@@ -1,0 +1,22 @@
+{
+  "name": "@repo/types",
+  "type": "module",
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc"
+  },
+  "exports": {
+    "./database": {
+      "types": "./src/database.types.ts",
+      "default": "./dist/database.types.js"
+    },
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "typescript": "latest"
+  }
+}
