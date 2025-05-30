@@ -1,9 +1,9 @@
 import type {
-  GPTIUser,
+  IUser,
   MailBox,
   OnboardingStatusType,
   Resource,
-  Tables
+  Tables,
 } from '@repo/types';
 import type { User } from '@supabase/supabase-js';
 
@@ -40,16 +40,16 @@ export const transformUser = ({
     full_name = null,
     username = null,
     billing_address = null,
-    payment_method = null
+    payment_method = null,
   },
   onboarding: {
     onboardingStatus = 'account_created',
     forwarderEmail = '',
     mailbox,
-    resources = []
+    resources = [],
   },
-  token = ''
-}: TransformUserOptions): GPTIUser => {
+  token = '',
+}: TransformUserOptions): IUser => {
   const id = user.id;
   const email = user.email ?? '';
 
@@ -65,12 +65,12 @@ export const transformUser = ({
     username,
     user_metadata: {
       bio: (user as User).user_metadata?.bio ?? bio,
-      link: (user as User).user_metadata?.link ?? link
+      link: (user as User).user_metadata?.link ?? link,
     },
     token,
     onboardingStatus,
     forwarderEmail,
     mailbox,
-    resources
+    resources,
   };
 };

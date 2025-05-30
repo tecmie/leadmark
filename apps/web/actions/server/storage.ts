@@ -4,10 +4,8 @@ import {
   BackendResponse,
   DeleteFileResourceOptions,
   DownloadFileResourceOptions,
-  FetchFileResourceOptions,
-  FileResource,
   Resource,
-  UploadFileResourceOptions
+  UploadFileResourceOptions,
 } from '@repo/types';
 import { createClient } from '@/supabase/server';
 import { uniqueFilename } from '@/utils/unique-filename';

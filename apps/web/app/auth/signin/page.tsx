@@ -1,0 +1,17 @@
+import { SignInPage } from '@/components/pages/auth/sign-in';
+import { routes } from '@/utils/routes';
+import { redirect } from 'next/navigation';
+import { createClient } from '@/supabase/client';
+
+export default async function Page() {
+  const supabase = createClient();
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (session) {
+    return redirect(routes.inboxOverview);
+  }
+  return <SignInPage />;
+}

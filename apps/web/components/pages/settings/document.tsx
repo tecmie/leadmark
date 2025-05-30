@@ -1,7 +1,7 @@
 'use client';
 
 import { FileUpload } from '@/components/ui/file-upload';
-import { FileResource, Resource } from '@repo/types';
+import { Resource } from '@repo/types';
 
 interface SettingsDocumentPageProps {
   documents: Resource[];
