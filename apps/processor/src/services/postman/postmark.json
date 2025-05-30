@@ -1,0 +1,107 @@
+{
+  "FromName": "Andrew Miracle",
+  "MessageStream": "inbound",
+  "From": "andrew@tecmie.com",
+  "FromFull": {
+    "Email": "andrew@tecmie.com",
+    "Name": "Andrew Miracle",
+    "MailboxHash": ""
+  },
+  "To": "cac0731fa0b48a89b6bb9d12bca81e59+1f3643215dd0f8826bcf8bd5deffa14d@inbound.postmarkapp.com",
+  "ToFull": [
+    {
+      "Email": "cac0731fa0b48a89b6bb9d12bca81e59+1f3643215dd0f8826bcf8bd5deffa14d@inbound.postmarkapp.com",
+      "Name": "",
+      "MailboxHash": "1f3643215dd0f8826bcf8bd5deffa14d",
+      "Method": "To"
+    }
+  ],
+  "Cc": "",
+  "CcFull": [],
+  "Bcc": "",
+  "BccFull": [],
+  "OriginalRecipient": "cac0731fa0b48a89b6bb9d12bca81e59+1f3643215dd0f8826bcf8bd5deffa14d@inbound.postmarkapp.com",
+  "Subject": "Fwd: Android App Development.",
+  "MessageID": "8aab64e7-5c19-48d7-b6db-1dd772f910a0",
+  "ReplyTo": "",
+  "MailboxHash": "1f3643215dd0f8826bcf8bd5deffa14d",
+  "Date": "Fri, 20 Oct 2023 19:44:08 +0000",
+  "TextBody": "---------- Forwarded message ---------\nFrom: kathy <kathyjenkins1994@gmail.com>\nDate: Fri, Oct 20, 2023 at 9:26 AM\nSubject: Android App Development.\nTo: <admin@tecmie.com>\n\n\nHello  ,\n\nWe are Mobile Apps Development Company with experience of delivering over\n500 projects for about 200 clients across US, UAE, Europe, UK, Australia\nand the Middle East.\n\nWe provide affordable solutions with high levels of satisfaction to global\norganizations at\n\nCompetitive prices and following is a list of services offered by us:-\n\n1.      IPhone App Development.\n\n2.      IPad App Development.\n\n3.      Android App Development.\n\n4.      Custom Dashboard Development.\n\n5.      Custom CRM Development.\n\n6.      API Development.\n\nPlease let me know if you have any requirement for the above development,\nwe would be glad to share a detailed proposal with you.\n\nPlease let me know of a suitable time to discuss on (Phone/Skype ID) and\nunderstand the current opportunities/requirements within your company.\n\nI look forward to your response.\n\n*Regards,*\n\nKathy\n\nBusiness Consultant (INDIA)\n\n\n\n-- \nYou received this message because you are subscribed to the Google Groups\n\"Tecmie Admin\" group.\nTo unsubscribe from this group and stop receiving emails from it, send an\nemail to admin+unsubscribe@tecmie.com.\nTo view this discussion on the web visit\nhttps://groups.google.com/a/tecmie.com/d/msgid/admin/!%26!AAAAAAAAAAAYAAAAAAAAAA5j2ELZ%2BclJmC9J9BKmGe7CgAAAEAAAAOLP277PF9pGvYB1v3VWGiYBAAAAAA%3D%3D%40gmail.com\n<https://groups.google.com/a/tecmie.com/d/msgid/admin/!%26!AAAAAAAAAAAYAAAAAAAAAA5j2ELZ%2BclJmC9J9BKmGe7CgAAAEAAAAOLP277PF9pGvYB1v3VWGiYBAAAAAA%3D%3D%40gmail.com?utm_medium=email&utm_source=footer>\n.\n\n\n-- \n\n\n\n[image: linkedin] <https://www.linkedin.com/company/tecmie>\n[image: twitter] <https://twitter.com/tecmie>\n[image: youtube] <https://www.youtube.com/channel/UCO3RGYJUu6hIluFcpemSmUg>\n[image: facebook] <https://facebook.com/tecmie>\n[image: instagram] <https://instagram.com/tecmie>\n\nTecmie Venture Labs\n\nAfrica-focused Product & Experience Venture lab\n\ntecmie.com  <https://tecmie.com/>\n\nThe information contained in this email may be confidential. It has been\nsent for the sole use of the intended recipient(s). If the  reader of this\nemail is not an intended recipient, you are hereby notified that any\nunauthorized review, use, disclosure, dissemination, distribution, or\ncopying of this message is strictly prohibited.\n\nIf you have received this email in error, please notify the sender\nimmediately and destroy all copies of the message.\n",
+  "StrippedTextReply": "---------- Forwarded message ---------",
+  "Tag": "",
+  "Headers": [
+    {
+      "Name": "Return-Path",
+      "Value": "<andrew@tecmie.com>"
+    },
+    {
+      "Name": "Received",
+      "Value": "by p-pm-inboundg02c-aws-euwest1c.inbound.postmarkapp.com (Postfix, from userid 996)\tid 45A16404F67; Fri, 20 Oct 2023 19:44:23 +0000 (UTC)"
+    },
+    {
+      "Name": "X-Spam-Checker-Version",
+      "Value": "SpamAssassin 3.4.0 (2014-02-07) on\tp-pm-inboundg02c-aws-euwest1c"
+    },
+    {
+      "Name": "X-Spam-Status",
+      "Value": "No"
+    },
+    {
+      "Name": "X-Spam-Score",
+      "Value": "0.0"
+    },
+    {
+      "Name": "X-Spam-Tests",
+      "Value": "DKIM_SIGNED,DKIM_VALID,HTML_MESSAGE,RCVD_IN_DNSWL_NONE,\tRCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,RCVD_IN_ZEN_BLOCKED_OPENDNS,SPF_HELO_NONE,\tSPF_PASS,URIBL_DBL_BLOCKED_OPENDNS,URIBL_ZEN_BLOCKED_OPENDNS"
+    },
+    {
+      "Name": "Received-SPF",
+      "Value": "pass (tecmie.com: Sender is authorized to use 'andrew@tecmie.com' in 'mfrom' identity (mechanism 'include:_spf.google.com' matched)) receiver=p-pm-inboundg02c-aws-euwest1c; identity=mailfrom; envelope-from=\"andrew@tecmie.com\"; helo=mail-ej1-f50.google.com; client-ip=209.85.218.50"
+    },
+    {
+      "Name": "Received",
+      "Value": "from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])\t(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))\t(No client certificate requested)\tby p-pm-inboundg02c-aws-euwest1c.inbound.postmarkapp.com (Postfix) with ESMTPS id B3A62405133\tfor <cac0731fa0b48a89b6bb9d12bca81e59+1f3643215dd0f8826bcf8bd5deffa14d@inbound.postmarkapp.com>; Fri, 20 Oct 2023 19:44:22 +0000 (UTC)"
+    },
+    {
+      "Name": "Received",
+      "Value": "by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-9b96c3b4be4so181030366b.1        for <cac0731fa0b48a89b6bb9d12bca81e59+1f3643215dd0f8826bcf8bd5deffa14d@inbound.postmarkapp.com>; Fri, 20 Oct 2023 12:44:22 -0700 (PDT)"
+    },
+    {
+      "Name": "DKIM-Signature",
+      "Value": "v=1; a=rsa-sha256; c=relaxed/relaxed;        d=tecmie-com.20230601.gappssmtp.com; s=20230601; t=1697831062; x=1698435862; darn=inbound.postmarkapp.com;        h=to:subject:message-id:date:from:in-reply-to:references:mime-version         :from:to:cc:subject:date:message-id:reply-to;        bh=64RU/64QEOAuiRSt8wB01dK5+qiwjvKz3QIcic9I2e0=;        b=rdhNlkhohruzkgJXL3uZptLpB5pVSBLZNoMDwaCOv4cEpGkTlbsV9YJEsWjUAEa1It         FLaW8fnw8fZJyTgSAoJPjcWpMw772kuxVxFzV57H7eu/dwo7/1UDLvPnq0ha+F8nJlsG         DRIjsv/8q00ChXKnfgH3ZnX/pVqm2MohySxrCqc8vTWDvVvYUnoei5g/E4XdmlYmWuGb         SBjEUoznsD98lNkDRjGN/J4GBbIW6umv+1D3xp3AVbpiVQByn5S6ouLmrtaqGZ+dr08I         Eu7Y3oEUQ/yKSHHZHmC0U4c6/28w6k2kSwj7PDUxfP1oE1HxPFN8vJy3UvUFAji9ytbs         cn8A=="
+    },
+    {
+      "Name": "X-Google-DKIM-Signature",
+      "Value": "v=1; a=rsa-sha256; c=relaxed/relaxed;        d=1e100.net; s=20230601; t=1697831062; x=1698435862;        h=to:subject:message-id:date:from:in-reply-to:references:mime-version         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;        bh=64RU/64QEOAuiRSt8wB01dK5+qiwjvKz3QIcic9I2e0=;        b=snsOhW++F4WUEHhBKn8nJRpePTXU2LYsYMN6hCX900ZGpmpAJPSHcrZMJoINGBUWQG         e43jFXeuol7l3s32znN5+oVwi8SD2Vs9zDUuBuX6LDskPKmW2snqivTw1nPSKAec/nZ/         nvs+v0WU1rgumlGvufgT0gO1++RwVlcw9gwzj+BcR154lLy8FRtCs4qA9155znitTzKF         a08lljItKsXBbRpn9li8Z3NRXKqKbWlm5iwHLu70DfLzbQOyJVuyIWINaXhTd/+81lEw         K/okHtN/FhbEe/x0v0pvhO5p63xGJfdDS7ef7pGiti6/+qevbu/JjI077pfEgLH8+mN/         ZDuA=="
+    },
+    {
+      "Name": "X-Gm-Message-State",
+      "Value": "AOJu0YzhaC9DlSAB1W4j98Gg8OfZ6rvcVNdwW3RTJ+qI9bTBbEdcZeC6\tg/feBDm9DXpzUpeB+npByhwAf3ocvlaitcsWU43sV7RUtOZ9TL6nLA8="
+    },
+    {
+      "Name": "X-Google-Smtp-Source",
+      "Value": "AGHT+IGcqiSux8K8xVyTcaSSps7YEg7XqyAvxEtNcu7yZSUD4tvP4sccyv41wDtupT6N3MZ9ORIEcRVSdrFByp3SUSo="
+    },
+    {
+      "Name": "X-Received",
+      "Value": "by 2002:a17:907:3182:b0:9ae:4776:5a3a with SMTP id xe2-20020a170907318200b009ae47765a3amr2122904ejb.39.1697831061312; Fri, 20 Oct 2023 12:44:21 -0700 (PDT)"
+    },
+    {
+      "Name": "MIME-Version",
+      "Value": "1.0"
+    },
+    {
+      "Name": "References",
+      "Value": "<!&!AAAAAAAAAAAYAAAAAAAAAA5j2ELZ+clJmC9J9BKmGe7CgAAAEAAAAOLP277PF9pGvYB1v3VWGiYBAAAAAA==@gmail.com>"
+    },
+    {
+      "Name": "In-Reply-To",
+      "Value": "<!&!AAAAAAAAAAAYAAAAAAAAAA5j2ELZ+clJmC9J9BKmGe7CgAAAEAAAAOLP277PF9pGvYB1v3VWGiYBAAAAAA==@gmail.com>"
+    },
+    {
+      "Name": "Message-ID",
+      "Value": "<CAJM9gr2bpnG-sQmqiFR6czdkoQyWvT+Zoq+g5uBS89rEga7a+w@mail.gmail.com>"
+    }
+  ],
+  "Attachments": []
+}

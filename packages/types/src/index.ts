@@ -6,7 +6,7 @@ export type BackendResponse<T = undefined> = {
   data?: T;
 };
 
-export type GPTIUser = any;
+export type IUser = any;
 
 export enum ActionTypeEnum {
   PAYMENT = "PAYMENT_DETAILS_ACTION",
@@ -16,6 +16,9 @@ export type Forwarder = any;
 export type Payment = any;
 export type UpdateForwarderActionOptions = any;
 export type UpdatePaymentDetailsActionOptions = any;
+export type MailboxBaseWithUserBase = any;
+export type MessageBase = any;
+export type ForwardedMessageBase = any;
 
 export type UniqueFilenameOptions = any;
 export type Tables = any;
