@@ -6,11 +6,11 @@ export type BackendResponse<T = undefined> = {
   data?: T;
 };
 
-export type GPTIUser = any;
+export type IUser = any;
 
 export enum ActionTypeEnum {
-  PAYMENT = "PAYMENT_DETAILS_ACTION",
-  FORWARDER = "MAIL_FORWARDER_ACTION",
+  PAYMENT = 'PAYMENT_DETAILS_ACTION',
+  FORWARDER = 'MAIL_FORWARDER_ACTION',
 }
 export type Forwarder = any;
 export type Payment = any;
@@ -20,7 +20,6 @@ export type UpdatePaymentDetailsActionOptions = any;
 export type UniqueFilenameOptions = any;
 export type Tables = any;
 export type DeleteFileResourceOptions = any;
-export type OnboardingStatusType = any;
 export type DownloadFileResourceOptions = any;
 export type FetchFileResourceOptions = any;
 export type FileResource = any;
@@ -41,3 +40,40 @@ export type UploadResourceOptions = {
     };
   }[];
 };
+
+export type OnboardingStatusType =
+  | 'account_created'
+  | 'mailbox_created'
+  | 'forwarder_created'
+  | 'links_created';
+
+export type OnboardingStatus = {
+  onboardingStatus: OnboardingStatusType;
+  mailbox?: MailBox;
+  forwarderEmail?: string;
+  resources?: Resource[];
+};
+
+export type ViewSignIn = 'sign_in';
+export type ViewSignUp = 'sign_up';
+export type ViewMagicLink = 'magic_link';
+export type ViewForgottenPassword = 'forgotten_password';
+export type ViewUpdatePassword = 'update_password';
+export type ViewVerifyOtp = 'verify_otp';
+export type ViewType =
+  | ViewSignIn
+  | ViewSignUp
+  | ViewMagicLink
+  | ViewForgottenPassword
+  | ViewUpdatePassword
+  | ViewVerifyOtp;
+
+export type CreateAccountOptions = any;
+export type LoginOptions = any;
+export type OauthOptions = any;
+export type ResetPasswordOptions = any;
+export type UpdatePasswordOptions = any;
+
+export type Thread = any;
+export type Message = any;
+export type TypeMessageAttachment = any;
