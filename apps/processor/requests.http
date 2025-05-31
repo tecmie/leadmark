@@ -24,10 +24,10 @@ Content-Type: application/json
   "CcFull": [],
   "Bcc": "",
   "BccFull": [],
-  "Subject": "Fwd: Request from the Developent Server API.",
+  "Subject": "Property Investment Inquiry",
   "Date": "Fri, 20 Oct 2023 19:44:08 +0000",
-  "TextBody": "---------- Forwarded message ---------\nFrom: kathy <kathyjenkins1994@gmail.com>\nDate: Fri, Oct 20, 2023 at 9:26 AM\nSubject: Android App Development.\nTo: <admin@tecmie.com>\n\n\n what do you suggest?\n",
-  "StrippedTextReply": "---------- Forwarded message ---------",
+  "TextBody": "Hi James,\n\nLet's do June 1, 9:00 AM for the meeting \n\nBest regards,\nPaul",
+  "StrippedTextReply": "Hi James,\n\nLet's do June 1, 9:00 AM for the meeting\n\nBest regards,\nPaul",
   "Headers": [
     {
       "Name": "Return-Path",

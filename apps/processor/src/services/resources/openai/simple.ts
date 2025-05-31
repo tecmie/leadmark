@@ -77,6 +77,7 @@ export async function simpleCompletion({
         
         Here are your constraints:
         - DO NOT INCLUDE CODE TAGS LIKE \`\`\` markdown, {}, or similar 
+        - DO NOT INCLUDE OR CREATE A SUBJECT FOR THE EMAIL
 
     
     `,
