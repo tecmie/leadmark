@@ -3,10 +3,17 @@
 import { ProgressProvider } from '@bprogress/next/app';
 import { Toaster } from 'sonner';
 import React from 'react';
+import { ThemeProvider } from '@/components/ui/theme-provider';
 
 function Providers({ children }: React.PropsWithChildren) {
   return (
-    <div>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="light"
+      forcedTheme="light"
+      enableSystem={false}
+      disableTransitionOnChange
+    >
       <Toaster
         expand
         richColors
@@ -32,7 +39,7 @@ function Providers({ children }: React.PropsWithChildren) {
       >
         {children}
       </ProgressProvider>
-    </div>
+    </ThemeProvider>
   );
 }
 

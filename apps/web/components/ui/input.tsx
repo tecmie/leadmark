@@ -102,7 +102,7 @@ const LabelledInput = React.forwardRef<HTMLInputElement, LabelledInputProps>(
     <div className="flex flex-col w-full gap-2">
       <Label
         htmlFor={name}
-        className="text-xs text-left text-[#000000A3] dark:text-neutral-strong"
+        className="text-xs text-left text-[#000000A3] "
       >
         {label}
       </Label>

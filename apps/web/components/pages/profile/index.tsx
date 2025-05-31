@@ -130,7 +130,7 @@ export const ProfilePage = ({
         <Avatar src="" label={initials} />
         <div className="flex flex-col gap-1">
           {fullname ? (
-            <h3 className="text-xl text-black sm:text-2xl dark:text-neutral-strong">
+            <h3 className="text-xl text-black sm:text-2xl ">
               {fullname}
             </h3>
           ) : (
@@ -234,7 +234,7 @@ export const ProfilePage = ({
           </div>
           <div className="flex flex-col gap-4 border-b border-[#0000000A] px-4 pb-4">
             <div className="flex flex-col gap-1">
-              <h3 className="text-base text-black dark:text-neutral-strong">
+              <h3 className="text-base text-black ">
                 Link
               </h3>
               <p>

@@ -54,7 +54,7 @@ export default async function Page() {
   return (
     <div className="flex flex-col w-full h-full gap-3 py-6 max-w-screen">
       <div className="flex flex-col gap-1 px-6 border-b border-[#0000000A] pb-4">
-        <h3 className="text-xl font-bold text-black sm:text-2xl dark:text-neutral-strong">
+        <h3 className="text-xl font-bold text-black sm:text-2xl ">
           Settings
         </h3>
       </div>
@@ -65,18 +65,18 @@ export default async function Page() {
             key={index}
             href={route.href}
             className={cn(
-              'px-6 py-4 rounded-none flex items-center justify-between border-b border-[#0000000A] gap-3 font-medium dark:text-[#FFFFFFA3] text-[#000000A3]'
+              'px-6 py-4 rounded-none flex items-center justify-between border-b border-[#0000000A] gap-3 font-medium  text-[#000000A3]'
             )}
           >
             <div className="flex items-center justify-center gap-3">
               <route.icon
-                className={cn('dark:text-primary-100 text-[#000000A3]')}
+                className={cn(' text-[#000000A3]')}
               />
 
               <span>{route.label}</span>
             </div>
             <CaretRightIcon
-              className={cn(' text-[#000000A3] dark:text-[#FFFFFFA3]')}
+              className={cn(' text-[#000000A3] ')}
             />
           </Link>
         ))}

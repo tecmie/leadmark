@@ -54,12 +54,12 @@ export const AddFolderDialog = ({
     <Dialog open={openDialog} onOpenChange={closeDialog}>
       <DialogContent className="bg-white p-6 dark:bg-background text-neutral sm:max-w-[425px] border-none rounded-t-[40px] sm:rounded-[40px] translate-y-0 sm:translate-y-[-50%] bottom-0 sm:top-[50%] sm:h-fit data-[state=closed]:slide-out-to-bottom-[48%] data-[state=open]:slide-in-from-bottom-[48%]">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-normal text-[#000000A3] dark:text-neutral-strong">
+          <DialogTitle className="text-2xl font-normal text-[#000000A3] ">
             Add a folder
           </DialogTitle>
         </DialogHeader>
         <div className="">
-          <span className="text-sm text-[#000000A3] dark:text-neutral-strong">
+          <span className="text-sm text-[#000000A3] ">
             Step <b>{currentStep}</b> of <b>2</b>
           </span>
         </div>
@@ -67,10 +67,10 @@ export const AddFolderDialog = ({
           <>
             <div className="overflow-scroll max-h-60 sm:max-h-fit [&::-webkit-scrollbar]:hidden w-full">
               <div className="flex flex-col items-start justify-start gap-2">
-                <h1 className="text-[#000000A3] dark:text-neutral-strong font-bold">
+                <h1 className="text-[#000000A3]  font-bold">
                   Create folder
                 </h1>
-                <p className="text-[#000000A3] dark:text-neutral-strong text-sm">
+                <p className="text-[#000000A3]  text-sm">
                   Folders are designed to automatically categorize and manage
                   incoming mails. Fill in the required information and pick a
                   color to identify the folder.
@@ -80,20 +80,20 @@ export const AddFolderDialog = ({
                 <div className="flex flex-col gap-2.5">
                   <Label
                     htmlFor="name"
-                    className="text-left text-[#000000A3] dark:text-neutral-strong"
+                    className="text-left text-[#000000A3] "
                   >
                     Folder name
                   </Label>
                   <Input
                     id="name"
                     defaultValue="Pedro Duartund"
-                    className=" text-[#000000A3] dark:text-neutral-strong"
+                    className=" text-[#000000A3] "
                   />
                 </div>
                 <div className="flex flex-col gap-2.5">
                   <Label
                     htmlFor=""
-                    className="text-left text-[#000000A3] dark:text-neutral-strong"
+                    className="text-left text-[#000000A3] "
                   >
                     Nest folder under
                   </Label>
@@ -110,14 +110,14 @@ export const AddFolderDialog = ({
                 <div className="flex flex-col gap-2.5">
                   <Label
                     htmlFor=""
-                    className="text-left text-[#000000A3] dark:text-neutral-strong"
+                    className="text-left text-[#000000A3] "
                   >
                     Description
                   </Label>
                   <Textarea
                     id="username"
                     placeholder="Message Specify the types of emails you wish to have sorted into this folder."
-                    className=" text-[#000000A3] dark:text-neutral-strong"
+                    className=" text-[#000000A3] "
                   />
                 </div>
                 <div className="pl-2">
@@ -184,10 +184,10 @@ export const AddFolderDialog = ({
         {currentStep === 2 && (
           <>
             <div className="flex flex-col items-start justify-start gap-2">
-              <h1 className="text-[#000000A3] dark:text-neutral-strong font-bold">
+              <h1 className="text-[#000000A3]  font-bold">
                 Add links
               </h1>
-              <p className="text-[#000000A3] dark:text-neutral-strong">
+              <p className="text-[#000000A3] ">
                 Enter the URL(s) of your external support content for this
                 folder.
               </p>

@@ -247,7 +247,7 @@ export const Sidebar = ({
           } w-full`}
         >
           {isExpanded && (
-            <span className="flex items-center flex-shrink-0 text-[10px] tracking-[0.4px] leading-3 font-bold text-black uppercase dark:text-white">
+            <span className="flex items-center flex-shrink-0 text-[10px] tracking-[0.4px] leading-3 font-bold text-black uppercase ">
               Folders
             </span>
           )}
@@ -266,7 +266,7 @@ export const Sidebar = ({
         {isExpanded && (
           <button
             onClick={() => onOpen()}
-            className="flex items-center flex-shrink-0 w-full p-2 text-sm font-medium text-primary-base dark:text-white"
+            className="flex items-center flex-shrink-0 w-full p-2 text-sm font-medium text-primary-base "
           >
             Add a folder
           </button>

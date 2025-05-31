@@ -23,7 +23,7 @@ const FolderCard: React.FC<FolderProps> = ({ folder, isExpanded }) => {
   return (
     <li
       className={cn(
-        'w-full flex flex-shrink-0 justify-center py-4 px-4 sm:px-2 sm:py-2 flex-col text-sm text-black capitalize dark:text-white',
+        'w-full flex flex-shrink-0 justify-center py-4 px-4 sm:px-2 sm:py-2 flex-col text-sm text-black capitalize ',
         { 'py-4': isCollapsed },
         { 'text-black font-medium': folder.id === activeId },
         { 'text-[#000000A3]': folder.id !== activeId }

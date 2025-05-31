@@ -36,13 +36,13 @@ export const SelectMenu = ({
           />
           <ChevronDown
             size={16}
-            className="dark:text-neutral-strong text-neutral-100"
+            className=" text-neutral-100"
           />
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="start"
-        className="dark:text-primary-100 text-nuetral bg-primary-150 dark:bg-surface-strong"
+        className=" text-nuetral bg-primary-150 dark:bg-surface-strong"
       >
         {['none', 'all'].map((option, index) => (
           <DropdownMenuCheckboxItem

@@ -33,7 +33,7 @@ export const SidebarItem = ({
           ' text-black font-medium': isActive
         },
         {
-          'dark:text-[#FFFFFFA3] text-[#000000A3]': !isActive
+          'text-[#000000A3]': !isActive
         },
         { 'w-12 justify-center': !isExpanded },
         { 'w-full justify-between': isExpanded }
@@ -47,7 +47,7 @@ export const SidebarItem = ({
               'text-black justify-center fill-black': isActive
             },
             {
-              'dark:text-primary-100 text-[#000000A3] fill-black': !isActive
+              'text-[#000000A3] fill-black': !isActive
             }
           )}
         />
@@ -61,7 +61,7 @@ export const SidebarItem = ({
             'text-black': isActive
           },
           {
-            ' text-[#000000A3] dark:text-[#FFFFFFA3]': !isActive
+            'text-[#000000A3]': !isActive
           },
           { ' hidden': !isExpanded }
         )}
@@ -71,7 +71,7 @@ export const SidebarItem = ({
           className={cn(
             'hidden sm:block',
             {
-              'dark:text-black text-primary-100': isActive
+              'text-primary-100': isActive
             },
             {
               'text-white opacity-0': !isActive

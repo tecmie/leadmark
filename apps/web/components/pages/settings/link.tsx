@@ -90,7 +90,7 @@ export const SettingsLinkPage = ({
   return (
     <div className="flex flex-col gap-6 ">
       <div className="flex flex-col gap-1">
-        <h3 className="px-6 py-4 text-xl text-black sm:text-2xl dark:text-neutral-strong">
+        <h3 className="px-6 py-4 text-xl text-black sm:text-2xl ">
           Links
         </h3>
         <p className="p-6 border-y border-surface-surface-normal">

@@ -178,14 +178,16 @@ export const Navbar = ({
           )}
         </Tooltip>
 
-        <Tooltip content="Settings" side="bottom">
+        <div className="mr-4"></div>
+
+        {/* <Tooltip content="Settings" side="bottom">
           <Link
             href={routes.SETTINGS}
             className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }))}
           >
             <SettingsNavIcon className="inline-block" />
           </Link>
-        </Tooltip>
+        </Tooltip> */}
       </div>
     </div>
   );

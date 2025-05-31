@@ -175,7 +175,7 @@ export const LinkPreview = ({
         {isPreview && (
           <Label
             htmlFor="show-link-previews"
-            className="flex items-center gap-2 text-[#000000A3] dark:text-neutral-strong"
+            className="flex items-center gap-2 text-[#000000A3] "
           >
             <Checkbox
               name="show-link-previews"
