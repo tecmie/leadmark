@@ -13,7 +13,7 @@ import { getURL } from '@/utils/helpers';
 import { transformUser } from '@/utils/transform-user';
 import { AuthError, Session, User } from '@supabase/supabase-js';
 import { checkOnboardingStatus, checkOnboardingStep } from './user-profile';
-import { createClient } from '@/supabase/client';
+import { createClient } from '@/supabase/server';
 import { cookies } from 'next/headers';
 
 const getUrl = getURL();
@@ -50,7 +50,7 @@ const _handleUserResponse = async (
 };
 
 export async function logout() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error } = await supabase.auth.signOut();
   //clear all cookies
   const cookieStore = await cookies();
@@ -73,7 +73,7 @@ export async function logout() {
 }
 
 export const socialProviderAuth = async ({ provider }: OauthOptions) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   await supabase.auth.signInWithOAuth({
     provider,
     options: {
@@ -94,7 +94,7 @@ export const resendConfirmationEmail = async (): Promise<BackendResponse> => {
       message: 'No valid email found',
     };
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase.auth.resend({
     type: 'signup',
     email,
@@ -116,7 +116,7 @@ export const resendConfirmationEmail = async (): Promise<BackendResponse> => {
 export const resetPassword = async ({
   email,
 }: ResetPasswordOptions): Promise<BackendResponse<void>> => {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${getUrl}/auth/reset-password`,
   });
@@ -137,7 +137,7 @@ export const resetPassword = async ({
 export const updatePassword = async ({
   newPassword: password,
 }: UpdatePasswordOptions): Promise<BackendResponse<IUser>> => {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase.auth.updateUser({
     password,
   });
@@ -153,7 +153,7 @@ export const login = async ({
   email,
   password,
 }: LoginOptions): Promise<BackendResponse<IUser>> => {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithPassword({
     email: email,
     password: password,
@@ -185,7 +185,7 @@ export const createAccount = async ({
   //   };
   // }
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
     email: email,
     password: password,
@@ -206,7 +206,7 @@ export const createAccount = async ({
 
 export const getUserDetails = async () => {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: userDetails } = await supabase
       .from('users')
       .select('*')
@@ -219,7 +219,7 @@ export const getUserDetails = async () => {
 };
 
 export async function getSession() {
-  const supabase = createClient();
+  const supabase = await createClient();
   try {
     const {
       data: { session },
@@ -232,7 +232,7 @@ export async function getSession() {
 }
 
 export async function getOrAddToWaitlist(id: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   try {
     const { data, error } = await supabase
