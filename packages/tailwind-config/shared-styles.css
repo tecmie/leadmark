@@ -4,4 +4,52 @@
   --blue-1000: #2a8af6;
   --purple-1000: #a853ba;
   --red-1000: #e92a67;
+
+  --background: 222, 58%, 72%, 1;
+  --background-secondary: 205 57% 10% /1;
+  --surface-surface-neutral: 204 60% 5% / 0.04;
+  --surface-surface-normal: 0 0% 0% / 0.04;
+  --surface: 204 58% 68% / 1;
+  --surface-strong: 203 58% 16%;
+  --surface-neutral: 0 0% 100% / 0.04;
+  --surface-weak: 204, 60%, 5% / 0.04;
+  --surface-warning: 39 58% 68% / 1;
+  --surface-warning-strong: 40 58% 16% / 1;
+
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+
+
+  --primary-base: 222, 58%, 72%, 1;
+  --primary-hover: 222, 58%, 72%, 0.9;
+  --link: 204 58% 68% / 1;
+  --error-weak: 8 58% 68%;
+
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+
+  --neutral: 0 0% 100% / 0.64;
+  --neutral-weak: 0 0% 100% / 0.4;
+  --neutral-strong: 0 0% 100% / 1;
+
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border-neutral: 0 0% 100% 0.16;
+  --border-neutral-weak: 0 0% 100% / 0.08;
+  --border-neutral-weaker: 0 0% 100% / 0.04;
+
+  --input: 214.3 31.8% 91.4%;
+  --ring: 222.2 84% 4.9%;
+
+  --radius: 0.5rem;
 }

@@ -35,26 +35,13 @@ export const SignInPage = () => {
       }
 
       if (data?.user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('onboarding_status')
-          .eq('id', data.user.id)
-          .single();
+        // const { data: profile } = await supabase
+        //   .from('profiles')
+        //   .select('onboarding_status')
+        //   .eq('id', data.user.id)
+        //   .single();
 
-        const onboardingStatus = profile?.onboarding_status;
-
-        let route = routes.getStarted;
-        if (onboardingStatus === 'mailbox_created') {
-          route = routes.setupForwarder;
-        }
-        if (onboardingStatus === 'forwarder_created') {
-          route = routes.setupInboxLinks;
-        }
-        if (onboardingStatus === 'links_created') {
-          route = routes.inboxOverview;
-        }
-
-        router.push(route);
+        router.push(routes.ONBOARDING_GET_STARTED);
       }
     } catch (err) {
       toast.error((err as Error).message);
@@ -106,25 +93,21 @@ export const SignInPage = () => {
 
         <div className="flex items-center justify-end">
           <Link
-            href={routes.forgotPassword}
+            href={routes.FORGOT_PASSWORD}
             className="text-sm font-medium text-primary-base"
           >
             Forgot password?
           </Link>
         </div>
 
-        <Button
-          type="submit"
-          className="w-full bg-black text-white"
-          disabled={loading}
-        >
+        <Button type="submit" className="w-full text-white" disabled={loading}>
           {loading ? <Loader2 size={16} className="animate-spin" /> : 'Log in'}
         </Button>
       </form>
 
       <p>
         Don&apos;t have an account yet?{' '}
-        <Link href={routes.signUp} className="text-blue-500 font-medium">
+        <Link href={routes.SIGN_UP} className="text-blue-500 font-medium">
           Create an account
         </Link>
       </p>

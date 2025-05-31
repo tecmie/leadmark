@@ -33,7 +33,7 @@ export const ForgotPasswordPage = () => {
         return;
       }
 
-      router.push(`${routes.forgotPassword}?success=true`);
+      router.push(`${routes.FORGOT_PASSWORD}?success=true`);
     } catch (err) {
       toast.error((err as Error).message);
     } finally {
@@ -53,7 +53,7 @@ export const ForgotPasswordPage = () => {
         </div>
         <div>
           Not you?{' '}
-          <Link href={routes.forgotPassword} className="text-primary-base">
+          <Link href={routes.FORGOT_PASSWORD} className="text-primary-base">
             Change email address
           </Link>
         </div>
@@ -91,11 +91,7 @@ export const ForgotPasswordPage = () => {
           />
         </div>
 
-        <Button
-          type="submit"
-          className="w-full bg-black text-white"
-          disabled={loading}
-        >
+        <Button type="submit" className="w-full text-white" disabled={loading}>
           {loading ? (
             <Loader2 size={16} className="animate-spin" />
           ) : (
@@ -106,7 +102,7 @@ export const ForgotPasswordPage = () => {
 
       <p>
         Remember your password?{' '}
-        <Link href={routes.signIn} className="text-primary-base">
+        <Link href={routes.SIGN_IN} className="text-blue-500 font-medium">
           Log in
         </Link>
       </p>

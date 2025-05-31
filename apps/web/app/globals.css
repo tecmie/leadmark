@@ -2,10 +2,37 @@
 @import "@repo/tailwind-config";
 @import "@repo/ui/styles.css";
 
+* {
+  font-size: 16px;
+}
+
 .column-message {
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 1;
   line-clamp: 1;
   -webkit-box-orient: vertical;
+}
+
+input[type='text'],
+input[type='number'],
+input[type='email'],
+input {
+  font-size: 16px;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  select,
+  textarea,
+  input {
+    font-size: 16px;
+  }
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  select:focus,
+  textarea:focus,
+  input:focus {
+    font-size: 16px;
+  }
 }

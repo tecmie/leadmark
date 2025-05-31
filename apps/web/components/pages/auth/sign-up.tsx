@@ -57,7 +57,7 @@ export const SignUpPage = () => {
           return;
         }
 
-        router.push(`${routes.signUp}?success=true`);
+        router.push(`${routes.ONBOARDING_GET_STARTED}`);
         setTimeout(() => {
           setCanResendLink(true);
         }, 60 * 1000);
@@ -181,11 +181,7 @@ export const SignUpPage = () => {
           </p>
         </div>
 
-        <Button
-          type="submit"
-          className="w-full bg-black text-white"
-          disabled={loading}
-        >
+        <Button type="submit" className="w-full text-white" disabled={loading}>
           {loading ? (
             <Loader2 size={16} className="animate-spin" />
           ) : (
@@ -196,7 +192,7 @@ export const SignUpPage = () => {
 
       <p>
         Already have an account?{' '}
-        <Link href={routes.signIn} className="text-primary-base">
+        <Link href={routes.SIGN_IN} className="text-primary-base">
           Log in
         </Link>
       </p>
