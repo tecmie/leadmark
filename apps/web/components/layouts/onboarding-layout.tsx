@@ -7,6 +7,7 @@ import { PropsWithChildren } from 'react';
 import { routes } from '@/utils/routes';
 import { logout } from '@/actions/server/auth';
 import { LogOutIcon } from 'lucide-react';
+import { useRouter } from '@bprogress/next/app';
 
 const steps = [
   { path: routes.ONBOARDING_SETUP_MAIL_ACCOUNT, label: 'Setup', number: 1 },
@@ -17,7 +18,7 @@ const steps = [
 
 export const OnboardingLayout = ({ children }: PropsWithChildren) => {
   const pathname = usePathname();
-
+  const router = useRouter();
   return (
     <div className="min-h-screen relative overflow-hidden w-full">
       <div className="app-container z-10 flex items-center justify-between w-full py-4">
@@ -28,7 +29,7 @@ export const OnboardingLayout = ({ children }: PropsWithChildren) => {
           className="ml-4 flex items-center gap-2 whitespace-nowrap font-medium cursor-pointer right-4 text-destructive"
           onClick={async () => {
             await logout();
-            window.location.reload();
+            router.push(routes.SIGN_IN);
           }}
         >
           Logout <LogOutIcon className="w-4 h-4" />

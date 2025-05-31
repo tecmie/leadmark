@@ -14,7 +14,6 @@ import { transformUser } from '@/utils/transform-user';
 import { AuthError, Session, User } from '@supabase/supabase-js';
 import { checkOnboardingStatus, checkOnboardingStep } from './user-profile';
 import { createClient } from '@/supabase/server';
-import { cookies } from 'next/headers';
 
 const getUrl = getURL();
 
@@ -52,16 +51,6 @@ const _handleUserResponse = async (
 export async function logout() {
   const supabase = await createClient();
   const { error } = await supabase.auth.signOut();
-  //clear all cookies
-  const cookieStore = await cookies();
-  cookieStore.delete('supabase-auth-token');
-  cookieStore.delete('supabase-auth-token-type');
-  cookieStore.delete('supabase-auth-token-expires-at');
-  cookieStore.delete('supabase-auth-token-refresh-token');
-  cookieStore.delete('supabase-auth-token-access-token');
-  cookieStore.delete('supabase-auth-token-access-token-expires-at');
-  cookieStore.delete('supabase-auth-token-access-token-refresh-token');
-  cookieStore.delete('supabase-auth-token-access-token-access-token');
   if (error) {
     console.error('Error:', error);
   }
