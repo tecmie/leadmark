@@ -17,7 +17,7 @@ import { triggerDownload } from '@/utils/helpers';
 import { cn } from '@/utils/ui';
 import { createClient } from '@/supabase/client';
 import { ArrowLeft, ChevronRight, DownloadCloud, Trash2 } from 'lucide-react';
-import { useRouter } from 'next-nprogress-bar';
+import { useRouter } from '@bprogress/next/app';
 import { useState } from 'react';
 import { toast } from 'sonner';
 

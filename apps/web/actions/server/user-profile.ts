@@ -4,8 +4,9 @@ import { createClient } from '@/supabase/client';
 import {
   BackendResponse,
   IUser,
-  OnboardingStatus,
+  OnboardingStatusEnum,
   OnboardingStatusType,
+  OnboardingStepType,
 } from '@repo/types';
 import { fetchMailbox } from './mailbox';
 import { fetchResources } from './resources';
@@ -14,59 +15,59 @@ import { transformUser } from '@/utils/transform-user';
 
 const supabase = createClient();
 
-export const checkOnboardingStatus = async (
-  userId: string
-): Promise<OnboardingStatus> => {
-  let onboardingStatus: OnboardingStatusType = 'account_created';
+// export const checkOnboardingStatus = async (
+//   userId: string
+// ): Promise<OnboardingStatus> => {
+//   let onboardingStatus: OnboardingStatusType = 'account_created';
 
-  const mailbox = await fetchMailbox(userId);
+//   const mailbox = await fetchMailbox(userId);
 
-  if (!mailbox.success) {
-    return {
-      onboardingStatus: onboardingStatus,
-    };
-  }
+//   if (!mailbox.success) {
+//     return {
+//       onboardingStatus: onboardingStatus,
+//     };
+//   }
 
-  onboardingStatus = 'mailbox_created';
+//   onboardingStatus = 'mailbox_created';
 
-  const forwarderTool = await fetchForwarderTool(userId);
+//   const forwarderTool = await fetchForwarderTool(userId);
 
-  if (!forwarderTool.success) {
-    return {
-      onboardingStatus: onboardingStatus,
-      mailbox: mailbox.data,
-    };
-  }
+//   if (!forwarderTool.success) {
+//     return {
+//       onboardingStatus: onboardingStatus,
+//       mailbox: mailbox.data,
+//     };
+//   }
 
-  onboardingStatus = 'forwarder_created';
+//   onboardingStatus = 'forwarder_created';
 
-  const resources = await fetchResources(userId);
+//   const resources = await fetchResources(userId);
 
-  if (!resources.success) {
-    return {
-      onboardingStatus: onboardingStatus,
-      mailbox: mailbox.data,
-      forwarderEmail: forwarderTool.data,
-    };
-  }
+//   if (!resources.success) {
+//     return {
+//       onboardingStatus: onboardingStatus,
+//       mailbox: mailbox.data,
+//       forwarderEmail: forwarderTool.data,
+//     };
+//   }
 
-  const { data: waitlistUser } = await supabase
-    .from('waitlist')
-    .select()
-    .eq('user_id', userId)
-    .single();
+//   const { data: waitlistUser } = await supabase
+//     .from('waitlist')
+//     .select()
+//     .eq('user_id', userId)
+//     .single();
 
-  if (waitlistUser?.is_onboard) {
-    onboardingStatus = 'links_created';
-  }
+//   if (waitlistUser?.is_onboard) {
+//     onboardingStatus = 'links_created';
+//   }
 
-  return {
-    onboardingStatus: onboardingStatus,
-    mailbox: mailbox.data,
-    forwarderEmail: forwarderTool.data,
-    resources: resources.data,
-  };
-};
+//   return {
+//     onboardingStatus: onboardingStatus,
+//     mailbox: mailbox.data,
+//     forwarderEmail: forwarderTool.data,
+//     resources: resources.data,
+//   };
+// };
 
 export const fetchProfileInfo = async (
   userId: string
@@ -88,7 +89,9 @@ export const fetchProfileInfo = async (
   const transformedUser = transformUser({
     user: data[0],
     metadata: {},
-    onboarding: { ...status },
+    onboarding: {
+      onboardingStatus: status,
+    },
   });
 
   return {
@@ -143,4 +146,87 @@ export const fetchUserData = async (): Promise<BackendResponse<IUser>> => {
     message: 'User data fetched successfully',
     data: transformedUser,
   };
+};
+
+// Update onboarding progress (step and status) for a user
+export const updateOnboardingProgress = async (
+  userId: string,
+  onboardingStatus: OnboardingStatusType,
+  onboardingStep: OnboardingStepType
+): Promise<BackendResponse<void>> => {
+  const { error } = await supabase
+    .from('profiles')
+    .update({
+      onboarding_status: onboardingStatus,
+      onboarding_step: onboardingStep,
+    })
+    .eq('id', userId);
+
+  if (error) {
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+
+  return {
+    success: true,
+    message: 'Onboarding progress updated successfully',
+  };
+};
+// add onboarding step check
+export const checkOnboardingStep = async (
+  userId: string
+): Promise<OnboardingStepType> => {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('onboarding_step')
+    .eq('id', userId)
+    .single();
+
+  if (error || !data) {
+    return 'not_started';
+  }
+
+  return data.onboarding_step;
+};
+
+export const checkOnboardingStatus = async (
+  userId: string
+): Promise<OnboardingStatusType> => {
+  let onboardingStatus: OnboardingStatusType = OnboardingStatusEnum.NOT_STARTED;
+
+  const mailbox = await fetchMailbox(userId);
+
+  if (!mailbox.success) {
+    return onboardingStatus;
+  }
+
+  onboardingStatus = 'in_progress';
+
+  const forwarderTool = await fetchForwarderTool(userId);
+
+  if (!forwarderTool.success) {
+    return onboardingStatus;
+  }
+
+  onboardingStatus = 'in_progress';
+
+  const resources = await fetchResources(userId);
+
+  if (!resources.success) {
+    return onboardingStatus;
+  }
+
+  const { data: waitlistUser } = await supabase
+    .from('waitlist')
+    .select()
+    .eq('user_id', userId)
+    .single();
+
+  if (waitlistUser?.is_onboard) {
+    onboardingStatus = OnboardingStatusEnum.COMPLETED;
+  }
+
+  return onboardingStatus;
 };

@@ -243,7 +243,7 @@ export const checkUsernameAvailability = async (
     if (isReservedAddress(username)) {
       return {
         success: false,
-        message: "This username is reserved and cannot be used",
+        message: 'This username is reserved and cannot be used',
         data: { available: false },
       };
     }
@@ -251,15 +251,15 @@ export const checkUsernameAvailability = async (
     // Check if username already exists in database
     const supabase = await createClient();
     const { data: existingMailbox, error } = await supabase
-      .from("mailboxes")
-      .select("username")
-      .eq("username", username.toLowerCase())
+      .from('mailboxes')
+      .select('unique_address')
+      .eq('unique_address', username.toLowerCase())
       .maybeSingle();
 
     if (error) {
       return {
         success: false,
-        message: "Error checking username availability",
+        message: 'Error checking username availability',
       };
     }
 
@@ -269,9 +269,9 @@ export const checkUsernameAvailability = async (
       for (let i = 1; i <= 3; i++) {
         const suggestion = `${username}${i}`;
         const { data: suggestionExists } = await supabase
-          .from("mailboxes")
-          .select("username")
-          .eq("username", suggestion.toLowerCase())
+          .from('mailboxes')
+          .select('unique_address')
+          .eq('unique_address', suggestion.toLowerCase())
           .maybeSingle();
 
         if (!suggestionExists && !isReservedAddress(suggestion)) {
@@ -281,20 +281,20 @@ export const checkUsernameAvailability = async (
 
       return {
         success: false,
-        message: "Username is already taken",
+        message: 'Username is already taken',
         data: { available: false, suggestions },
       };
     }
 
     return {
       success: true,
-      message: "Username is available",
+      message: 'Username is available',
       data: { available: true },
     };
-  } catch (error) {
+  } catch {
     return {
       success: false,
-      message: "Error checking username availability",
+      message: 'Error checking username availability',
     };
   }
 };
@@ -306,10 +306,10 @@ export const processMailboxObjective = async (
   try {
     const response = await openai.chat.completions.create({
       model: MODEL,
-      response_format: { type: "json_object" },
+      response_format: { type: 'json_object' },
       messages: [
         {
-          role: "system",
+          role: 'system',
           content: `You are an AI that converts raw mailbox objectives into structured JSON format. The output must strictly follow the parseMailObjectiveZodSchema format with these fields:
 - mock: { discussion: Array of { dialog: string, response: string } } - Sample conversation between user and assistant
 - name: { model_name: string } - Name for the AI assistant
@@ -324,7 +324,7 @@ Constraints:
 Return ONLY valid JSON that matches this exact schema.`,
         },
         {
-          role: "user",
+          role: 'user',
           content: `Convert this mailbox objective into the required JSON schema format:
 
 Raw Objective: ${rawObjective}
@@ -339,7 +339,7 @@ The AI assistant will handle emails for this mailbox. Create appropriate mock co
     const processedObjectiveText = response.choices[0]?.message?.content;
 
     if (!processedObjectiveText) {
-      throw new Error("No response from OpenAI");
+      throw new Error('No response from OpenAI');
     }
 
     const processedObjective = JSON.parse(processedObjectiveText);
@@ -348,16 +348,16 @@ The AI assistant will handle emails for this mailbox. Create appropriate mock co
 
     return {
       success: true,
-      message: "Mailbox objective processed successfully",
+      message: 'Mailbox objective processed successfully',
       data: validatedData,
     };
   } catch (error) {
-    console.error("Error processing mailbox objective:", error);
+    console.error('Error processing mailbox objective:', error);
     return {
       success: false,
       message:
-        "Error processing mailbox objective: " +
-        (error instanceof Error ? error.message : "Unknown error"),
+        'Error processing mailbox objective: ' +
+        (error instanceof Error ? error.message : 'Unknown error'),
     };
   }
 };
@@ -365,12 +365,12 @@ The AI assistant will handle emails for this mailbox. Create appropriate mock co
 // 3. Create new mailbox for user
 export const createMailboxForUser = async ({
   userId,
-  username,
+  unique_address,
   rawObjective,
   processedObjective,
 }: {
   userId: string;
-  username: string;
+  unique_address: string;
   rawObjective: string;
   processedObjective: any;
 }): Promise<BackendResponse<{ mailboxId: string }>> => {
@@ -378,33 +378,33 @@ export const createMailboxForUser = async ({
     const supabase = await createClient();
 
     const { data, error } = await supabase
-      .from("mailboxes")
+      .from('mailboxes')
       .insert({
         owner_id: userId,
-        username: username.toLowerCase(),
+        unique_address: unique_address.toLowerCase(),
         raw_objective: rawObjective,
         processed_objective: JSON.stringify(processedObjective),
       })
-      .select("id")
+      .select('id')
       .single();
 
     if (error) {
       return {
         success: false,
         message:
-          error.code === "23505" ? "Username already exists" : error.message,
+          error.code === '23505' ? 'Username already exists' : error.message,
       };
     }
 
     return {
       success: true,
-      message: "Mailbox created successfully",
+      message: 'Mailbox created successfully',
       data: { mailboxId: data.id },
     };
-  } catch (error) {
+  } catch {
     return {
       success: false,
-      message: "Error creating mailbox",
+      message: 'Error creating mailbox',
     };
   }
 };
@@ -434,12 +434,12 @@ export const uploadResourcesForMailbox = async ({
 
       // If it's a file, upload to Supabase Storage
       if (resource.file) {
-        const fileExtension = resource.file.name.split(".").pop();
+        const fileExtension = resource.file.name.split('.').pop();
         const fileName = `${Date.now()}_${resource.name}.${fileExtension}`;
         const storagePath = `resources/${userId}/${fileName}`;
 
         const { error: uploadError } = await supabase.storage
-          .from("uploads")
+          .from('uploads')
           .upload(storagePath, resource.file);
 
         if (uploadError) {
@@ -449,14 +449,14 @@ export const uploadResourcesForMailbox = async ({
         filePath = storagePath;
 
         // Extract text content from different file types
-        if (resource.file.type === "text/plain") {
+        if (resource.file.type === 'text/plain') {
           rawContent = await resource.file.text();
-        } else if (resource.file.type === "application/pdf") {
+        } else if (resource.file.type === 'application/pdf') {
           // For PDF files, you'd use a PDF parser like pdf-parse
           rawContent = await extractTextFromPDF(resource.file);
         } else if (
-          resource.file.type.includes("word") ||
-          resource.file.name.endsWith(".docx")
+          resource.file.type.includes('word') ||
+          resource.file.name.endsWith('.docx')
         ) {
           // For Word documents, you'd use mammoth or similar
           rawContent = await extractTextFromWord(resource.file);
@@ -474,7 +474,7 @@ export const uploadResourcesForMailbox = async ({
 
       // Create database record
       const { data, error } = await supabase
-        .from("resources")
+        .from('resources')
         .insert({
           owner_id: userId,
           mailbox_id: mailboxId,
@@ -483,7 +483,7 @@ export const uploadResourcesForMailbox = async ({
           file_path: filePath,
           raw_content: rawContent,
         })
-        .select("id")
+        .select('id')
         .single();
 
       if (!error && data) {
@@ -496,10 +496,10 @@ export const uploadResourcesForMailbox = async ({
       message: `${resourceIds.length} resources uploaded successfully`,
       data: { resourceIds },
     };
-  } catch (error) {
+  } catch {
     return {
       success: false,
-      message: "Error uploading resources",
+      message: 'Error uploading resources',
     };
   }
 };
@@ -515,10 +515,10 @@ export const generateFormTemplates = async ({
   try {
     const response = await openai.chat.completions.create({
       model: MODEL,
-      response_format: { type: "json_object" },
+      response_format: { type: 'json_object' },
       messages: [
         {
-          role: "system",
+          role: 'system',
           content: `You are an AI that creates contact form templates based on business objectives and context. Generate 3-5 different form templates as JSON object with "templates" array.
 
 Each template should have:
@@ -535,12 +535,12 @@ Each template should have:
 Create forms that align with the business objective and help qualify leads effectively. Return JSON object with "templates" key containing the array.`,
         },
         {
-          role: "user",
+          role: 'user',
           content: `Create contact form templates based on this business context:
 
 Processed Objective: ${JSON.stringify(processedObjective, null, 2)}
 
-${resourcesSummary ? `Business Resources Summary: ${resourcesSummary}` : ""}
+${resourcesSummary ? `Business Resources Summary: ${resourcesSummary}` : ''}
 
 Generate 3-5 form templates that would help this business capture and qualify leads effectively. Include a basic contact form, a detailed qualification form, and forms specific to their business model.`,
         },
@@ -552,28 +552,28 @@ Generate 3-5 form templates that would help this business capture and qualify le
     const templatesText = response.choices[0]?.message?.content;
 
     if (!templatesText) {
-      throw new Error("No response from OpenAI");
+      throw new Error('No response from OpenAI');
     }
 
     const templatesResponse = JSON.parse(templatesText);
     const templates = templatesResponse.templates || templatesResponse;
 
     if (!Array.isArray(templates)) {
-      throw new Error("AI response is not an array of templates");
+      throw new Error('AI response is not an array of templates');
     }
 
     return {
       success: true,
-      message: "Form templates generated successfully",
+      message: 'Form templates generated successfully',
       data: templates,
     };
   } catch (error) {
-    console.error("Error generating form templates:", error);
+    console.error('Error generating form templates:', error);
     return {
       success: false,
       message:
-        "Error generating form templates: " +
-        (error instanceof Error ? error.message : "Unknown error"),
+        'Error generating form templates: ' +
+        (error instanceof Error ? error.message : 'Unknown error'),
     };
   }
 };
@@ -595,8 +595,8 @@ export const saveFormTemplate = async ({
     // Generate slug from template name
     const slug = template.name
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "");
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
 
     // Merge template with customizations
     const formFields = {
@@ -606,7 +606,7 @@ export const saveFormTemplate = async ({
     };
 
     const { data, error } = await supabase
-      .from("forms")
+      .from('forms')
       .insert({
         mailbox_id: mailboxId,
         name: template.name,
@@ -614,7 +614,7 @@ export const saveFormTemplate = async ({
         form_fields: formFields,
         is_active: true,
       })
-      .select("id")
+      .select('id')
       .single();
 
     if (error) {
@@ -626,13 +626,13 @@ export const saveFormTemplate = async ({
 
     return {
       success: true,
-      message: "Form template saved successfully",
+      message: 'Form template saved successfully',
       data: { formId: data.id },
     };
   } catch (error) {
     return {
       success: false,
-      message: "Error saving form template",
+      message: 'Error saving form template',
     };
   }
 };
@@ -640,12 +640,12 @@ export const saveFormTemplate = async ({
 // Complete onboarding workflow
 export const completeOnboardingWorkflow = async ({
   userId,
-  username,
+  unique_address,
   rawObjective,
   resources,
 }: {
   userId: string;
-  username: string;
+  unique_address: string;
   rawObjective: string;
   resources?: Array<{
     name: string;
@@ -661,7 +661,7 @@ export const completeOnboardingWorkflow = async ({
 > => {
   try {
     // Step 1: Check username availability
-    const usernameCheck = await checkUsernameAvailability(username);
+    const usernameCheck = await checkUsernameAvailability(unique_address);
     if (!usernameCheck.success || !usernameCheck.data?.available) {
       return usernameCheck as any;
     }
@@ -676,7 +676,7 @@ export const completeOnboardingWorkflow = async ({
     // Step 3: Create mailbox
     const mailboxResult = await createMailboxForUser({
       userId,
-      username,
+      unique_address,
       rawObjective,
       processedObjective: processedObjectiveResult.data,
     });
@@ -713,7 +713,7 @@ export const completeOnboardingWorkflow = async ({
 
     return {
       success: true,
-      message: "Onboarding completed successfully",
+      message: 'Onboarding completed successfully',
       data: {
         mailboxId,
         formTemplates: templatesResult.data!,
@@ -722,7 +722,7 @@ export const completeOnboardingWorkflow = async ({
   } catch (error) {
     return {
       success: false,
-      message: "Error completing onboarding workflow",
+      message: 'Error completing onboarding workflow',
     };
   }
 };

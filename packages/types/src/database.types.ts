@@ -9,6 +9,47 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      contacts: {
+        Row: {
+          email: string | null
+          first_name: string | null
+          id: number
+          last_name: string | null
+          metadata: Json | null
+          owner_id: string
+          phone_number: string | null
+          primary_contact: string | null
+        }
+        Insert: {
+          email?: string | null
+          first_name?: string | null
+          id?: never
+          last_name?: string | null
+          metadata?: Json | null
+          owner_id: string
+          phone_number?: string | null
+          primary_contact?: string | null
+        }
+        Update: {
+          email?: string | null
+          first_name?: string | null
+          id?: never
+          last_name?: string | null
+          metadata?: Json | null
+          owner_id?: string
+          phone_number?: string | null
+          primary_contact?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contacts_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       form_responses: {
         Row: {
           created_at: string | null
@@ -113,30 +154,36 @@ export type Database = {
       mailboxes: {
         Row: {
           created_at: string | null
+          dotcom: string
           id: string
           owner_id: string
           processed_objective: string | null
           raw_objective: string | null
+          status: string
+          unique_address: string
           updated_at: string | null
-          username: string
         }
         Insert: {
           created_at?: string | null
+          dotcom?: string
           id?: string
           owner_id: string
           processed_objective?: string | null
           raw_objective?: string | null
+          status?: string
+          unique_address: string
           updated_at?: string | null
-          username: string
         }
         Update: {
           created_at?: string | null
+          dotcom?: string
           id?: string
           owner_id?: string
           processed_objective?: string | null
           raw_objective?: string | null
+          status?: string
+          unique_address?: string
           updated_at?: string | null
-          username?: string
         }
         Relationships: [
           {
@@ -319,22 +366,28 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          email: string
           full_name: string | null
           id: string
+          onboarding_status: string | null
           updated_at: string | null
           username: string | null
         }
         Insert: {
           avatar_url?: string | null
+          email?: string
           full_name?: string | null
           id: string
+          onboarding_status?: string | null
           updated_at?: string | null
           username?: string | null
         }
         Update: {
           avatar_url?: string | null
+          email?: string
           full_name?: string | null
           id?: string
+          onboarding_status?: string | null
           updated_at?: string | null
           username?: string | null
         }
@@ -349,6 +402,7 @@ export type Database = {
           name: string
           owner_id: string
           raw_content: string | null
+          raw_metadata: Json
           type: string
           updated_at: string | null
         }
@@ -360,6 +414,7 @@ export type Database = {
           name: string
           owner_id: string
           raw_content?: string | null
+          raw_metadata?: Json
           type: string
           updated_at?: string | null
         }
@@ -371,6 +426,7 @@ export type Database = {
           name?: string
           owner_id?: string
           raw_content?: string | null
+          raw_metadata?: Json
           type?: string
           updated_at?: string | null
         }
@@ -406,7 +462,7 @@ export type Database = {
           owner_id: string
           priority: string | null
           slug: string | null
-          status: Database["public"]["Enums"]["thread_status"]
+          status: Database["public"]["Enums"]["thread_status"] | null
           subject: string | null
         }
         Insert: {
@@ -423,7 +479,7 @@ export type Database = {
           owner_id: string
           priority?: string | null
           slug?: string | null
-          status?: Database["public"]["Enums"]["thread_status"]
+          status?: Database["public"]["Enums"]["thread_status"] | null
           subject?: string | null
         }
         Update: {
@@ -440,7 +496,7 @@ export type Database = {
           owner_id?: string
           priority?: string | null
           slug?: string | null
-          status?: Database["public"]["Enums"]["thread_status"]
+          status?: Database["public"]["Enums"]["thread_status"] | null
           subject?: string | null
         }
         Relationships: [
@@ -501,7 +557,15 @@ export type Database = {
         | "qualified"
         | "disqualified"
         | "meeting_booked"
-      thread_status: "quarantined" | "active" | "closed" | "spam"
+      thread_status:
+        | "open"
+        | "composing"
+        | "closed"
+        | "flagged"
+        | "archived"
+        | "quarantined"
+        | "spam"
+        | "trash"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -631,7 +695,16 @@ export const Constants = {
         "disqualified",
         "meeting_booked",
       ],
-      thread_status: ["quarantined", "active", "closed", "spam"],
+      thread_status: [
+        "open",
+        "composing",
+        "closed",
+        "flagged",
+        "archived",
+        "quarantined",
+        "spam",
+        "trash",
+      ],
     },
   },
 } as const

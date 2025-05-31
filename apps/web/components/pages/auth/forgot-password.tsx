@@ -1,7 +1,6 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { LogoMark } from '@/components/ui/logo-mark';
 import { createClient } from '@/supabase/client';
 import { routes } from '@/utils/routes';
@@ -10,21 +9,47 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+
+const forgotPasswordSchema = z.object({
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .email('Please enter a valid email address'),
+});
+
+type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
 export const ForgotPasswordPage = () => {
-  const [email, setEmail] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const resetSuccess = searchParams?.get('success') === 'true';
   const supabase = createClient();
 
-  const handleResetPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const form = useForm<ForgotPasswordFormData>({
+    resolver: zodResolver(forgotPasswordSchema),
+    defaultValues: {
+      email: '',
+    },
+  });
+
+  const onSubmit = async (data: ForgotPasswordFormData) => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
         redirectTo: `${window.location.origin}/auth/reset-password`,
       });
 
@@ -47,8 +72,9 @@ export const ForgotPasswordPage = () => {
         <LogoMark />
         <div className="flex flex-col items-center w-full gap-1">
           <p>
-            A password reset link has been sent to your email address ({email}).
-            Please check your inbox and click the link to reset your password.
+            A password reset link has been sent to your email address (
+            {form.getValues('email')}). Please check your inbox and click the
+            link to reset your password.
           </p>
         </div>
         <div>
@@ -63,8 +89,8 @@ export const ForgotPasswordPage = () => {
 
   return (
     <div className="flex flex-col gap-8 items-center w-full p-6 mx-auto max-w-[400px] text-center">
-      <LogoMark />
       <div className="flex flex-col items-center w-full gap-1">
+        <LogoMark />
         <h2 className="text-2xl font-medium">Forgot your password?</h2>
         <p>
           Enter the email address associated with your account and we will send
@@ -72,33 +98,43 @@ export const ForgotPasswordPage = () => {
         </p>
       </div>
 
-      <form
-        onSubmit={handleResetPassword}
-        className="flex flex-col w-full gap-4"
-      >
-        <div className="space-y-2 flex items-start flex-col justify-start">
-          <label htmlFor="email" className="text-sm font-medium">
-            Email address
-          </label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="Enter your email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            startIcon={Mail}
-            required
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col w-full gap-4"
+        >
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem className="space-y-2">
+                <FormLabel>Email address</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter your email address"
+                    {...field}
+                    type="email"
+                    startIcon={Mail}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </div>
 
-        <Button type="submit" className="w-full text-white" disabled={loading}>
-          {loading ? (
-            <Loader2 size={16} className="animate-spin" />
-          ) : (
-            'Send reset link'
-          )}
-        </Button>
-      </form>
+          <Button
+            type="submit"
+            className="w-full text-white bg-primary-base"
+            disabled={loading}
+          >
+            {loading ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              'Send reset link'
+            )}
+          </Button>
+        </form>
+      </Form>
 
       <p>
         Remember your password?{' '}

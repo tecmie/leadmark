@@ -23,7 +23,7 @@ import {
   useReactTable,
   SortingFn,
 } from '@tanstack/react-table';
-import { useRouter } from 'next-nprogress-bar';
+import { useRouter } from '@bprogress/next/app';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Trash2 } from 'lucide-react';

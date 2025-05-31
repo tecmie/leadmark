@@ -13,6 +13,7 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@bprogress/next": "^3.2.12",
     "@headlessui/react": "^2.2.4",
     "@hookform/resolvers": "^5.0.1",
     "@radix-ui/react-avatar": "^1.1.10",
@@ -43,7 +44,6 @@
     "lucide-react": "^0.511.0",
     "mammoth": "^1.9.1",
     "next": "^15.3.0",
-    "next-nprogress-bar": "^2.4.7",
     "next-themes": "^0.4.6",
     "openai": "^5.0.1",
     "pdf-parse": "^1.1.1",

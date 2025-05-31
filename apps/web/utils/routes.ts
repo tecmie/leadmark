@@ -6,10 +6,10 @@ export const routes = {
   RESET_PASSWORD: '/auth/reset-password',
 
   // Onboarding routes
-  ONBOARDING_GET_STARTED: '/onboarding/get-started',
+  ONBOARDING_GET_STARTED: '/onboarding',
   ONBOARDING_SETUP_MAIL_ACCOUNT: '/onboarding/setup-mail',
   ONBOARDING_SETUP_RESOURCE: '/onboarding/resource',
-  ONBOARDING_TEMPLATES: '/onboarding/templates',
+  ONBOARDING_CHOOSE_TEMPLATE: '/onboarding/choose-template',
   ONBOARDING_CUSTOMIZE: '/onboarding/customize',
   ONBOARDING_WELCOME: '/onboarding/welcome',
   BILLING: '/account',

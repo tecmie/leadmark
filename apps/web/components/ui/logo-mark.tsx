@@ -4,7 +4,7 @@ import Link from 'next/link';
 export const LogoMark = () => {
   return (
     <Link href="/">
-      <div className="flex items-end gap-x-1 text-link font-semibold text-2xl">
+      <div className="flex items-end gap-x-1 text-primary-base font-semibold text-2xl">
         {/* <LogoIcon size={28} />
         <LogoWords size={70} /> */}
         Leadmark
