@@ -1,10 +1,10 @@
 'use client';
 
 import { parseStorageUrl } from "@/actions/server/storage";
-import { Resource } from '@repo/types';
+import { IResource } from '@repo/types';
 import { createClient } from '@/supabase/client';
 
-export const fileDownloadHelper = async (resource: Resource) => {
+export const fileDownloadHelper = async (resource: IResource) => {
   const supabase = createClient();
 
   console.log('resource', resource)

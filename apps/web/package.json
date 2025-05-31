@@ -62,6 +62,7 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/tailwind-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@repo/types": "workspace:*",
     "@tailwindcss/postcss": "^4.1.8",
     "@types/node": "^22.15.3",
     "@types/pdf-parse": "^1.1.5",

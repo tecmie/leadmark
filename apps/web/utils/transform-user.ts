@@ -3,8 +3,7 @@ import type {
   IMailbox,
   OnboardingStatusType,
   OnboardingStepType,
-  Resource,
-  Tables,
+  IResource
 } from '@repo/types';
 import type { User } from '@supabase/supabase-js';
 
@@ -25,7 +24,7 @@ type TransformUserOptions = {
     onboardingStatus?: OnboardingStatusType;
     mailbox?: IMailbox;
     forwarderEmail?: string;
-    resources?: Resource[];
+    resources?: IResource[];
     onboardingStep?: OnboardingStepType;
   };
   token?: string;
@@ -48,7 +47,7 @@ export const transformUser = ({
     onboardingStatus = 'not_started',
     onboardingStep = 'not_started',
     forwarderEmail = '',
-    mailbox,
+    // mailbox, // Not available in schema
     resources = [],
   },
   token = '',
@@ -60,20 +59,23 @@ export const transformUser = ({
     id,
     email,
     avatar_url,
-    billing_address,
-    first_name,
+    // billing_address, // Not available in schema
+    // first_name, // Not available in schema
     full_name: (user as User).user_metadata?.fullname ?? full_name,
-    last_name,
-    payment_method,
-    username,
-    user_metadata: {
-      bio: (user as User).user_metadata?.bio ?? bio,
-      link: (user as User).user_metadata?.link ?? link,
-    },
-    token,
-    onboardingStatus,
-    forwarderEmail,
-    mailbox,
-    resources,
+    // last_name, // Not available in schema
+    // payment_method, // Not available in schema
+    // username, // Not available in schema
+    // user_metadata: { // Not available in schema
+    //   bio: (user as User).user_metadata?.bio ?? bio,
+    //   link: (user as User).user_metadata?.link ?? link,
+    // },
+    // token, // Not available in schema
+    google_calendar_token: null,
+    onboarding_status: onboardingStatus,
+    onboarding_step: null,
+    updated_at: null,
+    // forwarderEmail, // Not available in schema
+    // mailbox, // Not available in schema
+    // resources, // Not available in schema
   };
 };

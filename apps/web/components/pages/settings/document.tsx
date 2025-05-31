@@ -1,10 +1,10 @@
 'use client';
 
 import { FileUpload } from '@/components/ui/file-upload';
-import { Resource } from '@repo/types';
+import { IResource } from '@repo/types';
 
 interface SettingsDocumentPageProps {
-  documents: Resource[];
+  documents: IResource[];
 }
 
 export const SettingsDocumentPage = ({

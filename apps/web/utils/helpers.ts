@@ -1,7 +1,12 @@
 import { env } from '@/env.mjs';
 import { Database } from '@repo/types/database';
 
-type Price = Database['public']['Tables']['prices']['Row'];
+// type Price = Database['public']['Tables']['prices']['Row']; // prices table not available in schema
+type Price = {
+  id: string;
+  amount: number;
+  currency: string;
+};
 
 export const getURL = () => {
   let url =

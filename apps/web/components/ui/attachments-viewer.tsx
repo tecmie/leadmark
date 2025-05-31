@@ -9,10 +9,10 @@ import {
   CollapsibleTrigger
 } from './collapsible';
 import { FileUploadItem } from './file-upload';
-import { Resource } from '@repo/types';
+import { IResource } from '@repo/types';
 
 interface AttachmentsViewerProps {
-  attachments: Resource[];
+  attachments: IResource[];
 }
 
 export const AttachmentsViewer = ({ attachments }: AttachmentsViewerProps) => {

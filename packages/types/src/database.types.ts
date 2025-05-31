@@ -365,6 +365,7 @@ export type Database = {
           google_calendar_token: string | null
           id: string
           onboarding_status: string | null
+          onboarding_step: string | null
           updated_at: string | null
         }
         Insert: {
@@ -374,6 +375,7 @@ export type Database = {
           google_calendar_token?: string | null
           id: string
           onboarding_status?: string | null
+          onboarding_step?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -383,6 +385,7 @@ export type Database = {
           google_calendar_token?: string | null
           id?: string
           onboarding_status?: string | null
+          onboarding_step?: string | null
           updated_at?: string | null
         }
         Relationships: []

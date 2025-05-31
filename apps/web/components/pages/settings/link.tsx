@@ -52,15 +52,16 @@ export const SettingsLinkPage = ({
     }
 
     const processedLinks: {
-      name?: string;
+      name: string;
       resourceUrl: string;
-      resourceType: any;
-      contextSpace: any;
+      resourceType: string;
+      contextSpace: string;
       rawMetadata: {
         fullUrl: string;
         sizeInBytes: number;
       };
     }[] = links.map((link) => ({
+      name: link || 'unnamed-link',
       resourceUrl: link,
       resourceType: 'link',
       contextSpace: 'global',
