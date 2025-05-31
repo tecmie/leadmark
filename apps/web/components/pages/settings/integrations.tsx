@@ -1,26 +1,25 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import Image from 'next/image';
-
-type Integration = {
-  label: string;
-  icon: string;
-};
-
-const SETTINGS_INTEGRATIONS: Integration[] = [
-  { label: 'HTTP/Webhook', icon: '/icons/rss.svg' },
-  { label: 'Telegram', icon: '/icons/telegram.jpg' },
-  { label: 'Facebook', icon: '/icons/fb.svg' },
-  { label: 'Google Workspace', icon: '/icons/google.jpg' },
-  { label: 'Microsoft 365', icon: '/icons/ms-365.jpg' },
-  { label: 'Zapier', icon: '/icons/zapier.jpg' },
-  { label: 'Asana', icon: '/icons/asana.jpg' },
-  { label: 'Discord', icon: '/icons/discord.jpg' },
-  { label: 'Slack', icon: '/icons/slack.jpg' },
-  { label: 'Clickup', icon: '/icons/clickup.jpg' }
-];
+import { useState } from 'react';
+import { GoogleCalendarIntegration } from './integrations/google-calendar';
+import { appList } from '@/constants/apps';
 
 export const SettingsIntegrationsPage = () => {
+  const [selectedIntegration, setSelectedIntegration] = useState<string | null>(null);
+
+  const handleIntegrationClick = (appName: string) => {
+    if (appName === 'Google Calendar') {
+      setSelectedIntegration('Google Calendar');
+    }
+  };
+
+  if (selectedIntegration === 'Google Calendar') {
+    return <GoogleCalendarIntegration onBack={() => setSelectedIntegration(null)} />;
+  }
+
   return (
     <div className="w-full flex flex-col gap-8">
       <div className="flex flex-col gap-1">
@@ -36,20 +35,21 @@ export const SettingsIntegrationsPage = () => {
         </p>
       </div>
       <div className="grid sm:grid-cols-2 gap-3">
-        {SETTINGS_INTEGRATIONS.map((integration, index) => (
+        {appList.map((app, index) => (
           <Button
             key={index}
             variant={'outline'}
-            className="border-border-neutral-weaker text-neutral-strong disabled:opacity-80 disabled:cursor-not-allowed disabled:pointer-events-auto"
-            disabled
+            className="border-border-neutral-weaker text-neutral-strong disabled:opacity-80 disabled:cursor-not-allowed"
+            disabled={app.appName !== 'Google Calendar'}
+            onClick={() => handleIntegrationClick(app.appName)}
           >
             <Image
-              src={integration.icon}
+              src={app.appIcon}
               width={16}
               height={16}
-              alt={`${integration.label} icon`}
+              alt={`${app.appName} icon`}
             />
-            <span className="flex-1 text-left">{integration.label}</span>
+            <span className="flex-1 text-left">{app.appName}</span>
             <ChevronRight size={16} />
           </Button>
         ))}

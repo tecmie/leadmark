@@ -1,19 +1,17 @@
-'use server';
+"use server";
 
-import { createClient } from '@/supabase/client';
+import { createClient } from "@/supabase/server";
 import {
   BackendResponse,
   IUser,
   OnboardingStatusEnum,
   OnboardingStatusType,
   OnboardingStepType,
-} from '@repo/types';
-import { fetchMailbox } from './mailbox';
-import { fetchResources } from './resources';
-import { fetchForwarderTool } from './tools';
-import { transformUser } from '@/utils/transform-user';
-
-const supabase = createClient();
+} from "@repo/types";
+import { fetchMailbox } from "./mailbox";
+import { fetchResources } from "./resources";
+import { fetchForwarderTool } from "./tools";
+import { transformUser } from "@/utils/transform-user";
 
 // export const checkOnboardingStatus = async (
 //   userId: string
@@ -72,16 +70,17 @@ const supabase = createClient();
 export const fetchProfileInfo = async (
   userId: string
 ): Promise<BackendResponse<IUser>> => {
+  const supabase = await createClient();
   const { data, error } = await supabase
-    .from('profiles')
+    .from("profiles")
     .select()
-    .eq('id', userId)
+    .eq("id", userId)
     .single();
 
   if (error || !data) {
     return {
       success: false,
-      message: error.message ?? 'User not found',
+      message: error.message ?? "User not found",
     };
   }
 
@@ -90,16 +89,16 @@ export const fetchProfileInfo = async (
 
   const transformedUser = transformUser({
     user: data,
-   metadata: {},
-   onboarding: {
-     onboardingStatus: status,
-     onboardingStep: step,
-   },
- });
+    metadata: {},
+    onboarding: {
+      onboardingStatus: status,
+      onboardingStep: step,
+    },
+  });
 
   return {
     success: true,
-    message: 'Profile information fetched successfully',
+    message: "Profile information fetched successfully",
     data: transformedUser,
   };
 };
@@ -107,13 +106,15 @@ export const fetchProfileInfo = async (
 export const updateProfileInfo = async (
   userModel: IUser
 ): Promise<BackendResponse<void>> => {
+  const supabase = await createClient();
+
   const { error } = await supabase
-    .from('profiles')
+    .from("profiles")
     .update({
       full_name: userModel.full_name,
       email: userModel.email,
     })
-    .eq('id', userModel.id);
+    .eq("id", userModel.id);
 
   if (error) {
     return {
@@ -124,17 +125,19 @@ export const updateProfileInfo = async (
 
   return {
     success: true,
-    message: 'Profile information updated successfully',
+    message: "Profile information updated successfully",
   };
 };
 
 export const fetchUserData = async (): Promise<BackendResponse<IUser>> => {
+  const supabase = await createClient();
+
   const { data, error } = await supabase.auth.getUser();
 
   if (error || !data.user) {
     return {
       success: false,
-      message: error?.message ?? 'User not found',
+      message: error?.message ?? "User not found",
     };
   }
 
@@ -146,7 +149,7 @@ export const fetchUserData = async (): Promise<BackendResponse<IUser>> => {
 
   return {
     success: true,
-    message: 'User data fetched successfully',
+    message: "User data fetched successfully",
     data: transformedUser,
   };
 };
@@ -157,13 +160,15 @@ export const updateOnboardingProgress = async (
   onboardingStatus: OnboardingStatusType,
   onboardingStep: OnboardingStepType
 ): Promise<BackendResponse<void>> => {
+  const supabase = await createClient();
+
   const { error } = await supabase
-    .from('profiles')
+    .from("profiles")
     .update({
       onboarding_status: onboardingStatus,
       onboarding_step: onboardingStep,
     })
-    .eq('id', userId);
+    .eq("id", userId);
 
   if (error) {
     return {
@@ -174,38 +179,107 @@ export const updateOnboardingProgress = async (
 
   return {
     success: true,
-    message: 'Onboarding progress updated successfully',
+    message: "Onboarding progress updated successfully",
   };
 };
 // add onboarding step check
 export const checkOnboardingStep = async (
   userId: string
 ): Promise<OnboardingStepType> => {
+  const supabase = await createClient();
+
   const { data, error } = await supabase
-    .from('profiles')
-    .select('onboarding_step')
-    .eq('id', userId)
+    .from("profiles")
+    .select("onboarding_step")
+    .eq("id", userId)
     .single();
 
   if (error || !data) {
-    return 'not_started';
+    return "not_started";
   }
 
-  return (data.onboarding_step as OnboardingStepType) ?? 'not_started';
+  return (data.onboarding_step as OnboardingStepType) ?? "not_started";
 };
 
 export const checkOnboardingStatus = async (
   userId: string
 ): Promise<OnboardingStatusType> => {
+  const supabase = await createClient();
+
   const { data, error } = await supabase
-    .from('profiles')
-    .select('onboarding_status')
-    .eq('id', userId)
+    .from("profiles")
+    .select("onboarding_status")
+    .eq("id", userId)
     .single();
 
   if (error || !data) {
-    return 'not_started';
+    return "not_started";
   }
 
-  return (data.onboarding_status as OnboardingStatusType) ?? 'not_started';
+  return (data.onboarding_status as OnboardingStatusType) ?? "not_started";
+};
+
+export const updateGoogleAccessToken = async (
+  accessToken: string,
+  refreshToken?: string
+): Promise<BackendResponse<void>> => {
+  const supabase = await createClient();
+
+  const { data: user, error: userError } = await supabase.auth.getUser();
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      google_calendar_token: accessToken,
+      google_refresh_token: refreshToken,
+      google_connected_at: new Date().toISOString(),
+    })
+    .eq("id", user!.user!.id);
+
+  if (error) {
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+
+  return {
+    success: true,
+    message: "Google access token saved successfully",
+  };
+};
+
+export const getGoogleAccessToken = async (
+  userId: string
+): Promise<BackendResponse<{ accessToken: string; refreshToken?: string }>> => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("google_calendar_token, google_refresh_token")
+    .eq("id", userId)
+    .single();
+
+  if (error || !data) {
+    return {
+      success: false,
+      message: error?.message ?? "User not found",
+    };
+  }
+
+  if (!data.google_calendar_token) {
+    return {
+      success: false,
+      message: "No Google access token found",
+    };
+  }
+
+  return {
+    success: true,
+    message: "Google access token retrieved successfully",
+    data: {
+      accessToken: data.google_calendar_token,
+      refreshToken: data.google_refresh_token ?? "",
+    },
+  };
 };

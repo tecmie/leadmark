@@ -363,6 +363,8 @@ export type Database = {
           email: string
           full_name: string | null
           google_calendar_token: string | null
+          google_connected_at: string | null
+          google_refresh_token: string | null
           id: string
           onboarding_status: string | null
           onboarding_step: string | null
@@ -373,6 +375,8 @@ export type Database = {
           email?: string
           full_name?: string | null
           google_calendar_token?: string | null
+          google_connected_at?: string | null
+          google_refresh_token?: string | null
           id: string
           onboarding_status?: string | null
           onboarding_step?: string | null
@@ -383,6 +387,8 @@ export type Database = {
           email?: string
           full_name?: string | null
           google_calendar_token?: string | null
+          google_connected_at?: string | null
+          google_refresh_token?: string | null
           id?: string
           onboarding_status?: string | null
           onboarding_step?: string | null

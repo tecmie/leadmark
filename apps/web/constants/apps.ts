@@ -1,47 +1,57 @@
 export const appList = [
   {
+    appName: 'HTTP/Webhook',
+    appIcon: '/icons/rss.svg',
+    appURL: '',
+  },
+  {
     appName: 'Telegram',
-    appIcon: '/appIcons/telegram.png',
+    appIcon: '/icons/telegram.jpg',
     appURL: '',
   },
   {
     appName: 'Facebook',
-    appIcon: '/appIcons/facebook.png',
+    appIcon: '/icons/fb.svg',
+    appURL: '',
+  },
+  {
+    appName: 'Google Calendar',
+    appIcon: '/icons/google-calendar.png',
     appURL: '',
   },
   {
     appName: 'Google Workspace',
-    appIcon: '/appIcons/google.png',
+    appIcon: '/icons/google.jpg',
     appURL: '',
   },
   {
     appName: 'Microsoft 365',
-    appIcon: '/appIcons/microsoft.png',
+    appIcon: '/icons/ms-365.jpg',
     appURL: '',
   },
   {
     appName: 'Zapier',
-    appIcon: '/appIcons/zapier.png',
+    appIcon: '/icons/zapier.jpg',
     appURL: '',
   },
   {
     appName: 'Asana',
-    appIcon: '/appIcons/asana.png',
+    appIcon: '/icons/asana.jpg',
     appURL: '',
   },
   {
     appName: 'Discord',
-    appIcon: '/appIcons/discord.png',
+    appIcon: '/icons/discord.jpg',
     appURL: '',
   },
   {
     appName: 'Slack',
-    appIcon: '/appIcons/slack.png',
+    appIcon: '/icons/slack.jpg',
     appURL: '',
   },
   {
     appName: 'Clickup',
-    appIcon: '/appIcons/clickup.png',
+    appIcon: '/icons/clickup.jpg',
     appURL: '',
   },
 ];

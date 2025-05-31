@@ -1,11 +1,27 @@
+'use client';
+
 import { Avatar } from '@/components/ui/avatar';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { cn } from '@/utils/ui';
 import { ArrowRightCircle, ListFilter } from 'lucide-react';
 import { ComingSoonTag } from '@/components/ui/coming-soon';
 import { appList } from '@/constants/apps';
+import { useState } from 'react';
+import { GoogleCalendarIntegration } from '@/components/pages/settings/integrations/google-calendar';
 
 export const AppsPage = () => {
+  const [selectedApp, setSelectedApp] = useState<string | null>(null);
+
+  const handleAppClick = (appName: string) => {
+    if (appName === 'Google Calendar') {
+      setSelectedApp('Google Calendar');
+    }
+  };
+
+  if (selectedApp === 'Google Calendar') {
+    return <GoogleCalendarIntegration onBack={() => setSelectedApp(null)} />;
+  }
+
   return (
     <div className="flex flex-col w-full h-full overflow-auto [&::-webkit-scrollbar]:hidden pb-20 sm:pb-0">
       <div className="flex items-center justify-between gap-4 p-4">
@@ -32,7 +48,12 @@ export const AppsPage = () => {
           <Button
             variant={'secondary'}
             key={app.appName}
-            className="rounded-full w-full flex justify-between items-center p-4 h-auto bg-[#050e140a]"
+            className={cn(
+              "rounded-full w-full flex justify-between items-center p-4 h-auto bg-[#050e140a]",
+              app.appName !== 'Google Calendar' && "opacity-50 cursor-not-allowed"
+            )}
+            disabled={app.appName !== 'Google Calendar'}
+            onClick={() => handleAppClick(app.appName)}
           >
             <div className="flex items-center gap-4">
               <Avatar src={app?.appIcon} className="w-6 h-6" />

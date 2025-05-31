@@ -71,6 +71,8 @@ export const transformUser = ({
     // },
     // token, // Not available in schema
     google_calendar_token: null,
+    google_connected_at: null,
+    google_refresh_token: null,
     onboarding_status: onboardingStatus,
     onboarding_step: null,
     updated_at: null,
