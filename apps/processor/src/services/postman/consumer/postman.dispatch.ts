@@ -1,41 +1,41 @@
-const showdown = require('showdown');
-import secrets from '../../../secrets';
+import showdown from "showdown";
+import secrets from "../../../secrets";
 const converter = new showdown.Converter();
-const { Configuration, OpenAIApi } = require('openai');
-
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-  temperature: 0,
-});
-
-const openai = new OpenAIApi(configuration);
+import { simpleCompletion } from "../../resources/openai/simple";
+import {
+  detectMeetingRequest,
+  detectMeetingConfirmation,
+  generateMeetingResponse,
+  parseTimePreferences,
+} from "../../calendar/meeting-detection";
+import {
+  createCalendarService,
+  getUserCalendarToken,
+} from "../../calendar/google-calendar";
 
 /** @format */
 
-import { Job } from 'bullmq';
-import { ServerClient } from 'postmark';
-import { simpleCompletion } from '../../openai/simple';
-import { insertMessage } from '../../../supabase/base/message.base';
-import { insertMessageAttachment } from '../../../supabase/base/message-attachment.base';
-import { MessengerRole, MessageStatus, MessageOrigin, MessageStream, ThreadStatus } from '../sender.interface';
+import { Job } from "bullmq";
+import { ServerClient } from "postmark";
+import { insertMessage } from "~/services/supabase/base/message.base";
+import { insertMessageAttachment } from "~/services/supabase/base/message-attachment.base";
+import { MessageStream } from "../sender.interface";
 import {
-  ThreadBase,
-  MailboxBase,
-  MessageBase,
-  ContactBase,
-  MessageAttachmentBase,
-} from '../../../supabase/declared-types';
+  IThread,
+  IMailbox,
+  IMessage,
+  IContact,
+  IMessageAttachment,
+} from "@repo/types";
 import {
   EventConsumerMQ,
   PostmanEventMQName,
   PostmanPreprocessReturnValues,
   PostmanValidateReturnValues,
-} from '../../../events';
-import { unlockThreadOperation } from '../../../supabase/base/thread.base';
-import * as Sentry from '@sentry/node';
-import { getOrCreateDBWorkspace } from '../../../db/vectordb/utils';
-import { fetchFormattedContext } from '../../../db/vectordb';
-import { _GPT4_MODEL_11_PREVIEW } from '../../../constants';
+} from "../../../events";
+import { unlockThreadOperation } from "~/services/supabase/base/thread.base";
+import { supabase } from "~/services/supabase/client";
+import { _GPT4_ } from "~/constants";
 
 // -------------------------------------------------------------------------------------- //
 // ---------------------------- METHOD IMPLEMENTATIONS HERE----------------------------- //
@@ -44,61 +44,55 @@ export const postmark = new ServerClient(secrets.POSTMARK_API_KEY);
 
 export async function storeOutboundMessage({
   thread,
-  mailbox,
   aiResponse,
   aiResponseToHtml,
   headers,
   recipients,
+  subject,
 }: {
-  thread: ThreadBase;
-  mailbox: MailboxBase;
+  thread: IThread;
   aiResponse: string;
   aiResponseToHtml: string;
   headers: any;
   recipients: any;
-}): Promise<MessageBase | undefined> {
+  subject: string;
+}): Promise<IMessage | undefined> {
   return await insertMessage([
     {
+      subject,
       thread_id: thread?.id,
-      role: MessengerRole.ASSISTANT,
-      status: MessageStatus.RESOLVED,
-      message_html: aiResponseToHtml,
-      message_text: aiResponse,
-      attachments: [],
-      origin: MessageOrigin.EMAIL as 'email',
-      owner_id: mailbox.owner_id as string,
-      raw_metadata: JSON.stringify({
+      is_ai_generated: true,
+      direction: "outbound",
+      html_content: aiResponseToHtml,
+      content: aiResponse,
+      postmark_data: {
         headers: headers,
         recipients: recipients,
         stream: MessageStream.OUTBOUND,
-      }),
+      },
     },
   ]);
 }
 
-export async function summarizeContext({ context, messageText }: { context: string; messageText: string }) {
-  const chatCompletion = await openai.createChatCompletion({
-    model: _GPT4_MODEL_11_PREVIEW,
-    messages: [
-      {
-        role: 'system',
-        content:
-          'You are a Jabob, helpful assistant that helps to summarise various sources of information in to a detailed meaning full context based on another context or question the I will give you',
-      },
-      {
-        role: 'user',
-        content: `
-      Summarise these information
-      ${context}
+export async function summarizeContext({
+  context,
+  messageText,
+}: {
+  context: string;
+  messageText: string;
+}) {
+  return await simpleCompletion({
+    name: "Context Summarizer",
+    objective:
+      "Summarize various sources of information into detailed, meaningful context based on another context or question.",
+    text: `Summarize this information:
+${context}
 
-      Based on this given question/context from me:
-     "${messageText}"
-      `,
-      },
-    ],
+Based on this given question/context:
+"${messageText}"`,
+    attachmentContext: "",
+    linksContext: "",
   });
-
-  return chatCompletion.data.choices[0].message.content;
 }
 
 async function getAttachmentContext({
@@ -106,24 +100,201 @@ async function getAttachmentContext({
   attachmentResourceIds,
   messageText,
 }: {
-  mailbox: MailboxBase;
-  attachmentResourceIds: number[];
+  mailbox: IMailbox;
+  attachmentResourceIds: string[];
   messageText: string;
 }): Promise<string> {
-  const path = getOrCreateDBWorkspace({ ownerId: mailbox.owner_id });
-  const namespace = `${path}_${mailbox.unique_address}_${mailbox.id}`;
+  if (attachmentResourceIds.length === 0) return "";
 
-  const context = await fetchFormattedContext({
-    owner_id: mailbox.owner_id,
-    namespace,
-    query: messageText,
-    filterIds: attachmentResourceIds,
-  });
+  const { data: resources } = await supabase
+    .from("resources")
+    .select("raw_content, name, raw_metadata")
+    .in("id", attachmentResourceIds)
+    .eq("owner_id", mailbox.owner_id);
+
+  if (!resources || resources.length === 0) return "";
+
+  const context = resources
+    .map(
+      (resource) => `File: ${resource.name}\nContent: ${resource.raw_content}`
+    )
+    .join("\n\n");
 
   return await summarizeContext({
     context,
     messageText,
   });
+}
+
+async function getMailboxResourcesContext({
+  mailbox,
+  messageText,
+}: {
+  mailbox: IMailbox;
+  messageText: string;
+}): Promise<string> {
+  const { data: resources } = await supabase
+    .from("resources")
+    .select("raw_content, name, raw_metadata")
+    .eq("mailbox_id", mailbox.id)
+    .eq("owner_id", mailbox.owner_id);
+
+  if (!resources || resources.length === 0) return "";
+
+  const context = resources
+    .map(
+      (resource) =>
+        `Resource: ${resource.name}\nContent: ${resource.raw_content}`
+    )
+    .join("\n\n");
+
+  return await summarizeContext({
+    context,
+    messageText,
+  });
+}
+
+async function getMessageHistory({
+  threadId,
+  limit = 10,
+}: {
+  threadId: string;
+  limit?: number;
+}): Promise<string> {
+  const { data: messages } = await supabase
+    .from("messages")
+    .select("direction, content, created_at")
+    .eq("thread_id", threadId)
+    .order("created_at", { ascending: true })
+    .limit(limit);
+
+  if (!messages || messages.length === 0) return "";
+
+  return messages
+    .map(
+      (msg) =>
+        `${msg.direction == "inbound" ? "Customer" : "AI Agent"}: ${msg.content}`
+    )
+    .join("\n\n");
+}
+
+async function handleMeetingBooking({
+  messageText,
+  messageHistory,
+  senderName,
+  ownerId,
+  full_name,
+  contactEmail,
+}: {
+  messageText: string;
+  messageHistory: string;
+  senderName: string;
+  ownerId: string;
+  full_name: string;
+  contactEmail: string;
+}): Promise<string> {
+  try {
+    // First check if customer is confirming a time slot
+    const confirmation = await detectMeetingConfirmation({
+      messageText,
+      messageHistory,
+      senderName,
+    });
+
+    if (confirmation.isConfirming && confirmation.selectedDateTime) {
+      // Get user's calendar access token
+      const calendarToken = await getUserCalendarToken(ownerId);
+      if (!calendarToken) {
+        return "I'd be happy to book that meeting for you. However, I need to set up calendar access first. Please contact me directly to confirm the appointment.";
+      }
+
+      // Create calendar service
+      const calendarService = createCalendarService(calendarToken);
+
+      // Create the calendar event
+      const duration = confirmation.confirmedDuration || 60;
+      const startTime = new Date(confirmation.selectedDateTime);
+      const endTime = new Date(startTime.getTime() + duration * 60000);
+
+      const event = {
+        summary: confirmation.purpose || `Meeting with ${senderName}`,
+        description: `Meeting scheduled via LeadMark AI Assistant\n\nFormat: ${confirmation.format || 'unspecified'}`,
+        start: {
+          dateTime: startTime.toISOString(),
+          timeZone: 'UTC',
+        },
+        end: {
+          dateTime: endTime.toISOString(),
+          timeZone: 'UTC',
+        },
+        attendees: [
+          {
+            email: contactEmail,
+            displayName: senderName,
+          },
+        ],
+      };
+
+      const eventId = await calendarService.createEvent(event);
+
+      return `Perfect! I've booked our meeting for ${startTime.toLocaleDateString()} at ${startTime.toLocaleTimeString()}.
+
+Meeting details:
+- Duration: ${duration} minutes
+- ${confirmation.format ? `Format: ${confirmation.format}` : ''}
+- Calendar invite sent to: ${contactEmail}
+
+Looking forward to our conversation!
+
+Best regards,
+${full_name}
+LeadMark AI Assistant`;
+    }
+
+    // If not confirming, check if this is a new meeting request
+    const meetingRequest = await detectMeetingRequest({
+      messageText,
+      messageHistory,
+      senderName,
+    });
+
+    if (!meetingRequest.isRequested) {
+      return "";
+    }
+
+    // Get user's calendar access token
+    const calendarToken = await getUserCalendarToken(ownerId);
+    if (!calendarToken) {
+      return "I'd be happy to schedule a meeting with you. However, I need to set up calendar access first. Please contact me directly to arrange a suitable time.";
+    }
+
+    // Create calendar service
+    const calendarService = createCalendarService(calendarToken);
+
+    // Parse time preferences or default to next week
+    const timeframe = meetingRequest.suggestedTimeframe || "next week";
+    const { start, end } = parseTimePreferences(timeframe);
+
+    // Get available slots
+    const duration = meetingRequest.suggestedDuration || 60;
+    const availableSlots = await calendarService.getAvailableSlots(
+      start,
+      end,
+      duration
+    );
+    const formattedSlots = calendarService.formatAvailableSlots(availableSlots);
+
+    // Generate meeting response
+    return await generateMeetingResponse(
+      meetingRequest,
+      formattedSlots,
+      senderName,
+      full_name
+    );
+  } catch (error) {
+    console.error("Error handling meeting booking:", error);
+    return "I'd be happy to schedule a meeting with you. Let me check my calendar and get back to you with some available times.";
+  }
 }
 
 export async function getAIResponse({
@@ -132,14 +303,14 @@ export async function getAIResponse({
   mailbox,
   contact,
   attachmentResourceIds,
-  similaritySearchResults,
+  full_name,
 }: {
-  thread: ThreadBase;
+  thread: IThread;
   messageText: string;
-  mailbox: MailboxBase;
-  contact: ContactBase;
-  attachmentResourceIds?: number[];
-  similaritySearchResults?: any;
+  mailbox: IMailbox;
+  contact: IContact;
+  attachmentResourceIds?: string[];
+  full_name: string;
 }) {
   const attachmentContext = attachmentResourceIds
     ? await getAttachmentContext({
@@ -147,30 +318,63 @@ export async function getAIResponse({
         attachmentResourceIds,
         messageText,
       })
-    : '';
+    : "";
 
-  const linksContext = similaritySearchResults
-    ? await summarizeContext({
-        context: similaritySearchResults,
-        messageText,
-      })
-    : '';
-
-  const config: any = mailbox.config;
-  const memoryDbName = config.collectionName ?? 'pilot';
-
-  const memoryCollectionName = `${mailbox.owner_id}_${thread.namespace}`;
-
-  const aiResponse = await simpleCompletion({
-    text: messageText,
-    name: `${contact?.first_name} ${contact?.last_name}`,
-    objectiveParsed: mailbox.objective_parsed,
-    objective: mailbox.objective_raw as string,
-    attachmentContext,
-    linksContext,
-    memoryDbName,
-    memoryCollectionName,
+  const mailboxResourcesContext = await getMailboxResourcesContext({
+    mailbox,
+    messageText,
   });
+
+  const messageHistory = await getMessageHistory({
+    threadId: thread.id.toString(),
+  });
+
+  const linksContext = [
+    messageHistory && `Previous conversation:\n${messageHistory}`,
+    mailboxResourcesContext && `Mailbox resources:\n${mailboxResourcesContext}`,
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+
+  const senderName =
+    contact?.first_name && contact?.last_name
+      ? `${contact.first_name} ${contact.last_name}`
+      : "User";
+
+  // Check for meeting booking/scheduling requests
+  const meetingBookingResponse = await handleMeetingBooking({
+    messageText,
+    messageHistory,
+    senderName,
+    ownerId: mailbox.owner_id,
+    full_name,
+    contactEmail: contact?.email || "unknown@example.com",
+  });
+
+  // Check if we have parsed objectives
+  const objectiveParsed = mailbox.processed_objective
+    ? JSON.parse(mailbox.processed_objective)
+    : null;
+
+  let aiResponse: string;
+
+  if (meetingBookingResponse) {
+    // If this is a meeting request/confirmation, use the meeting booking response
+    aiResponse = meetingBookingResponse;
+  } else {
+    // Otherwise, use the normal AI completion
+    aiResponse = await simpleCompletion({
+      name: senderName,
+      objective:
+        mailbox.raw_objective ||
+        "You are an AI assistant responding via email. Always respond in markdown format.",
+      objectiveParsed,
+      text: messageText,
+      attachmentContext,
+      linksContext,
+      full_name,
+    });
+  }
 
   // Convert markdown response to HTML
   const aiResponseToHtml = converter.makeHtml(aiResponse);
@@ -184,22 +388,19 @@ async function _storeInboundMessage({
   input,
   messageText,
 }: {
-  thread: ThreadBase;
-  mailbox: MailboxBase;
-  input: PostmanValidateReturnValues['input'];
+  thread: IThread;
+  mailbox: IMailbox;
+  input: PostmanValidateReturnValues["input"];
   messageText: string;
-}): Promise<MessageBase | undefined> {
+}): Promise<IMessage | undefined> {
   return await insertMessage([
     {
       thread_id: thread?.id,
-      role: MessengerRole.RECIPIENT,
-      status: MessageStatus.RESOLVED,
-      message_html: input.HtmlBody,
-      message_text: messageText,
-      origin: MessageOrigin.EMAIL,
-      attachments: [],
-      owner_id: mailbox.owner_id,
-      raw_metadata: JSON.stringify({
+      html_content: input.HtmlBody,
+      content: messageText,
+      direction: "inbound",
+      subject: input.Subject,
+      postmark_data: JSON.stringify({
         stream: input.MessageStream,
         attachments: [],
         headers: input.Headers,
@@ -214,10 +415,10 @@ async function _storeAttachmentReferences({
   resourceIds,
   thread,
 }: {
-  thread: ThreadBase;
-  message: MessageBase;
-  resourceIds: number[];
-}): Promise<MessageAttachmentBase[] | undefined> {
+  thread: IThread;
+  message: IMessage;
+  resourceIds: string[];
+}): Promise<IMessageAttachment[] | undefined> {
   const resourceIdsSet = new Set(resourceIds);
 
   const dataToInsert: any[] = [];
@@ -237,7 +438,9 @@ async function _storeAttachmentReferences({
 // ---------------------------- METHOD IMPLEMENTATIONS HERE----------------------------- //
 // ------------------------------------------------------------------------------------ //
 
-async function handleDispatchCallback(job: Job<any, any, string>): Promise<any> {
+async function handleDispatchCallback(
+  job: Job<any, any, string>
+): Promise<any> {
   try {
     const childVals = await job.getChildrenValues();
     const [data] = Object.values(childVals) as [PostmanPreprocessReturnValues];
@@ -250,8 +453,8 @@ async function handleDispatchCallback(job: Job<any, any, string>): Promise<any> 
       recipients,
       headers,
       subject,
+      owner,
       attachmentResourceIds,
-      similaritySearchResults,
       message: messageText,
     } = data;
 
@@ -259,15 +462,20 @@ async function handleDispatchCallback(job: Job<any, any, string>): Promise<any> 
      * @operation
      * Store the inbound message in the thread
      */
-    const insertInboundMessage = await _storeInboundMessage({ thread, mailbox, input, messageText });
+    const insertInboundMessage = await _storeInboundMessage({
+      thread,
+      mailbox,
+      input,
+      messageText,
+    });
     if (!insertInboundMessage) {
       // If an error occurs while inserting the inbound message, throw an error
-      throw 'Error inserting inbound message';
+      throw "Error inserting inbound message";
     }
 
     /**
      * @operation
-     * Store the attachment references for the messages
+     * Store the attachment references for the messagespost
      */
     if (attachmentResourceIds.length != 0) {
       const insertAttachmentReferences = await _storeAttachmentReferences({
@@ -278,7 +486,7 @@ async function handleDispatchCallback(job: Job<any, any, string>): Promise<any> 
 
       if (!insertAttachmentReferences) {
         // If an error occurs while inserting the attachment references, throw an error
-        throw 'Error inserting message attachment references';
+        throw "Error inserting message attachment references";
       }
     }
 
@@ -293,31 +501,17 @@ async function handleDispatchCallback(job: Job<any, any, string>): Promise<any> 
      * @operation
      * Handle AI Response to the conversation
      */
-    const { aiResponse, aiResponseToHtml } =
-      mailbox.unique_address == 'workforce'
-        ? await getAIResponse({
-            thread,
-            messageText,
-            mailbox,
-            contact,
-            attachmentResourceIds,
-            similaritySearchResults,
-          })
-        : await getAIResponse({
-            thread,
-            messageText,
-            mailbox,
-            contact,
-            attachmentResourceIds,
-            similaritySearchResults,
-          });
+    const { aiResponse, aiResponseToHtml } = await getAIResponse({
+      thread,
+      messageText,
+      mailbox,
+      contact,
+      attachmentResourceIds,
+      full_name: owner.full_name!,
+    });
 
-    /**
-     * @operation
-     * Send a response email to the recipient
-     */
-    await postmark.sendEmail({
-      From: `${mailbox.full_name} <${mailbox.unique_address}@${mailbox.dotcom}>`,
+    console.log({
+      From: `${owner.full_name} <${mailbox.unique_address}@${mailbox.dotcom}>`,
       Headers: headers,
       Subject: subject,
       To: input.FromFull.Email,
@@ -325,13 +519,27 @@ async function handleDispatchCallback(job: Job<any, any, string>): Promise<any> 
       TextBody: aiResponse,
     });
 
+    // /**
+    //  * @operation
+    //  * Send a response email to the recipient
+    //  */
+    // Commented out for testing
+    // await postmark.sendEmail({
+    //   From: `${owner.full_name} <${mailbox.unique_address}@${mailbox.dotcom}>`,
+    //   Headers: headers,
+    //   Subject: subject,
+    //   To: input.FromFull.Email,
+    //   HtmlBody: aiResponseToHtml,
+    //   TextBody: aiResponse,
+    // });
+
     /**
      * @operation
      * Store the outbound message in the thread
      */
     const processMessages = await storeOutboundMessage({
+      subject,
       thread,
-      mailbox,
       aiResponse,
       aiResponseToHtml,
       headers,
@@ -348,11 +556,13 @@ async function handleDispatchCallback(job: Job<any, any, string>): Promise<any> 
       subject,
       processMessages,
       thread: unlockedThread,
-      ack: '<><><><><><><><><><><><><>< webhook completion for postman with event flow ><><><><><><><><><><><><><><><><<><><><>',
+      ack: "<><><><><><><><><><><><><>< webhook completion for postman with event flow ><><><><><><><><><><><><><><><><<><><><>",
     };
   } catch (error) {
-    Sentry.captureException(error);
-    console.error(error, 'Error in postman.preprocess.ts [handlePreprocessCallback]');
+    console.error(
+      error,
+      "Error in postman.preprocess.ts [handlePreprocessCallback]"
+    );
     throw error;
   }
 }

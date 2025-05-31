@@ -1,7 +1,7 @@
 import { supabase } from '../client';
 
 function getNormalizedEmail(email: string) {
-  // Some email clients, E.g "Zoho mail" may send the email TO field as '"paul" <paul@wootiv.com>'
+  // Some email clients, E.g "Zoho mail" may send the email TO field as '"paul" <paul@leadmark.com>'
   email = email.trim().toLowerCase();
   let name;
 
@@ -26,7 +26,7 @@ function getNormalizedEmail(email: string) {
 
   const [uniqueAddress, dotcom] = email.split('@');
 
-  console.log({ uniqueAddress, dotcom, name }, '[MailboxBase.getNormalizedEmail]');
+  console.log({ uniqueAddress, dotcom, name }, '[IMailbox.getNormalizedEmail]');
 
   return { uniqueAddress, dotcom, name };
 }
@@ -39,11 +39,11 @@ export async function getMailboxAndOwnerByUniqueAddress(address: string) {
       const { data, error } = await supabase
         .from('mailboxes')
         .select('*, owner:owner_id(*)')
-        .eq('unique_address', uniqueAddress)
-        .eq('dotcom', dotcom)
+        .eq('unique_address', uniqueAddress as string)
+        .eq('dotcom', dotcom as string)
         .single();
   
-      console.log({ data, error }, '[MailboxBase.getMailboxAndOwnerByUniqueAddress]');
+      console.log({ data, error }, '[IMailbox.getMailboxAndOwnerByUniqueAddress]');
   
       if (error) {
         throw error;

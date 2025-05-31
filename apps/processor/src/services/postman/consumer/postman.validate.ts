@@ -3,24 +3,24 @@ import { findHeaderKeyValue } from '../header';
 import { textFromHtml } from '~/services/resources/resources.utils'
 import { EventConsumerMQ, PostmanEventMQName } from '../../../events';
 import { InboundMessageDetails } from 'postmark/dist/client/models';
-import { MailBox, MailboxBaseWithUserBase, IUser } from '@repo/types';
+import { IMailbox, IMailboxWithIUser, IUser } from '@repo/types';
 import { MailRecipients, handleMailSubject, prepareMailRecipients } from '../helpers';
 
 export type PostmanValidateConsumerContext = {
   payload: InboundMessageDetails;
-  mailbox: MailboxBaseWithUserBase;
+  mailbox: IMailboxWithIUser;
 };
 
 export type PostmanValidateReturnValues = {
   owner: IUser;
   input: Omit<InboundMessageDetails, 'Attachments'>;
-  mailbox: MailBox;
+  mailbox: IMailbox;
   subject: string;
   headers: any[];
   message: string;
   recipients: MailRecipients;
   attachments: InboundMessageDetails['Attachments'];
-  mailboxWithOwner: MailboxBaseWithUserBase;
+  mailboxWithOwner: IMailboxWithIUser;
 };
 
 async function _extractNecessaryInfo(input: any): Promise<any> {
@@ -67,7 +67,7 @@ async function handleValidateCallback(
     const { subject, recipients, headers, messageText } = await _extractNecessaryInfo(input);
 
     // Create a mailbox object without the owner information
-    const mailbox: MailBox = Object.assign({}, mailboxWithOwner, { owner: undefined });
+    const mailbox: IMailbox = Object.assign({}, mailboxWithOwner, { owner: undefined });
 
     /**
      * @operation

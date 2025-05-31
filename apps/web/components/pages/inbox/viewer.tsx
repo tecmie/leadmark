@@ -55,7 +55,7 @@ const MessageAttachment = ({ attachment, ownerId }: MessageAttachmentProps) => {
       return;
     }
     const { data, error } = await supabase.storage
-      .from('wootiv/attachments')
+      .from('leadmark/attachments')
       .download(`${ownerId}/${resource.source_url}`);
 
     if (error || !data) {

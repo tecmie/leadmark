@@ -4,7 +4,7 @@ import {
   deleteFileResource,
   uploadFileResource,
 } from "@/actions/server/storage";
-import { Resource } from "@repo/types";
+import { IResource } from "@repo/types";
 import { triggerDownload } from "@/utils/helpers";
 import { cn } from "@/utils/ui";
 import { createClient } from "@/supabase/client";
@@ -28,17 +28,17 @@ interface FileInputProps
     React.InputHTMLAttributes<HTMLInputElement>,
     "type" | "onChange"
   > {
-  onUpload: (file: Resource) => void;
+  onUpload: (file: IResource) => void;
 }
 
 interface FileUploadItemProps {
-  resource: Resource;
-  actions?: { label: FileUploadActions; onClick?: (name: Resource) => void }[];
+  resource: IResource;
+  actions?: { label: FileUploadActions; onClick?: (name: IResource) => void }[];
   isUploading?: boolean;
 }
 
 interface FileUploadProps {
-  documents: Resource[];
+  documents: IResource[];
 }
 
 const targetSizeInMB = 2;
@@ -76,7 +76,7 @@ export const FileInput = ({
 
       const { success, message, data } = await uploadFileResource({
         form,
-        bucket: "wootiv",
+        bucket: "leadmark",
         userId: session.session.user.id,
       });
 
@@ -195,11 +195,11 @@ export const FileUpload = ({
 }: FileUploadProps) => {
   const supabase = createClient();
   const [documents, setDocuments] = useState(resourceDocuments);
-  const handleFileUpload = (document: Resource) => {
+  const handleFileUpload = (document: IResource) => {
     setDocuments([document, ...documents]);
   };
 
-  const handleFileDelete = async (resource: Resource) => {
+  const handleFileDelete = async (resource: IResource) => {
     // @Note: Mimic optimistic update
     const oldDocuments = documents;
     const updatedDocuments = documents.filter(
@@ -225,7 +225,7 @@ export const FileUpload = ({
     toast.success(message);
   };
 
-  const handleFileDownload = async (resource: Resource) => {
+  const handleFileDownload = async (resource: IResource) => {
     const { data: sessionInfo } = await supabase.auth.getSession();
 
     if (!sessionInfo.session?.user.id) {

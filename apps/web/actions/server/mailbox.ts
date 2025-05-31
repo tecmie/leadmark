@@ -4,9 +4,16 @@
 import { createClient } from '@/supabase/server';
 import {
   BackendResponse,
-  MailBox,
-  UpsertMailboxOptions
+  IMailbox
 } from '@repo/types';
+
+type UpsertMailboxOptions = {
+  userId: string;
+  fullname?: string;
+  objective: string;
+  uniqueAddress: string;
+  bio?: string;
+};
 // import { api } from '@/trpc/server';
 // import { isReservedAddress } from '../utils/blacklisted-email';
 // import { splitEmailAddress } from '../utils/email';
@@ -14,7 +21,7 @@ import {
 
 export const fetchMailbox = async (
   userId: string
-): Promise<BackendResponse<MailBox>> => {
+): Promise<BackendResponse<IMailbox>> => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('mailboxes')
@@ -45,27 +52,20 @@ export const setupMailbox = async ({
 }: UpsertMailboxOptions): Promise<BackendResponse> => {
   const supabase = await createClient();
 
-  console.log({
-    unique_address: uniqueAddress.toLowerCase(),
-    owner_id: userId,
-    objective_raw: objective,
-    config: {
-      collectionName: 'pilot'
-    },
-    full_name: fullname,
-    bio: bio ?? ''
-  });
+  // Update user profile with fullname if provided
+  if (fullname) {
+    await supabase
+      .from('profiles')
+      .update({ full_name: fullname })
+      .eq('id', userId);
+  }
+
   const { data, error } = await supabase
     .from('mailboxes')
     .insert({
       unique_address: uniqueAddress.toLowerCase(),
       owner_id: userId,
-      objective_raw: objective,
-      config: {
-        collectionName: 'pilot'
-      },
-      full_name: fullname,
-      bio: ''
+      raw_objective: objective
     })
     .select('id')
     .single();
@@ -83,9 +83,9 @@ export const setupMailbox = async ({
   const result = await parseObjective({
     objective,
     mailboxId: data.id,
-    mailboxName: fullname
+    mailboxName: (fullname
       ? fullname.split(' ')[0]
-      : uniqueAddress.toLowerCase(),
+      : uniqueAddress?.toLowerCase()) || 'mailbox',
     successMessage: 'Mailbox created successfully'
   });
 
@@ -142,16 +142,21 @@ export const updateMailbox = async ({
   // Fetch existing data from the database
   const existingData = await fetchMailbox(userId);
 
+  // Update user profile with fullname if provided
+  if (fullname) {
+    await supabase
+      .from('profiles')
+      .update({ full_name: fullname })
+      .eq('id', userId);
+  }
+
   // Check if the objective has changed
-  const objectiveChanged = existingData?.data?.objective_raw !== objective;
-  console.log(objectiveChanged);
+  const objectiveChanged = existingData?.data?.raw_objective !== objective;
 
   const { data, error } = await supabase
     .from('mailboxes')
     .update({
-      full_name: fullname,
-      objective_raw: objective,
-      bio: bio
+      raw_objective: objective
     })
     .eq('owner_id', userId)
     .select('id')
@@ -169,9 +174,9 @@ export const updateMailbox = async ({
     return await parseObjective({
       objective,
       mailboxId: data.id,
-      mailboxName: fullname
+      mailboxName: (fullname
         ? fullname.split(' ')[0]
-        : uniqueAddress.toLowerCase(),
+        : uniqueAddress?.toLowerCase()) || 'mailbox',
       successMessage: 'Mailbox updated successfully'
     });
   }

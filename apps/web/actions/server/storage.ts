@@ -2,11 +2,25 @@
 
 import {
   BackendResponse,
-  DeleteFileResourceOptions,
-  DownloadFileResourceOptions,
-  Resource,
-  UploadFileResourceOptions,
+  IResource
 } from '@repo/types';
+
+type UploadFileResourceOptions = {
+  form: FormData;
+  bucket: string;
+  userId: string;
+  upsert?: boolean;
+};
+
+type DownloadFileResourceOptions = {
+  bucket: string;
+  filename: string;
+  userId: string;
+};
+
+type DeleteFileResourceOptions = {
+  resource: IResource;
+};
 import { createClient } from '@/supabase/server';
 import { uniqueFilename } from '@/utils/unique-filename';
 import { deleteResource, uploadResources } from './resources';
@@ -16,7 +30,7 @@ export async function uploadFileResource({
   bucket,
   userId,
   upsert = false
-}: UploadFileResourceOptions): Promise<BackendResponse<Resource>> {
+}: UploadFileResourceOptions): Promise<BackendResponse<IResource>> {
   const file = form.get('fileUpload') as File;
   const supabase = await createClient();
   const filename = uniqueFilename({ filename: file.name });
@@ -145,5 +159,5 @@ export async function deleteFileResource({
     };
   }
 
-  return await deleteResource(resource.id);
+  return await deleteResource(Number(resource.id));
 }

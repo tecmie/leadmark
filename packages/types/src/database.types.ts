@@ -312,7 +312,6 @@ export type Database = {
           content: string
           created_at: string | null
           direction: string
-          from_email: string
           html_content: string | null
           id: string
           in_reply_to: string | null
@@ -321,13 +320,11 @@ export type Database = {
           postmark_data: Json | null
           subject: string | null
           thread_id: string
-          to_email: string
         }
         Insert: {
           content: string
           created_at?: string | null
           direction: string
-          from_email: string
           html_content?: string | null
           id?: string
           in_reply_to?: string | null
@@ -336,13 +333,11 @@ export type Database = {
           postmark_data?: Json | null
           subject?: string | null
           thread_id: string
-          to_email: string
         }
         Update: {
           content?: string
           created_at?: string | null
           direction?: string
-          from_email?: string
           html_content?: string | null
           id?: string
           in_reply_to?: string | null
@@ -351,7 +346,6 @@ export type Database = {
           postmark_data?: Json | null
           subject?: string | null
           thread_id?: string
-          to_email?: string
         }
         Relationships: [
           {
@@ -368,28 +362,31 @@ export type Database = {
           avatar_url: string | null
           email: string
           full_name: string | null
+          google_calendar_token: string | null
           id: string
           onboarding_status: string | null
+          onboarding_step: string | null
           updated_at: string | null
-          username: string | null
         }
         Insert: {
           avatar_url?: string | null
           email?: string
           full_name?: string | null
+          google_calendar_token?: string | null
           id: string
           onboarding_status?: string | null
+          onboarding_step?: string | null
           updated_at?: string | null
-          username?: string | null
         }
         Update: {
           avatar_url?: string | null
           email?: string
           full_name?: string | null
+          google_calendar_token?: string | null
           id?: string
           onboarding_status?: string | null
+          onboarding_step?: string | null
           updated_at?: string | null
-          username?: string | null
         }
         Relationships: []
       }
@@ -449,9 +446,7 @@ export type Database = {
       }
       threads: {
         Row: {
-          contact_email: string | null
-          contact_metadata: Json | null
-          contact_name: string | null
+          contact_id: number
           created_at: string | null
           form_response_id: string | null
           id: string
@@ -466,9 +461,7 @@ export type Database = {
           subject: string | null
         }
         Insert: {
-          contact_email?: string | null
-          contact_metadata?: Json | null
-          contact_name?: string | null
+          contact_id: number
           created_at?: string | null
           form_response_id?: string | null
           id?: string
@@ -483,9 +476,7 @@ export type Database = {
           subject?: string | null
         }
         Update: {
-          contact_email?: string | null
-          contact_metadata?: Json | null
-          contact_name?: string | null
+          contact_id?: number
           created_at?: string | null
           form_response_id?: string | null
           id?: string
@@ -512,6 +503,13 @@ export type Database = {
             columns: ["last_message_id"]
             isOneToOne: false
             referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "threads_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
             referencedColumns: ["id"]
           },
           {

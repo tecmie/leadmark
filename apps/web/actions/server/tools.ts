@@ -3,12 +3,28 @@
 import { createClient } from "@/supabase/server";
 import {
   ActionTypeEnum,
-  BackendResponse,
-  Forwarder,
-  Payment,
-  UpdateForwarderActionOptions,
-  UpdatePaymentDetailsActionOptions,
+  BackendResponse
 } from "@repo/types";
+
+type Forwarder = {
+  forward_to: string;
+};
+
+type Payment = {
+  amount: number;
+  currency: string;
+  description?: string;
+};
+
+type UpdateForwarderActionOptions = {
+  email: string;
+  userId: string;
+};
+
+type UpdatePaymentDetailsActionOptions = {
+  userId: string;
+  payment: Payment;
+};
 import { fetchMailbox } from "./mailbox";
 import { emailIsValid } from "@/utils/email";
 

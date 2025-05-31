@@ -1,0 +1,72 @@
+### Embedded Request with JSON Body
+
+
+POST http://localhost:3000/api/postman HTTP/1.1
+Content-Type: application/json
+
+{
+  "FromName": "Paul Imoke",
+  "MessageStream": "inbound",
+  "From": "pauleke65@gmail.com",
+  "FromFull": {
+    "Email": "pauleke65@gmail.com",
+    "Name": "Paul Imoke"
+  },
+  "To": "paul@leadmark.email",
+  "ToFull": [
+    {
+      "Email": "paul@leadmark.email",
+      "Name": "James Leadson",
+      "Method": "To"
+    }
+  ],
+  "Cc": "",
+  "CcFull": [],
+  "Bcc": "",
+  "BccFull": [],
+  "Subject": "Property Investment Inquiry",
+  "Date": "Fri, 20 Oct 2023 19:44:08 +0000",
+  "TextBody": "Hi James,\n\nLet's do June 1, 9:00 AM for the meeting \n\nBest regards,\nPaul",
+  "StrippedTextReply": "Hi James,\n\nLet's do June 1, 9:00 AM for the meeting\n\nBest regards,\nPaul",
+  "Headers": [
+    {
+      "Name": "Return-Path",
+      "Value": "<pauleke65@gmail.com>"
+    },
+    {
+      "Name": "X-Gm-Message-State",
+      "Value": "AOJu0YzhaC9DlSAB1W4j98Gg8OfZ6rvcVNdwW3RTJ+qI9bTBbEdcZeC6\tg/feBDm9DXpzUpeB+npByhwAf3ocvlaitcsWU43sV7RUtOZ9TL6nLA8="
+    },
+    {
+      "Name": "X-Google-Smtp-Source",
+      "Value": "AGHT+IGcqiSux8K8xVyTcaSSps7YEg7XqyAvxEtNcu7yZSUD4tvP4sccyv41wDtupT6N3MZ9ORIEcRVSdrFByp3SUSo="
+    },
+    {
+      "Name": "X-Received",
+      "Value": "by 2002:a17:907:3182:b0:9ae:4776:5a3a with SMTP id xe2-20020a170907318200b009ae47765a3amr2122904ejb.39.1697831061312; Fri, 20 Oct 2023 12:44:21 -0700 (PDT)"
+    },
+    {
+      "Name": "References",
+      "Value": "<!&!AAAAAAAAAAAYAAAAAAAAAA5j2ELZ+clJmC9J9BKmGe7CgAAAEAAAAOLP277PF9pGvYB1v3VWGiYBAAAAAA==@gmail.com>"
+    },
+    {
+      "Name": "In-Reply-To",
+      "Value": "<!&!AAAAAAAAAAAYAAAAAAAAAA5j2ELZ+clJmC9J9BKmGe7CgAAAEAAAAOLP277PF9pGvYB1v3VWGiYBAAAAAA==@gmail.com>"
+    },
+    {
+      "Name": "Message-ID",
+      "Value": "<CAJM9gr2bpnG-sQmqiFR6czdkoQyWvT+Zoq+g5uBS89rEga7a+w@mail.gmail.com>"
+    }
+  ],
+  "Attachments": []
+}
+
+
+###
+### Request to postman using a JSON file with the request body
+
+POST http://localhost:3000/api/postman HTTP/1.1
+Host: localhost
+Content-Type: application/json
+
+<@ src/packages/postman/postmark.json

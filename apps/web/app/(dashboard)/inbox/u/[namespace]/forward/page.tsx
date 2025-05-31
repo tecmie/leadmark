@@ -7,6 +7,7 @@ import {
 import { getSession } from '@/actions/server/auth';
 import { routes } from '@/utils/routes';
 import { redirect } from 'next/navigation';
+import { createClient } from '@/supabase/server';
 
 export default async function Page({
   params,
@@ -24,6 +25,14 @@ export default async function Page({
     return redirect(routes.SIGN_IN);
   }
   const { data: mailbox } = await fetchMailbox(session.user.id);
+  
+  // Fetch profile data for fullname
+  const supabase = await createClient();
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('full_name')
+    .eq('id', session.user.id)
+    .single();
 
   if (!messages || !thread) {
     redirect(routes.INBOX_OVERVIEW);
@@ -34,7 +43,7 @@ export default async function Page({
       thread={thread}
       messages={messages}
       email={`${mailbox?.unique_address}@${mailbox?.dotcom}`}
-      fullname={mailbox?.full_name ?? ''}
+      fullname={profile?.full_name || ''}
       id={(await params).namespace}
     />
   );

@@ -12,7 +12,7 @@ export default async function Page() {
 
   const { data } = await fetchGlobalLinks(session.user.id);
 
-  const links = data?.map((resource) => resource.source_url ?? '') ?? [''];
+  const links = data?.map((resource) => resource.file_path ?? '') ?? [''];
 
   return <SettingsLinkPage links={links.length ? links : ['']} />;
 }

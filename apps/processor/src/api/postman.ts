@@ -1,6 +1,6 @@
 import express from "express";
 import { InboundMessageDetails } from "postmark/dist/client/models";
-import { MailboxBaseWithUserBase } from "@repo/types";
+import { IMailboxWithIUser } from "@repo/types";
 import { getMailboxAndOwnerByUniqueAddress } from "~/services/supabase/base/mailbox.base";
 import { PostmanResponse } from "~/interfaces/postman.interface";
 import { EventProducerMQ } from "~/events";
@@ -9,7 +9,7 @@ const router: express.Router = express.Router();
 
 async function _validateMailbox(
   fullEmail: string
-): Promise<MailboxBaseWithUserBase | undefined> {
+): Promise<IMailboxWithIUser | undefined> {
   /* ------  handle supabase related operations and checks ------ */
   const mailboxWithOwner = await getMailboxAndOwnerByUniqueAddress(fullEmail);
   if (mailboxWithOwner) return mailboxWithOwner;
@@ -21,6 +21,24 @@ async function _validateMailbox(
 async function _validateFromPostman(): Promise<boolean> {
   return true;
 }
+
+
+/**
+ * Sample curl request to call this endpoint:
+ * 
+  curl -X POST http://localhost:3000/api/postman \
+    -H "Content-Type: application/json" \
+    -d '{
+      "From": "sender@example.com",
+      "To": "recipient@example.com",
+      "Subject": "Test Email",
+      "TextBody": "Hello, this is a test email.",
+      "HtmlBody": "<p>Hello, this is a test email.</p>",
+      "Headers": [],
+      "Attachments": []
+    }'
+ */
+
 
 router.post<{}, PostmanResponse>("/", async (req, res) => {
   try {

@@ -91,7 +91,7 @@ export const SharePaymentCard = ({
     setIsLoading(true);
     const { message, success } = await updatePaymentDetailsAction({
       userId,
-      payment: { option, information, link }
+      payment: { amount: 0, currency: 'USD', description: information }
     });
 
     if (success) {

@@ -2,11 +2,13 @@
   "name": "processor",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "nodemon src/index.ts",
+    "dev": "tsx watch src/index.ts",
+    "lint:ts": "tsc --noEmit --pretty",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -16,13 +18,18 @@
     "@repo/types": "workspace:*",
     "bullmq": "^5.53.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "googleapis": "^149.0.0",
     "helmet": "^8.1.0",
     "html-to-text": "^9.0.5",
     "htmlparser2": "^10.0.0",
     "ioredis": "^5.6.1",
     "morgan": "^1.10.0",
-    "postmark": "^4.0.5"
+    "openai": "^5.0.1",
+    "postmark": "^4.0.5",
+    "showdown": "^2.1.0",
+    "xxhashjs": "^0.2.2"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
@@ -32,7 +39,9 @@
     "@types/html-to-text": "^9.0.4",
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.15.3",
-    "nodemon": "^3.1.10",
+    "@types/showdown": "^2.0.6",
+    "@types/xxhashjs": "^0.2.4",
+    "tsx": "^4.19.4",
     "typescript": "^5.8.3"
   }
 }
