@@ -8,14 +8,14 @@ import { PropsWithChildren } from 'react';
 
 export default async function Layout({ children }: PropsWithChildren) {
   const supabase = await createClient();
-  const { data: session } = await supabase.auth.getSession();
-  if (!session?.session?.user?.id) {
+  const { data: user } = await supabase.auth.getUser();
+  if (!user.user?.id) {
     return redirect(routes.SIGN_IN);
   }
 
   // check if the user is onboarded
   const onboardingStatus = await checkOnboardingStatus(
-    session?.session?.user?.id || ''
+    user.user?.id || ''
   );
   if (onboardingStatus === OnboardingStatusEnum.COMPLETED) {
     return redirect(routes.INBOX_OVERVIEW);

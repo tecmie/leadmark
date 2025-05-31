@@ -159,5 +159,5 @@ export async function deleteFileResource({
     };
   }
 
-  return await deleteResource(Number(resource.id));
+  return await deleteResource(resource.id);
 }

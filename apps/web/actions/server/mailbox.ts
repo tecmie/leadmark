@@ -4,7 +4,7 @@
 import { createClient } from '@/supabase/server';
 import {
   BackendResponse,
-  IMailbox
+  IMailboxWithIUser
 } from '@repo/types';
 
 type UpsertMailboxOptions = {
@@ -21,11 +21,11 @@ type UpsertMailboxOptions = {
 
 export const fetchMailbox = async (
   userId: string
-): Promise<BackendResponse<IMailbox>> => {
+): Promise<BackendResponse<IMailboxWithIUser>> => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('mailboxes')
-    .select()
+    .select('*, owner:owner_id(*)')
     .eq('owner_id', userId)
     .single();
 
@@ -104,7 +104,7 @@ const parseObjective = async ({
   successMessage = 'Objectives parsed successfully'
 }: {
   objective: string;
-  mailboxId: number;
+  mailboxId: string;
   mailboxName: string;
   successMessage?: string;
 }): Promise<BackendResponse> => {

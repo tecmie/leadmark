@@ -8,15 +8,15 @@ import { Converter } from 'showdown';
 const converter = new Converter();
 
 export const getMessageAttachments = async (
-  messageId: number
+  messageId: string
 ): Promise<
   BackendResponse<{
-    message_id: number;
+    message_id: string;
     attachments: {
-      id: number;
+      id: string;
       name: string;
-      source_type: string;
-      url: string;
+      type: string;
+      file_path: string | null;
     }[];
   }>
 > => {
@@ -25,13 +25,13 @@ export const getMessageAttachments = async (
     .from('message_attachments')
     .select('*, resource:resource_id(*)')
     .eq('message_id', messageId)
-    .eq('resource.source_type', 'document');
+    .eq('resource.type', 'document');
 
   if (error) return { success: false, message: error.message };
 
   const attachments = data.map(
     (attachment: {
-      resource: { id: number; name: string; source_type: string; url: string };
+      resource: { id: string; name: string; type: string; file_path: string | null };
     }) => {
       return attachment.resource;
     }
@@ -41,7 +41,7 @@ export const getMessageAttachments = async (
     success: true,
     message: 'Message attachments fetched successfully',
     data: {
-      message_id: data[0].message_id,
+      message_id: data[0]?.message_id || messageId,
       attachments,
     },
   };
@@ -57,7 +57,7 @@ export const replyToMessage = async ({
   lastMessageHeaders: any[];
   replyToEmailWithDomain: string;
   content: string;
-  threadId: number;
+  threadId: string;
   ownerId: string;
 }): Promise<BackendResponse<Message>> => {
   const contentAsHtml = converter.makeHtml(content);
@@ -67,21 +67,18 @@ export const replyToMessage = async ({
     replyToEmailWithDomain
   );
   const stream = 'outbound';
-  const supabase = createClient();
-  const { data, error } = await (await supabase).from('messages').insert([
+  const supabase = await createClient();
+  const { data, error } = await supabase.from('messages').insert([
     {
       thread_id: threadId,
-      role: 'user',
-      status: 'enqueue',
-      message_html: contentAsHtml,
-      message_text: content,
-      origin: 'email',
-      owner_id: ownerId,
-      raw_metadata: JSON.stringify({
+      direction: 'outbound',
+      content: content,
+      html_content: contentAsHtml,
+      postmark_data: JSON.parse(JSON.stringify({
         headers,
         recipients,
         stream,
-      }),
+      })),
     },
   ]);
 
@@ -98,24 +95,13 @@ export const forwardMessage = async ({
   messageId,
   messageText,
 }: {
-  messageId: number;
+  messageId: string;
   messageText: string;
 }): Promise<BackendResponse<Message>> => {
-  const supabase = createClient();
-  const { data, error } = await (await supabase)
-    .from('forwarded_messages')
-    .insert([
-      {
-        message_source: messageId,
-        message_text: messageText,
-      },
-    ]);
-
-  if (error) return { success: false, message: error.message };
-
+  // TODO: Implement forwarded message functionality
+  // The forwarded_messages table doesn't exist in the current schema
   return {
-    success: true,
-    message: 'Message forwarded',
-    data,
+    success: false,
+    message: 'Forward message functionality not yet implemented',
   };
 };

@@ -109,7 +109,7 @@ export const fetchResources = async (
 };
 
 export const deleteResource = async (
-  resourceId: number
+  resourceId: string
 ): Promise<BackendResponse<boolean>> => {
   const supabase = await createClient();
 

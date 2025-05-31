@@ -248,7 +248,7 @@ export default function SetupMailPage() {
             <Textarea
               value={objective}
               onChange={(e) => setObjective(e.target.value)}
-              placeholder="Describe what you want your AI assistant to accomplish when handling emails..."
+              placeholder="Describe what you want to use this mailbox for, e.g. 'I want to qualify leads for my SaaS product and schedule calls with potential customers.'"
               rows={7}
               className="resize-none focus:ring-2 p-3 transition-all"
             />

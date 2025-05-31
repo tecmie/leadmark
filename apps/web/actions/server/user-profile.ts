@@ -73,9 +73,10 @@ export const fetchProfileInfo = async (
   userId: string
 ): Promise<BackendResponse<IUser>> => {
   const { data, error } = await supabase
-    .from('users')
+    .from('profiles')
     .select()
-    .eq('id', userId);
+    .eq('id', userId)
+    .single();
 
   if (error || !data) {
     return {
@@ -84,11 +85,11 @@ export const fetchProfileInfo = async (
     };
   }
 
-  const status = await checkOnboardingStatus(data[0].id);
- const step = await checkOnboardingStep(data[0].id);
+  const status = await checkOnboardingStatus(data.id);
+  const step = await checkOnboardingStep(data.id);
 
- const transformedUser = transformUser({
-   user: data[0],
+  const transformedUser = transformUser({
+    user: data,
    metadata: {},
    onboarding: {
      onboardingStatus: status,
@@ -107,7 +108,7 @@ export const updateProfileInfo = async (
   userModel: IUser
 ): Promise<BackendResponse<void>> => {
   const { error } = await supabase
-    .from('users')
+    .from('profiles')
     .update({
       full_name: userModel.full_name,
       email: userModel.email,
@@ -190,45 +191,21 @@ export const checkOnboardingStep = async (
     return 'not_started';
   }
 
-  return data.onboarding_step;
+  return (data.onboarding_step as OnboardingStepType) ?? 'not_started';
 };
 
 export const checkOnboardingStatus = async (
   userId: string
 ): Promise<OnboardingStatusType> => {
-  let onboardingStatus: OnboardingStatusType = OnboardingStatusEnum.NOT_STARTED;
-
-  const mailbox = await fetchMailbox(userId);
-
-  if (!mailbox.success) {
-    return onboardingStatus;
-  }
-
-  onboardingStatus = 'in_progress';
-
-  const forwarderTool = await fetchForwarderTool(userId);
-
-  if (!forwarderTool.success) {
-    return onboardingStatus;
-  }
-
-  onboardingStatus = 'in_progress';
-
-  const resources = await fetchResources(userId);
-
-  if (!resources.success) {
-    return onboardingStatus;
-  }
-
-  const { data: waitlistUser } = await supabase
-    .from('waitlist')
-    .select()
-    .eq('user_id', userId)
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('onboarding_status')
+    .eq('id', userId)
     .single();
 
-  if (waitlistUser?.is_onboard) {
-    onboardingStatus = OnboardingStatusEnum.COMPLETED;
+  if (error || !data) {
+    return 'not_started';
   }
 
-  return onboardingStatus;
+  return (data.onboarding_status as OnboardingStatusType) ?? 'not_started';
 };

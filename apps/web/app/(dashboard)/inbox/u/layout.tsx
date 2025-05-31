@@ -6,17 +6,11 @@ import { redirect } from 'next/navigation';
 import { PropsWithChildren } from 'react';
 
 export default async function Layout({ children }: PropsWithChildren) {
-  const session = await getSession();
+  // const session = await getSession();
 
-  if (!session) {
-    redirect(routes.SIGN_IN);
-  }
-
-  const wlist = await getOrAddToWaitlist(session.user.id);
-
-  if (!wlist?.is_onboard) {
-    redirect(routes.ONBOARDING_GET_STARTED);
-  }
+  // if (!session) {
+  //   redirect(routes.SIGN_IN);
+  // }
 
   const { data: threads } = await fetchInboxThreads();
 
