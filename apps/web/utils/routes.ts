@@ -4,7 +4,7 @@ export const routes = {
   SIGN_UP: '/auth/signup',
   FORGOT_PASSWORD: '/auth/forgot-password',
   RESET_PASSWORD: '/auth/reset-password',
-
+  CONFIRM_EMAIL: '/auth/confirm-email',
   // Onboarding routes
   ONBOARDING_GET_STARTED: '/onboarding',
   ONBOARDING_SETUP_MAIL_ACCOUNT: '/onboarding/setup-mail',

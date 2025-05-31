@@ -6,7 +6,6 @@ import { createClient } from '@/supabase/client';
 import { routes } from '@/utils/routes';
 import { Eye, EyeOff, KeyRound, Loader2, Mail, User } from 'lucide-react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -42,9 +41,6 @@ type SignUpFormData = z.infer<typeof signUpSchema>;
 export const SignUpPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const searchParams = useSearchParams();
-  const createSuccess = searchParams?.get('success') === 'true';
-  const email = searchParams?.get('email');
   const supabase = createClient();
   const router = useRouter();
   const form = useForm<SignUpFormData>({
@@ -108,7 +104,7 @@ export const SignUpPage = () => {
           password: '',
           fullname: '',
         });
-        router.push(routes.SIGN_UP + '?success=true&email=' + data.email);
+        router.push(routes.CONFIRM_EMAIL + '?email=' + data.email);
       }
     } catch (err) {
       toast.error((err as Error).message);
@@ -116,54 +112,6 @@ export const SignUpPage = () => {
       setLoading(false);
     }
   };
-
-  const handleResendConfirmationEmail = async () => {
-    setCanResend(false);
-    setResendCountdown(30);
-
-    try {
-      const { error } = await supabase.auth.resend({
-        type: 'signup',
-        email: email || '',
-      });
-
-      if (error) {
-        toast.error(error.message);
-        setCanResend(true);
-        return;
-      }
-
-      toast.success('Confirmation email resent successfully');
-    } catch (err) {
-      toast.error((err as Error).message);
-      setCanResend(true);
-    }
-  };
-
-  if (createSuccess) {
-    return (
-      <div className="flex flex-col gap-8 items-center w-full p-6 mx-auto max-w-[400px] text-center">
-        <LogoMark />
-        <div className="flex flex-col items-center w-full gap-1">
-          <p>
-            An email confirmation link has been sent to your email address (
-            {email}). Please check your inbox and click the link to complete
-            your registration.
-          </p>
-        </div>
-        <div>
-          Didn&apos;t receive any mail?{' '}
-          <button
-            className="text-blue-500 font-medium"
-            onClick={handleResendConfirmationEmail}
-            disabled={!canResend}
-          >
-            {canResend ? 'Resend email' : `Resend in ${resendCountdown}s`}
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col gap-8 items-center w-full p-6 mx-auto max-w-[400px] text-center">

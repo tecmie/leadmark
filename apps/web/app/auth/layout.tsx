@@ -7,7 +7,7 @@ import { PropsWithChildren } from 'react';
 export default async function Layout({ children }: PropsWithChildren) {
   const supabase = await createClient();
   const { data: session } = await supabase.auth.getSession();
-  if (session) {
+  if (session?.session?.user?.id) {
     return redirect(routes.ONBOARDING_GET_STARTED);
   }
   return <AuthLayout>{children}</AuthLayout>;

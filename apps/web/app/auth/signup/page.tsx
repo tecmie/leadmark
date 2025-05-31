@@ -1,7 +1,7 @@
 import { SignUpPage } from '@/components/pages/auth/sign-up';
-// import { routes } from '@/utils/routes';
-// import { redirect } from 'next/navigation';
 import { createClient } from '@/supabase/client';
+import { redirect } from 'next/navigation';
+import { routes } from '@/utils/routes';
 import { Suspense } from 'react';
 
 export default async function Page() {
@@ -9,10 +9,9 @@ export default async function Page() {
   const {
     data: { session },
   } = await supabase.auth.getSession();
-  console.log(session);
-  // if (session) {
-  //   return redirect(routes.ONBOARDING_GET_STARTED);
-  // }
+  if (session?.user?.id) {
+    return redirect(routes.INBOX_OVERVIEW);
+  }
   return (
     <Suspense fallback={<></>}>
       <SignUpPage />

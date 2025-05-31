@@ -21,9 +21,9 @@ export default async function OnboardingPage() {
         <p className="text-muted-foreground text-sm">
           Your AI-powered inbox for customer support and lead management
         </p>
-        <Link href={routes.ONBOARDING_SETUP_MAIL_ACCOUNT}>
-          <Button>Get Started</Button>
-        </Link>
+        <Button asChild>
+          <Link href={routes.ONBOARDING_SETUP_MAIL_ACCOUNT}>Get Started</Link>
+        </Button>
       </div>
     </div>
   );

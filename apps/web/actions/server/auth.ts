@@ -15,7 +15,7 @@ import { AuthError, Session, User } from '@supabase/supabase-js';
 import { checkOnboardingStatus, checkOnboardingStep } from './user-profile';
 import { createClient } from '@/supabase/client';
 
-const supabase = createClient();
+
 const getUrl = getURL();
 
 const _handleUserResponse = async (
@@ -50,10 +50,20 @@ const _handleUserResponse = async (
 };
 
 export async function logout() {
-  await supabase.auth.signOut();
+  const supabase = createClient();
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    console.error('Error:', error);
+  }
+
+  return {
+    success: true,
+    message: 'Logout successful',
+  };
 }
 
 export const socialProviderAuth = async ({ provider }: OauthOptions) => {
+  const supabase = createClient();
   await supabase.auth.signInWithOAuth({
     provider,
     options: {
@@ -74,6 +84,7 @@ export const resendConfirmationEmail = async (): Promise<BackendResponse> => {
       message: 'No valid email found',
     };
 
+  const supabase = createClient();
   const { data, error } = await supabase.auth.resend({
     type: 'signup',
     email,
@@ -95,6 +106,7 @@ export const resendConfirmationEmail = async (): Promise<BackendResponse> => {
 export const resetPassword = async ({
   email,
 }: ResetPasswordOptions): Promise<BackendResponse<void>> => {
+  const supabase = createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${getUrl}/auth/reset-password`,
   });
@@ -115,6 +127,7 @@ export const resetPassword = async ({
 export const updatePassword = async ({
   newPassword: password,
 }: UpdatePasswordOptions): Promise<BackendResponse<IUser>> => {
+  const supabase = createClient();
   const { data, error } = await supabase.auth.updateUser({
     password,
   });
@@ -130,6 +143,7 @@ export const login = async ({
   email,
   password,
 }: LoginOptions): Promise<BackendResponse<IUser>> => {
+  const supabase = createClient();
   const { data, error } = await supabase.auth.signInWithPassword({
     email: email,
     password: password,
@@ -161,6 +175,7 @@ export const createAccount = async ({
   //   };
   // }
 
+  const supabase = createClient();
   const { data, error } = await supabase.auth.signUp({
     email: email,
     password: password,
@@ -181,6 +196,7 @@ export const createAccount = async ({
 
 export const getUserDetails = async () => {
   try {
+    const supabase = createClient();
     const { data: userDetails } = await supabase
       .from('users')
       .select('*')
