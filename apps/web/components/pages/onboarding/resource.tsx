@@ -212,8 +212,9 @@ export default function ResourcePage() {
       )}
 
       {/* Action Buttons */}
-      <div className="flex justify-end mt-8">
+      <div className="flex items-center justify-center gap-4 w-full mt-8">
         <Button
+          className="w-full"
           onClick={handleContinue}
           disabled={isProcessing || resources.length === 0}
         >

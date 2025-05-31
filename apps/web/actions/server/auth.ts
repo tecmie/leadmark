@@ -50,7 +50,7 @@ const _handleUserResponse = async (
 };
 
 export async function logout() {
-  const supabase = await  createClient();
+  const supabase = await createClient();
   const { error } = await supabase.auth.signOut();
   //clear all cookies
   const cookieStore = await cookies();
@@ -73,8 +73,7 @@ export async function logout() {
 }
 
 export const socialProviderAuth = async ({ provider }: OauthOptions) => {
-    const supabase = await  createClient();
-
+  const supabase = await createClient();
   await supabase.auth.signInWithOAuth({
     provider,
     options: {
@@ -94,8 +93,7 @@ export const resendConfirmationEmail = async (): Promise<BackendResponse> => {
       message: 'No valid email found',
     };
 
-    const supabase = await  createClient();
-
+  const supabase = await createClient();
   const { data, error } = await supabase.auth.resend({
     type: 'signup',
     email,
@@ -117,8 +115,7 @@ export const resendConfirmationEmail = async (): Promise<BackendResponse> => {
 export const resetPassword = async ({
   email,
 }: ResetPasswordOptions): Promise<BackendResponse<void>> => {
-    const supabase = await  createClient();
-
+  const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${getUrl}/auth/reset-password`,
   });
@@ -139,8 +136,7 @@ export const resetPassword = async ({
 export const updatePassword = async ({
   newPassword: password,
 }: UpdatePasswordOptions): Promise<BackendResponse<IUser>> => {
-    const supabase = await  createClient();
-
+  const supabase = await createClient();
   const { data, error } = await supabase.auth.updateUser({
     password,
   });
@@ -156,8 +152,7 @@ export const login = async ({
   email,
   password,
 }: LoginOptions): Promise<BackendResponse<IUser>> => {
-    const supabase = await  createClient();
-
+  const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithPassword({
     email: email,
     password: password,
@@ -189,8 +184,7 @@ export const createAccount = async ({
   //   };
   // }
 
-    const supabase = await  createClient();
-
+  const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
     email: email,
     password: password,
@@ -211,11 +205,12 @@ export const createAccount = async ({
 
 export const getUserDetails = async () => {
   try {
-      const supabase = await  createClient();
-
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return null;
-    
+    const supabase = await createClient();
+    const session = await getSession();
+    if (!session || !session.user) {
+      console.error('No session or user found');
+      return null;    
+    }
     const { data: userDetails } = await supabase
       .from('profiles')
       .select('*')
@@ -229,8 +224,7 @@ export const getUserDetails = async () => {
 };
 
 export async function getSession() {
-    const supabase = await  createClient();
-
+  const supabase = await createClient();
   try {
     const {
       data: { session },
@@ -243,7 +237,7 @@ export async function getSession() {
 }
 
 export async function getOrAddToWaitlist(id: string) {
-  // TODO: Implement waitlist table in database schema
+   // TODO: Implement waitlist table in database schema
   return {
     success: false,
     message: "Waitlist functionality not yet implemented - missing 'waitlist' table",

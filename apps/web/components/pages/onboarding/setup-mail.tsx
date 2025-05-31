@@ -18,9 +18,7 @@ import { routes } from '@/utils/routes';
 import { useRouter } from 'next/navigation';
 import { updateOnboardingProgress } from '@/actions/server/user-profile';
 import { createClient } from '@/supabase/client';
-import { OnboardingStepEnum, OnboardingStatusEnum } from '@repo/types';
 import { toast } from 'sonner';
-import { logout } from '@/actions/server/auth';
 
 export default function SetupMailPage() {
   const router = useRouter();
@@ -172,16 +170,6 @@ export default function SetupMailPage() {
             Choose your username and define your mailbox objective
           </p>
         </div>
-        <Button
-          variant="outline"
-          className="ml-4 whitespace-nowrap"
-          onClick={async () => {
-            await logout();
-            router.push('/auth/signin');
-          }}
-        >
-          Logout
-        </Button>
       </div>
 
       <div className="rounded-2xl bg-white/90 border border-gray-200 p-6">
