@@ -51,18 +51,15 @@ export default function ChooseTemplatePage() {
   useEffect(() => {
     const loadTemplates = async () => {
       try {
-        const data = {
-          processedObjective: {
-            objective: 'Capture leads for a software company',
-            context: 'The company sells a software product to businesses',
-          },
-          resourcesSummary: 'Business resources provided',
-        };
-
+        const existingData = JSON.parse(
+          sessionStorage.getItem('onboarding-data') || '{}'
+        );
+        const processedObjective = existingData.processedObjective;
+        const resourcesSummary = existingData.resourcesSummary;
         // Generate templates using AI
         const result = await generateFormTemplates({
-          processedObjective: data.processedObjective,
-          resourcesSummary: data.resourcesSummary,
+          processedObjective,
+          resourcesSummary,
         });
 
         if (result.success) {
@@ -120,7 +117,7 @@ export default function ChooseTemplatePage() {
       }
 
       router.push(routes.ONBOARDING_CUSTOMIZE);
-    } catch (error) {
+    } catch {
       toast.error('Failed to save template selection');
     }
   };
