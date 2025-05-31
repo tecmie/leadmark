@@ -60,7 +60,7 @@ export const SidebarEmailCounter = ({
         <span className="font-bold text-black">{mailsTotal}</span> mails
         received
       </p>
-      <Link href={routes.billing} className="w-full text-primary-base">
+      <Link href={routes.BILLING} className="w-full text-primary-base">
         Get more mails
       </Link>
     </div>
@@ -70,20 +70,20 @@ export const SidebarEmailCounter = ({
 const SIDEBAR_ROUTES: SidebarItem[] = [
   {
     icon: AllInboxIcon,
-    href: routes.inboxOverview,
-    label: 'All inboxes'
+    href: routes.INBOX_OVERVIEW,
+    label: 'All inboxes',
   },
   {
     icon: InportantInboxIcon,
-    href: routes.inboxImportant,
-    label: 'Important'
+    href: routes.INBOX_IMPORTANT,
+    label: 'Important',
   },
 
   {
     icon: NeedsAttentionIcon,
-    href: routes.inboxAttention,
-    label: 'Needs attention'
-  }
+    href: routes.INBOX_ATTENTION,
+    label: 'Needs attention',
+  },
 ];
 
 export const SidebarExternalLinks = () => {
