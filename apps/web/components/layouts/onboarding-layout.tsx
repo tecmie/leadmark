@@ -6,7 +6,6 @@ import { LogoMark } from '@/components/ui/logo-mark';
 import { PropsWithChildren } from 'react';
 import { routes } from '@/utils/routes';
 import { logout } from '@/actions/server/auth';
-import { useRouter } from '@bprogress/next/app';
 import { LogOutIcon } from 'lucide-react';
 
 const steps = [
@@ -18,7 +17,6 @@ const steps = [
 
 export const OnboardingLayout = ({ children }: PropsWithChildren) => {
   const pathname = usePathname();
-  const router = useRouter();
 
   return (
     <div className="min-h-screen relative overflow-hidden w-full">
@@ -30,7 +28,7 @@ export const OnboardingLayout = ({ children }: PropsWithChildren) => {
           className="ml-4 flex items-center gap-2 whitespace-nowrap font-medium cursor-pointer right-4 text-destructive"
           onClick={async () => {
             await logout();
-            router.push(routes.SIGN_IN);
+            window.location.reload();
           }}
         >
           Logout <LogOutIcon className="w-4 h-4" />
