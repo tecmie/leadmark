@@ -67,13 +67,13 @@ export const ProfilePage = ({
     setIsLoading(true);
     const supabase = createClient();
 
-    const session = await supabase.auth.getSession();
+    const { data: { user } } = await supabase.auth.getUser();
     const { message, success } = await updateMailbox({
       fullname,
       objective,
       uniqueAddress,
       bio,
-      userId: session.data.session?.user.id ?? '',
+      userId: user?.id ?? '',
     });
 
     setIsLoading(false);

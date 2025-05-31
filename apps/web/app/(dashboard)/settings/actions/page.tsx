@@ -1,11 +1,11 @@
 import { SettingsActionsPage } from '@/components/pages/settings/actions';
 import { fetchForwarderTool, fetchPaymentInfo } from '@/actions/server/tools';
-import { getSession } from '@/actions/server/auth';
+import { getUser } from '@/actions/server/auth';
 import { routes } from '@/utils/routes';
 import { redirect } from 'next/navigation';
 
 export default async function Page() {
-  const session = await getSession();
+  const session = await getUser();
   if (!session) {
     redirect(routes.SIGN_IN);
   }

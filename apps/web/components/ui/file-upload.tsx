@@ -64,9 +64,9 @@ export const FileInput = ({
       if (file.size > MAX_FILE_SIZE) {
         throw new Error("File too large!");
       }
-      const { data: session } = await supabase.auth.getSession();
+      const { data: { user } } = await supabase.auth.getUser();
 
-      if (!session.session?.user.id) {
+      if (!user?.id) {
         throw new Error("You must be authenticated to upload a resource");
       }
 
@@ -77,7 +77,7 @@ export const FileInput = ({
       const { success, message, data } = await uploadFileResource({
         form,
         bucket: "leadmark",
-        userId: session.session.user.id,
+        userId: user.id,
       });
 
       if (!success) {
@@ -207,9 +207,9 @@ export const FileUpload = ({
     );
     setDocuments(updatedDocuments);
 
-    const { data: sessionInfo } = await supabase.auth.getSession();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    if (!sessionInfo.session?.user.id) {
+    if (!user?.id) {
       toast.error("User not logged in.");
       return;
     }
@@ -226,9 +226,9 @@ export const FileUpload = ({
   };
 
   const handleFileDownload = async (resource: IResource) => {
-    const { data: sessionInfo } = await supabase.auth.getSession();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    if (!sessionInfo.session?.user.id) {
+    if (!user?.id) {
       toast.error("User not logged in.");
       return;
     }

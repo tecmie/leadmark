@@ -2,11 +2,19 @@
 
 import { Avatar } from '@/components/ui/avatar';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Thread } from '@repo/types';
+import { IThread } from '@repo/types';
 import { ColumnDef } from '@tanstack/react-table';
 import { LucideCheck } from 'lucide-react';
 
-export const columns: ColumnDef<Thread>[] = [
+// Extended thread type that includes the additional properties returned by fetchInboxThreads
+type EnhancedThread = IThread & {
+  contactEmail: string;
+  contactName: string;
+  fullName: string;
+  contact_metadata?: { [key: string]: string };
+};
+
+export const columns: ColumnDef<EnhancedThread>[] = [
   {
     id: 'select',
     header: ({ table }) => (

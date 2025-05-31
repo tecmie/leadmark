@@ -1,7 +1,7 @@
 'use server';
 
 import { createClient } from '@/supabase/server';
-import { BackendResponse, Message } from '@repo/types';
+import { BackendResponse, IMessage } from '@repo/types';
 import { extractNecessaryInfo } from './message-helpers';
 import { Converter } from 'showdown';
 
@@ -59,7 +59,7 @@ export const replyToMessage = async ({
   content: string;
   threadId: string;
   ownerId: string;
-}): Promise<BackendResponse<Message>> => {
+}): Promise<BackendResponse<IMessage>> => {
   const contentAsHtml = converter.makeHtml(content);
 
   const { headers, recipients } = extractNecessaryInfo(
@@ -82,7 +82,7 @@ export const replyToMessage = async ({
     },
   ]);
 
-  if (error) return { success: false, message: error.message };
+  if (error || !data) return { success: false, message: error?.message || 'Failed to send reply' };
 
   return {
     success: true,
@@ -97,7 +97,7 @@ export const forwardMessage = async ({
 }: {
   messageId: string;
   messageText: string;
-}): Promise<BackendResponse<Message>> => {
+}): Promise<BackendResponse<IMessage>> => {
   // TODO: Implement forwarded message functionality
   // The forwarded_messages table doesn't exist in the current schema
   return {

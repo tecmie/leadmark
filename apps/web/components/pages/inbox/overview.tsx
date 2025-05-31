@@ -1,13 +1,21 @@
 'use client';
 
-import { Thread } from '@repo/types';
+import { IThread } from '@repo/types';
+
+// Extended thread type that includes the additional properties returned by fetchInboxThreads
+type EnhancedThread = IThread & {
+  contactEmail: string;
+  contactName: string;
+  fullName: string;
+  contact_metadata?: { [key: string]: string };
+};
 import { columns } from './table/columns';
 import { DataTable } from './table/data-table';
 import { createClient } from '@/supabase/client';
 import { useEffect, useState } from 'react';
 
 interface InboxOverviewPageProps {
-  data: Thread[];
+  data: EnhancedThread[];
   className?: string;
 }
 
@@ -17,7 +25,7 @@ export const InboxOverviewPage = ({
 }: InboxOverviewPageProps) => {
   const supabase = createClient();
 
-  const [inboxOverviewData, setInboxOverviewData] = useState<Thread[]>(data);
+  const [inboxOverviewData, setInboxOverviewData] = useState<EnhancedThread[]>(data);
 
   useEffect(() => {
     const inboxOverviewChannel = supabase
@@ -26,7 +34,7 @@ export const InboxOverviewPage = ({
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'threads' },
         (payload) => {
-          setInboxOverviewData((prev) => [...prev, payload.new] as Thread[]);
+          setInboxOverviewData((prev) => [...prev, payload.new] as EnhancedThread[]);
         }
       )
       .subscribe();
@@ -40,8 +48,8 @@ export const InboxOverviewPage = ({
     <DataTable
       className={className}
       columns={columns}
-      data={inboxOverviewData.sort((a: Thread, b: Thread) =>
-        a.last_updated < b.last_updated ? 1 : -1
+      data={inboxOverviewData.sort((a: EnhancedThread, b: EnhancedThread) =>
+        (a.last_updated || '') < (b.last_updated || '') ? 1 : -1
       )}
     />
   );

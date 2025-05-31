@@ -7,10 +7,10 @@ export default async function Page() {
   const supabase = createClient();
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (session) {
+  if (user) {
     return redirect(routes.INBOX_OVERVIEW);
   }
   return <SignInPage />;

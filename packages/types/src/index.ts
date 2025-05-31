@@ -51,8 +51,6 @@ export type OauthOptions = any;
 export type ResetPasswordOptions = any;
 export type UpdatePasswordOptions = any;
 
-export type Thread = any;
-export type Message = any;
 export type TypeMessageAttachment = any;
 
 export type IUser = Database["public"]["Tables"]["profiles"]["Row"];

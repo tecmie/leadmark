@@ -1,12 +1,12 @@
 import { fetchMailbox } from '@/actions/server/mailbox';
-import { getSession } from '@/actions/server/auth';
+import { getUser } from '@/actions/server/auth';
 import { routes } from '@/utils/routes';
 import { redirect } from 'next/navigation';
 import { ProfilePage } from '@/components/pages/profile';
 import { createClient } from '@/supabase/server';
 
 export default async function Page() {
-  const session = await getSession();
+  const session = await getUser();
 
   if (!session) {
     redirect(routes.SIGN_IN);

@@ -1,10 +1,10 @@
-import { getSession } from '@/actions/server/auth';
+import { getUser } from '@/actions/server/auth';
 import { routes } from '@/utils/routes';
 import { redirect } from 'next/navigation';
 import { PropsWithChildren } from 'react';
 
 export default async function Layout({ children }: PropsWithChildren) {
-  const session = await getSession();
+  const session = await getUser();
 
   if (!session) {
     return redirect(routes.SIGN_IN);

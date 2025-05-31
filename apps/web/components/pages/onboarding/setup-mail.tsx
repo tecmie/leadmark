@@ -110,9 +110,9 @@ export default function SetupMailPage() {
         // Get current user ID
         const supabase = createClient();
         const {
-          data: { session },
-        } = await supabase.auth.getSession();
-        const userId = session?.user?.id;
+          data: { user },
+        } = await supabase.auth.getUser();
+        const userId = user?.id;
         if (userId) {
           // return if the update failed
           const updateResult = await updateOnboardingProgress(

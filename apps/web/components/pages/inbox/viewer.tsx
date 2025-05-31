@@ -12,7 +12,20 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { toggleAutoResponderByNamespace } from '@/actions/server/threads';
-import { type Message, type TypeMessageAttachment, Thread } from '@repo/types';
+import { type IMessage, type TypeMessageAttachment, IThread } from '@repo/types';
+
+// Extended message type that includes the additional properties returned by server actions
+type EnhancedMessage = IMessage & {
+  message_attachments?: {
+    id: number;
+    resource: {
+      id: string;
+      name: string;
+      file_path: string | null;
+      type: string;
+    };
+  }[];
+};
 import { triggerDownload } from '@/utils/helpers';
 import { cn } from '@/utils/ui';
 import { createClient } from '@/supabase/client';
@@ -22,18 +35,19 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 interface InboxMessageItemProps {
-  message: Message;
+  message: EnhancedMessage;
   senderName: string;
   senderEmail: string;
   sendDate: string;
   receiverName: string;
   receiverEmail: string;
+  ownerId?: string;
 }
 
 interface InboxViewerPageProps {
   namespace?: string;
-  messages?: Message[];
-  thread?: Thread & { contactName: string };
+  messages?: EnhancedMessage[];
+  thread?: IThread & { contactName: string; contactEmail: string };
   email: string;
   fullname: string;
 }
@@ -48,9 +62,9 @@ const MessageAttachment = ({ attachment, ownerId }: MessageAttachmentProps) => {
   const resource = attachment?.resource;
 
   const handleFileDownload = async (name: string) => {
-    const { data: sessionInfo } = await supabase.auth.getSession();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    if (!sessionInfo.session?.user.id) {
+    if (!user?.id) {
       toast.error('User not logged in.');
       return;
     }
@@ -116,8 +130,9 @@ const InboxMessageItem = ({
   sendDate,
   receiverEmail,
   receiverName,
+  ownerId,
 }: InboxMessageItemProps) => {
-  const displayName = message.role === 'recipient' ? senderName : receiverName;
+  const displayName = message.direction === 'inbound' ? senderName : receiverName;
   const date = new Date(sendDate);
   const formattedDate = date.toLocaleDateString('en-US', {
     month: 'short',
@@ -139,7 +154,7 @@ const InboxMessageItem = ({
               <p className="text-sm">{formattedDate}</p>
             </div>
             <p className="text-sm">
-              {message.role === 'recipient' ? senderEmail : receiverEmail}
+              {message.direction === 'inbound' ? senderEmail : receiverEmail}
             </p>
           </div>
         </div>
@@ -149,16 +164,16 @@ const InboxMessageItem = ({
         </div>
       </div>
       <div className="grid w-full gap-4 overflow-hidden text-base">
-        {message.message_html ? (
+        {message.html_content ? (
           <div
             className="overflow-hidden break-words"
             dangerouslySetInnerHTML={{
-              __html: message.message_html ? message.message_html : '',
+              __html: message.html_content ? message.html_content : '',
             }}
           />
         ) : (
           <div className="overflow-hidden break-words whitespace-pre-line">
-            {message.message_text}
+            {message.content}
           </div>
         )}
         <div className="flex flex-wrap w-full gap-4">
@@ -168,7 +183,7 @@ const InboxMessageItem = ({
               <MessageAttachment
                 key={index}
                 attachment={item}
-                ownerId={String(message.owner_id)}
+                ownerId={String(ownerId || '')}
               />
             ))}
         </div>
@@ -240,6 +255,7 @@ export const InboxViewerPage = ({
               key={index}
               receiverName={fullname}
               receiverEmail={email}
+              ownerId={thread?.owner_id}
             />
           ))}
         </div>

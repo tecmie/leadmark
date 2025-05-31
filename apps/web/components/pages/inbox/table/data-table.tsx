@@ -11,7 +11,15 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
-import { Thread } from '@repo/types';
+import { IThread } from '@repo/types';
+
+// Extended thread type that includes the additional properties returned by fetchInboxThreads
+type EnhancedThread = IThread & {
+  contactEmail: string;
+  contactName: string;
+  fullName: string;
+  contact_metadata?: { [key: string]: string };
+};
 import useMediaQuery from '@/utils/hooks/use-media-query';
 import { cn } from '@/utils/ui';
 import {
@@ -51,13 +59,13 @@ export function DataTable<TData, TValue>({
 
   const [columnVisibility, setColumnVisibility] = useState({});
 
-  const sortTable: SortingFn<Thread> = (rowA, rowB) => {
+  const sortTable: SortingFn<EnhancedThread> = (rowA, rowB) => {
     const value = (A: string): number => {
       return A === 'Low' ? 1 : A === 'Medium' ? 2 : 3;
     };
 
-    const Anum = value(rowA.original.subject);
-    const Bnum = value(rowB.original.subject);
+    const Anum = value(rowA.original.subject || '');
+    const Bnum = value(rowB.original.subject || '');
 
     if (Anum === Bnum) return 0;
     return Anum < Bnum ? 1 : -1;
@@ -140,7 +148,7 @@ export function DataTable<TData, TValue>({
                   <TableRow
                     onClick={() =>
                       router.push(
-                        `/inbox/u/${(row.original as Thread).namespace}`
+                        `/inbox/u/${(row.original as EnhancedThread).namespace}`
                       )
                     }
                     className="w-full border-none"
@@ -155,7 +163,7 @@ export function DataTable<TData, TValue>({
                           'px-0 py-3 cursor-pointer border-b border-[#00000012] ',
                           {
                             'bg-muted/50':
-                              (row.original as Thread).namespace === id,
+                              (row.original as EnhancedThread).namespace === id,
                           }
                         )}
                       >

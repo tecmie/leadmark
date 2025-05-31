@@ -5,7 +5,21 @@ import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { replyToMessage } from '@/actions/server/messages';
-import { Message, Thread } from '@repo/types';
+import { IMessage, IThread } from '@repo/types';
+
+// Extended message type that includes the additional properties returned by server actions
+type EnhancedMessage = IMessage & {
+  message_attachments?: {
+    id: number;
+    resource: {
+      id: string;
+      name: string;
+      file_path: string | null;
+      type: string;
+    };
+  }[];
+  raw_metadata?: any;
+};
 import { cn } from '@/utils/ui';
 import { ArrowLeft, Trash2 } from 'lucide-react';
 import { useRouter } from '@bprogress/next/app';
@@ -13,7 +27,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 interface InboxMessageItemProps {
-  message: Message;
+  message: EnhancedMessage;
   senderName: string;
   senderEmail: string;
   sendDate: string;
@@ -23,8 +37,8 @@ interface InboxMessageItemProps {
 
 interface InboxViewerPageProps {
   namespace?: string;
-  messages?: Message[];
-  thread?: Thread & { contactName: string };
+  messages?: EnhancedMessage[];
+  thread?: IThread & { contactName: string; contactEmail: string };
   email: string;
   fullname: string;
 }
@@ -81,7 +95,7 @@ const InboxMessageItem = ({
   receiverEmail,
   receiverName,
 }: InboxMessageItemProps) => {
-  const displayName = message.role === 'recipient' ? senderName : receiverName;
+  const displayName = message.direction === 'inbound' ? senderName : receiverName;
   const date = new Date(sendDate);
   const formattedDate = date.toLocaleDateString('en-US', {
     month: 'short',
@@ -101,7 +115,7 @@ const InboxMessageItem = ({
               <p className="text-sm">{formattedDate}</p>
             </div>
             <p className="text-sm">
-              {message.role === 'recipient' ? senderEmail : receiverEmail}
+              {message.direction === 'inbound' ? senderEmail : receiverEmail}
             </p>
           </div>
         </div>
@@ -111,16 +125,16 @@ const InboxMessageItem = ({
         </div> */}
       </div>
       <div className="grid overflow-hidden text-base">
-        {message.message_html ? (
+        {message.html_content ? (
           <div
             className="overflow-hidden break-words whitespace-pre-line"
             dangerouslySetInnerHTML={{
-              __html: message.message_html ? message.message_html : '',
+              __html: message.html_content ? message.html_content : '',
             }}
           />
         ) : (
           <div className="overflow-hidden break-words whitespace-pre-line">
-            {message.message_text}
+            {message.content}
           </div>
         )}
       </div>
@@ -145,7 +159,7 @@ export const InboxViewerPage = ({
         const { success, message } = await replyToMessage({
           threadId: thread!.id,
           lastMessageHeaders: JSON.parse(
-            messages?.[messages.length - 1].raw_metadata as string
+            (messages?.[messages.length - 1]?.raw_metadata as string) || '{}'
           ).headers,
           ownerId: thread!.owner_id,
           replyToEmailWithDomain: thread!.contactEmail ?? '',

@@ -4,7 +4,7 @@ import {
   fetchMessagesByThreadNamespace,
   getThreadByNamespace,
 } from '@/actions/server/threads';
-import { getSession } from '@/actions/server/auth';
+import { getUser } from '@/actions/server/auth';
 import { routes } from '@/utils/routes';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/supabase/server';
@@ -19,7 +19,7 @@ export default async function Page({
   );
   const { data: thread } = await getThreadByNamespace((await params).namespace);
 
-  const session = await getSession();
+  const session = await getUser();
 
   if (!session) {
     return redirect(routes.SIGN_IN);

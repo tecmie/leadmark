@@ -36,18 +36,18 @@ export async function middleware(request: NextRequest) {
 
     // Get the user session
     const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      data: { user },
+    } = await supabase.auth.getUser();
 
-    // If there's no session and trying to access a protected route
-    if (!session && !isPublicRoute) {
+    // If there's no user and trying to access a protected route
+    if (!user && !isPublicRoute) {
       const redirectUrl = new URL(routes.SIGN_IN, request.url);
       redirectUrl.searchParams.set('redirectTo', path);
       return NextResponse.redirect(redirectUrl);
     }
 
-    // If there's a session
-    if (session) {
+    // If there's a user
+    if (user) {
       // If trying to access auth pages while logged in
       if (isPublicRoute && path !== '/') {
         return NextResponse.redirect(
@@ -59,7 +59,7 @@ export async function middleware(request: NextRequest) {
       const { data: profile } = await supabase
         .from('profiles')
         .select('onboarding_status, onboarding_step')
-        .eq('id', session.user.id)
+        .eq('id', user.id)
         .single();
 
       const onboardingStatus =

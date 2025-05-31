@@ -3,11 +3,11 @@ import { fetchInboxThreads } from '@/actions/server/threads';
 import { routes } from '@/utils/routes';
 import { redirect } from 'next/navigation';
 import { PropsWithChildren } from 'react';
-import { getSession } from '@/actions/server/auth';
+import { getUser } from '@/actions/server/auth';
 import { InboxLayout } from '@/components/layouts/inbox-layout';
 
 export default async function Layout({ children }: PropsWithChildren) {
-  const session = await getSession();
+  const session = await getUser();
 
   if (!session) {
     return redirect(routes.SIGN_IN);

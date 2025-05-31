@@ -93,9 +93,9 @@ export default function ResourcePage() {
       // Update onboarding progress
       const supabase = createClient();
       const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      const userId = session?.user?.id;
+        data: { user },
+      } = await supabase.auth.getUser();
+      const userId = user?.id;
       if (userId) {
         const updateResult = await updateOnboardingProgress(
           userId,

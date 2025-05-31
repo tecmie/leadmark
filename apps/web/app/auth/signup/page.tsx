@@ -7,9 +7,9 @@ import { Suspense } from 'react';
 export default async function Page() {
   const supabase = createClient();
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  if (session?.user?.id) {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user?.id) {
     return redirect(routes.INBOX_OVERVIEW);
   }
   return (

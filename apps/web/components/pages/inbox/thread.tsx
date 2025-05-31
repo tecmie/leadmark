@@ -1,11 +1,19 @@
 'use client';
 
-import { Thread } from '@repo/types';
+import { IThread } from '@repo/types';
 import { usePathname } from 'next/navigation';
 import { InboxOverviewPage } from './overview';
 
+// Extended thread type that includes the additional properties returned by fetchInboxThreads
+type EnhancedThread = IThread & {
+  contactEmail: string;
+  contactName: string;
+  fullName: string;
+  contact_metadata?: { [key: string]: string };
+};
+
 interface ThreadsLayoutProps {
-  threads: Thread[];
+  threads: EnhancedThread[];
 }
 
 export const ThreadInbox = ({ threads }: ThreadsLayoutProps) => {

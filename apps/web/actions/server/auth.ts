@@ -206,7 +206,7 @@ export const createAccount = async ({
 export const getUserDetails = async () => {
   try {
     const supabase = await createClient();
-    const session = await getSession();
+    const session = await getUser();
     if (!session || !session.user) {
       console.error('No session or user found');
       return null;    
@@ -223,12 +223,13 @@ export const getUserDetails = async () => {
   }
 };
 
-export async function getSession() {
+export async function getUser() {
   const supabase = await createClient();
   try {
     const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      data: { user },
+    } = await supabase.auth.getUser();
+    const session = user ? { user } : null;
     return session;
   } catch (error) {
     console.error('Error:', error);

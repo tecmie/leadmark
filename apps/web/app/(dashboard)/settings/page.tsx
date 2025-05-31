@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { CaretRightIcon, CreditIcon } from '@/components/icons/sidebar';
 import { fetchMailbox } from '@/actions/server/mailbox';
-import { getSession } from '@/actions/server/auth';
+import { getUser } from '@/actions/server/auth';
 import { routes } from '@/utils/routes';
 import { cn } from '@/utils/ui';
 import Link from 'next/link';
@@ -14,7 +14,7 @@ import {
 } from '../../../components/icons/sidebar';
 
 export default async function Page() {
-  const session = await getSession();
+  const session = await getUser();
 
   if (!session) {
     return redirect(routes.SIGN_IN);

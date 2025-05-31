@@ -6,13 +6,26 @@ import { Avatar } from '@/components/ui/avatar';
 import { Button, ButtonProps } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Message, Thread } from '@repo/types';
+import { IMessage, IThread } from '@repo/types';
+
+// Extended message type that includes the additional properties returned by server actions
+type EnhancedMessage = IMessage & {
+  message_attachments?: {
+    id: number;
+    resource: {
+      id: string;
+      name: string;
+      file_path: string | null;
+      type: string;
+    };
+  }[];
+};
 import { cn } from '@/utils/ui';
 import { ArrowLeft, Trash2 } from 'lucide-react';
 import { useRouter } from '@bprogress/next/app';
 
 interface InboxMessageItemProps {
-  message: Message;
+  message: EnhancedMessage;
   senderName: string;
   senderEmail: string;
   sendDate: string;
@@ -22,8 +35,8 @@ interface InboxMessageItemProps {
 
 interface InboxViewerPageProps {
   id?: string;
-  messages?: Message[];
-  thread?: Thread & { contactName: string };
+  messages?: EnhancedMessage[];
+  thread?: IThread & { contactName: string; contactEmail: string };
   email: string;
   fullname: string;
 }
@@ -84,7 +97,7 @@ const InboxMessageItem = ({
   receiverEmail,
   receiverName,
 }: InboxMessageItemProps) => {
-  const displayName = message.role === 'recipient' ? senderName : receiverName;
+  const displayName = message.direction === 'inbound' ? senderName : receiverName;
   const date = new Date(sendDate);
   const formattedDate = date.toLocaleDateString('en-US', {
     month: 'short',
@@ -104,7 +117,7 @@ const InboxMessageItem = ({
               <p className="text-sm">{formattedDate}</p>
             </div>
             <p className="text-sm">
-              {message.role === 'recipient' ? senderEmail : receiverEmail}
+              {message.direction === 'inbound' ? senderEmail : receiverEmail}
             </p>
           </div>
         </div>
@@ -114,16 +127,16 @@ const InboxMessageItem = ({
         </div> */}
       </div>
       <div className="grid overflow-hidden text-base">
-        {message.message_html ? (
+        {message.html_content ? (
           <div
             className="overflow-hidden break-words"
             dangerouslySetInnerHTML={{
-              __html: message.message_html ? message.message_html : '',
+              __html: message.html_content ? message.html_content : '',
             }}
           />
         ) : (
           <div className="overflow-hidden break-words whitespace-pre-line">
-            {message.message_text}
+            {message.content}
           </div>
         )}
       </div>
@@ -200,7 +213,7 @@ export const InboxViewerPage = ({
                 <div className="mb-2 font-medium text-black">
                   Forwarded message
                 </div>
-                {message.role === 'recipient' ? (
+                {message.direction === 'inbound' ? (
                   <div>
                     From{' '}
                     <span className="font-medium text-black">
@@ -232,7 +245,7 @@ export const InboxViewerPage = ({
                     {thread?.subject}
                   </span>{' '}
                 </div>
-                {message.role === 'recipient' ? (
+                {message.direction === 'inbound' ? (
                   <div>
                     To{' '}
                     <span className="font-medium text-black">
