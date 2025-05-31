@@ -19,6 +19,7 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, Plus, X, Eye, Save } from 'lucide-react';
 import { completeOnboardingWorkflow } from '@/actions/server/onboarding';
 import { routes } from '@/utils/routes';
+import { createClient } from '@/supabase/client';
 import {
   Sheet,
   SheetContent,
@@ -33,6 +34,10 @@ interface FormField {
   required: boolean;
   options?: string[];
   placeholder?: string;
+  min?: string | number;
+  max?: string | number;
+  step?: string | number;
+  pattern?: string;
 }
 
 interface FormTemplate {
@@ -131,12 +136,26 @@ export default function CustomizePage() {
         sessionStorage.getItem('onboarding-data') || '{}'
       );
 
-      // Complete the onboarding workflow
+      // Get current user
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        setError('User not authenticated');
+        return;
+      }
+
+      // Complete the onboarding workflow with customized form
       const result = await completeOnboardingWorkflow({
-        userId: 'current-user-id', // This should come from auth context
+        userId: user.id,
         unique_address: onboardingData.unique_address,
         rawObjective: onboardingData.rawObjective,
         resources: onboardingData.resources,
+        customizedForm: {
+          name: formName,
+          description: formDescription,
+          fields: fields,
+        },
       });
 
       if (result.success) {
@@ -259,6 +278,9 @@ export default function CustomizePage() {
                           <SelectItem value="text">Text</SelectItem>
                           <SelectItem value="email">Email</SelectItem>
                           <SelectItem value="tel">Phone</SelectItem>
+                          <SelectItem value="number">Number</SelectItem>
+                          <SelectItem value="date">Date</SelectItem>
+                          <SelectItem value="url">URL</SelectItem>
                           <SelectItem value="textarea">Textarea</SelectItem>
                           <SelectItem value="select">Select</SelectItem>
                           <SelectItem value="checkbox">Checkbox</SelectItem>
@@ -277,6 +299,47 @@ export default function CustomizePage() {
                       }
                     />
                   </div>
+
+                  {/* Additional field properties for number/date fields */}
+                  {(field.type === 'number' || field.type === 'date') && (
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label>Min {field.type === 'date' ? 'Date' : 'Value'}</Label>
+                        <Input
+                          type={field.type === 'date' ? 'date' : 'number'}
+                          value={field.min || ''}
+                          onChange={(e) =>
+                            updateField(index, { min: e.target.value })
+                          }
+                          placeholder={field.type === 'date' ? 'YYYY-MM-DD' : '0'}
+                        />
+                      </div>
+                      <div>
+                        <Label>Max {field.type === 'date' ? 'Date' : 'Value'}</Label>
+                        <Input
+                          type={field.type === 'date' ? 'date' : 'number'}
+                          value={field.max || ''}
+                          onChange={(e) =>
+                            updateField(index, { max: e.target.value })
+                          }
+                          placeholder={field.type === 'date' ? 'YYYY-MM-DD' : '100'}
+                        />
+                      </div>
+                      {field.type === 'number' && (
+                        <div className="col-span-2">
+                          <Label>Step</Label>
+                          <Input
+                            type="number"
+                            value={field.step || ''}
+                            onChange={(e) =>
+                              updateField(index, { step: e.target.value })
+                            }
+                            placeholder="1"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   <div className="flex items-center space-x-2">
                     <Switch
@@ -386,6 +449,9 @@ export default function CustomizePage() {
                       type={field.type}
                       className="w-full p-2 border rounded-md"
                       placeholder={field.placeholder}
+                      min={field.min}
+                      max={field.max}
+                      step={field.step}
                       disabled
                     />
                   )}

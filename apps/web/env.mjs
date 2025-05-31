@@ -19,6 +19,7 @@ export const env = createEnv({
     OPENAI_API_KEY: z.string().optional(),
     SUPABASE_SERVICE_ROLE_KEY: z.string(),
     STRIPE_SECRET_KEY: z.string(),
+    BACKEND_API_URL: z.string().default('http://localhost:4000'),
   },
 
   /**
@@ -52,6 +53,7 @@ export const env = createEnv({
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
+    BACKEND_API_URL: process.env.BACKEND_API_URL,
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,

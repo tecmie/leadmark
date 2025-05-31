@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/supabase/server";
-import { BackendResponse } from "@repo/types";
+import { BackendResponse, OnboardingStatusEnum, OnboardingStepEnum } from "@repo/types";
 import { isReservedAddress } from "@/utils/blacklisted-email";
 import { z } from "zod";
 import OpenAI from "openai";
@@ -9,6 +9,7 @@ import { env } from "@/env.mjs";
 
 import pdfParse from "pdf-parse";
 import mammoth from "mammoth";
+import { updateOnboardingProgress } from "./user-profile";
 
 const MODEL = "gpt-4.1";
 
@@ -636,80 +637,217 @@ export const saveFormTemplate = async ({
     };
   }
 };
-
 // Complete onboarding workflow
 export const completeOnboardingWorkflow = async ({
   userId,
   unique_address,
   rawObjective,
   resources,
+  customizedForm,
 }: {
   userId: string;
-  unique_address: string;
-  rawObjective: string;
+  unique_address?: string;
+  rawObjective?: string;
   resources?: Array<{
     name: string;
     type: string;
     content?: string;
     file?: File;
   }>;
+  customizedForm?: {
+    name: string;
+    description: string;
+    fields: any[];
+  };
 }): Promise<
   BackendResponse<{
     mailboxId: string;
     formTemplates: any[];
+    formId?: string;
   }>
 > => {
   try {
-    // Step 1: Check username availability
-    const usernameCheck = await checkUsernameAvailability(unique_address);
-    if (!usernameCheck.success || !usernameCheck.data?.available) {
+    // Step 1: Check if mailbox already exists
+    const supabase = await createClient();
+    // Try to get unique_address and rawObjective if not provided
+    let finalUniqueAddress = unique_address;
+    let finalRawObjective = rawObjective;
+
+    // If unique_address is missing, try to get it from the first mailbox for the user
+    if (!finalUniqueAddress) {
+      const { data: userMailbox } = await supabase
+      .from('mailboxes')
+      .select('unique_address')
+      .eq('owner_id', userId)
+      .maybeSingle();
+      if (userMailbox?.unique_address) {
+      finalUniqueAddress = userMailbox.unique_address;
+      }
+    }
+
+    // If rawObjective is missing, try to get it from the mailbox
+    if (!finalRawObjective && finalUniqueAddress) {
+      const { data: mailboxData } = await supabase
+      .from('mailboxes')
+      .select('raw_objective')
+      .eq('unique_address', finalUniqueAddress.toLowerCase())
+      .maybeSingle();
+      if (mailboxData?.raw_objective) {
+      finalRawObjective = mailboxData.raw_objective;
+      }
+    }
+
+    if (!finalUniqueAddress) {
+      return {
+      success: false,
+      message: "unique_address is required or could not be determined",
+      };
+    }
+    if (!finalRawObjective) {
+      return {
+      success: false,
+      message: "rawObjective is required or could not be determined",
+      };
+    }
+
+    const { data: existingMailbox } = await supabase
+      .from('mailboxes')
+      .select('id')
+      .eq('unique_address', finalUniqueAddress.toLowerCase())
+      .maybeSingle();
+
+    let mailboxId: string;
+    let processedObjectiveResult: any = null;
+
+    if (existingMailbox) {
+      mailboxId = existingMailbox.id;
+
+      // Try to fetch processed objective if it exists
+      const { data: mailboxData } = await supabase
+      .from('mailboxes')
+      .select('processed_objective')
+      .eq('id', mailboxId)
+      .maybeSingle();
+
+      if (mailboxData?.processed_objective) {
+      try {
+        processedObjectiveResult = {
+        success: true,
+        data: JSON.parse(mailboxData.processed_objective),
+        };
+      } catch {
+        processedObjectiveResult = await processMailboxObjective(finalRawObjective as string);
+      }
+      } else {
+      processedObjectiveResult = await processMailboxObjective(finalRawObjective as string);
+      }
+    } else {
+      // Step 1: Check username availability
+      const usernameCheck = await checkUsernameAvailability(finalUniqueAddress as string);
+      if (!usernameCheck.success || !usernameCheck.data?.available) {
       return usernameCheck as any;
-    }
+      }
 
-    // Step 2: Process objective
-    const processedObjectiveResult =
-      await processMailboxObjective(rawObjective);
-    if (!processedObjectiveResult.success) {
+      // Step 2: Process objective
+      processedObjectiveResult = await processMailboxObjective(finalRawObjective as string);
+      if (!processedObjectiveResult.success) {
       return processedObjectiveResult as any;
-    }
+      }
 
-    // Step 3: Create mailbox
-    const mailboxResult = await createMailboxForUser({
+      // Step 3: Create mailbox
+      const mailboxResult = await createMailboxForUser({
       userId,
-      unique_address,
-      rawObjective,
+      unique_address: finalUniqueAddress as string,
+      rawObjective: finalRawObjective as string,
       processedObjective: processedObjectiveResult.data,
-    });
-    if (!mailboxResult.success) {
+      });
+      if (!mailboxResult.success) {
       return mailboxResult as any;
+      }
+      mailboxId = mailboxResult.data!.mailboxId;
     }
 
-    const mailboxId = mailboxResult.data!.mailboxId;
-
-    // Step 4: Upload resources (if provided)
+    // Step 4: Upload resources (if provided and not already uploaded)
     let resourcesSummary: string | undefined;
     if (resources && resources.length > 0) {
-      const resourcesResult = await uploadResourcesForMailbox({
-        userId,
-        mailboxId,
-        resources,
-      });
+      // Check if resources already exist for this mailbox
+      const { data: existingResources } = await supabase
+        .from('resources')
+        .select('id')
+        .eq('mailbox_id', mailboxId);
 
-      if (resourcesResult.success) {
-        // Generate a business summary from all uploaded resources
+      if (!existingResources || existingResources.length === 0) {
+        const resourcesResult = await uploadResourcesForMailbox({
+          userId,
+          mailboxId,
+          resources,
+        });
+
+        if (resourcesResult.success) {
+          // Generate a business summary from all uploaded resources
+          resourcesSummary = await generateBusinessSummary(mailboxId);
+        }
+      } else {
+        // Resources already exist, generate summary
         resourcesSummary = await generateBusinessSummary(mailboxId);
       }
     }
 
-    // Step 5: Generate form templates
-    const templatesResult = await generateFormTemplates({
-      processedObjective: processedObjectiveResult.data,
-      resourcesSummary,
-    });
+    // Step 5: Generate form templates (only if not already present)
+    let templatesResult: BackendResponse<any[]>;
+    const { data: existingForms } = await supabase
+      .from('forms')
+      .select('form_fields')
+      .eq('mailbox_id', mailboxId);
 
-    if (!templatesResult.success) {
-      return templatesResult as any;
+    if (existingForms && existingForms.length > 0) {
+      // Use existing form templates
+      templatesResult = {
+        success: true,
+        message: 'Form templates already exist',
+        data: existingForms.map((f) => f.form_fields),
+      };
+    } else {
+      templatesResult = await generateFormTemplates({
+        processedObjective: processedObjectiveResult.data,
+        resourcesSummary,
+      });
+      if (!templatesResult.success) {
+        return templatesResult as any;
+      }
     }
+
+    // Step 6: Save customized form if provided and not already saved
+    let formId: string | undefined;
+    if (customizedForm) {
+      // Check if a form with the same name already exists
+      const slug = customizedForm.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+      const { data: existingForm } = await supabase
+        .from('forms')
+        .select('id')
+        .eq('mailbox_id', mailboxId)
+        .eq('slug', slug)
+        .maybeSingle();
+
+      if (existingForm) {
+        formId = existingForm.id;
+      } else {
+        const saveFormResult = await saveFormTemplate({
+          userId,
+          mailboxId,
+          template: customizedForm,
+        });
+
+        if (saveFormResult.success) {
+          formId = saveFormResult.data!.formId;
+        }
+      }
+    }
+
+    await  updateOnboardingProgress(userId, OnboardingStatusEnum.COMPLETED, OnboardingStepEnum.CUSTOMIZE);
 
     return {
       success: true,
@@ -717,9 +855,11 @@ export const completeOnboardingWorkflow = async ({
       data: {
         mailboxId,
         formTemplates: templatesResult.data!,
+        formId,
       },
     };
   } catch (error) {
+    console.error('Error completing onboarding workflow:', error);
     return {
       success: false,
       message: 'Error completing onboarding workflow',

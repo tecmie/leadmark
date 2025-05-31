@@ -13,7 +13,8 @@ import {
   AllInboxIcon,
   ExternalLinkIcon,
   InportantInboxIcon,
-  NeedsAttentionIcon
+  NeedsAttentionIcon,
+  LinkIcon
 } from '../../icons/sidebar';
 import { Avatar } from '../avatar';
 import { LogoMark } from '../logo-mark';
@@ -83,6 +84,11 @@ const SIDEBAR_ROUTES: SidebarItem[] = [
     icon: NeedsAttentionIcon,
     href: routes.INBOX_ATTENTION,
     label: 'Needs attention',
+  },
+  {
+    icon: LinkIcon,
+    href: routes.FORMS,
+    label: 'Forms',
   },
 ];
 

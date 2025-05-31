@@ -523,15 +523,14 @@ async function handleDispatchCallback(
     //  * @operation
     //  * Send a response email to the recipient
     //  */
-    // Commented out for testing
-    // await postmark.sendEmail({
-    //   From: `${owner.full_name} <${mailbox.unique_address}@${mailbox.dotcom}>`,
-    //   Headers: headers,
-    //   Subject: subject,
-    //   To: input.FromFull.Email,
-    //   HtmlBody: aiResponseToHtml,
-    //   TextBody: aiResponse,
-    // });
+    await postmark.sendEmail({
+      From: `${owner.full_name} <${mailbox.unique_address}@${mailbox.dotcom}>`,
+      Headers: headers,
+      Subject: subject,
+      To: input.FromFull.Email,
+      HtmlBody: aiResponseToHtml,
+      TextBody: aiResponse,
+    });
 
     /**
      * @operation
