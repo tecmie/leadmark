@@ -1,6 +1,6 @@
 import type {
   IUser,
-  MailBox,
+  IMailbox,
   OnboardingStatusType,
   Resource,
   Tables,
@@ -22,7 +22,7 @@ type TransformUserOptions = {
   };
   onboarding: {
     onboardingStatus?: OnboardingStatusType;
-    mailbox?: MailBox;
+    mailbox?: IMailbox;
     forwarderEmail?: string;
     resources?: Resource[];
   };

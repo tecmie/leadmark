@@ -4,7 +4,7 @@
 import { createClient } from '@/supabase/server';
 import {
   BackendResponse,
-  MailBox,
+  IMailbox,
   UpsertMailboxOptions
 } from '@repo/types';
 // import { api } from '@/trpc/server';
@@ -14,7 +14,7 @@ import {
 
 export const fetchMailbox = async (
   userId: string
-): Promise<BackendResponse<MailBox>> => {
+): Promise<BackendResponse<IMailbox>> => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('mailboxes')

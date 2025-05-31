@@ -141,8 +141,8 @@ export const createAccount = async ({
   password,
   fullname,
 }: CreateAccountOptions): Promise<BackendResponse<IUser>> => {
-  /** @TODO: Review functions .. This should be another implementation where wootiv emails are rejected 8? */
-  // else people will use their proposed wootiv email to create an account and create forwarders
+  /** @TODO: Review functions .. This should be another implementation where leadmark emails are rejected 8? */
+  // else people will use their proposed leadmark email to create an account and create forwarders
   // if (isEmailBlacklisted(email)) {
   //   return {
   //     success: false,

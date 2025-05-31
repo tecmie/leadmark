@@ -76,7 +76,7 @@ export const FileInput = ({
 
       const { success, message, data } = await uploadFileResource({
         form,
-        bucket: "wootiv",
+        bucket: "leadmark",
         userId: session.session.user.id,
       });
 

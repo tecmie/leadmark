@@ -1,41 +1,31 @@
-const showdown = require('showdown');
-import secrets from '../../../secrets';
+import showdown from "showdown";
+import secrets from "../../../secrets";
 const converter = new showdown.Converter();
-const { Configuration, OpenAIApi } = require('openai');
-
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-  temperature: 0,
-});
-
-const openai = new OpenAIApi(configuration);
+import { simpleCompletion } from "../../resources/openai/simple";
 
 /** @format */
 
-import { Job } from 'bullmq';
-import { ServerClient } from 'postmark';
-import { simpleCompletion } from '../../openai/simple';
-import { insertMessage } from '../../../supabase/base/message.base';
-import { insertMessageAttachment } from '../../../supabase/base/message-attachment.base';
-import { MessengerRole, MessageStatus, MessageOrigin, MessageStream, ThreadStatus } from '../sender.interface';
+import { Job } from "bullmq";
+import { ServerClient } from "postmark";
+import { insertMessage } from "~/services/supabase/base/message.base";
+import { insertMessageAttachment } from "~/services/supabase/base/message-attachment.base";
+import { MessageStream } from "../sender.interface";
 import {
-  ThreadBase,
-  MailboxBase,
-  MessageBase,
-  ContactBase,
-  MessageAttachmentBase,
-} from '../../../supabase/declared-types';
+  IThread,
+  IMailbox,
+  IMessage,
+  IContact,
+  IMessageAttachment,
+} from "@repo/types";
 import {
   EventConsumerMQ,
   PostmanEventMQName,
   PostmanPreprocessReturnValues,
   PostmanValidateReturnValues,
-} from '../../../events';
-import { unlockThreadOperation } from '../../../supabase/base/thread.base';
-import * as Sentry from '@sentry/node';
-import { getOrCreateDBWorkspace } from '../../../db/vectordb/utils';
-import { fetchFormattedContext } from '../../../db/vectordb';
-import { _GPT4_MODEL_11_PREVIEW } from '../../../constants';
+} from "../../../events";
+import { unlockThreadOperation } from "~/services/supabase/base/thread.base";
+import { supabase } from "~/services/supabase/client";
+import { _GPT4_ } from "~/constants";
 
 // -------------------------------------------------------------------------------------- //
 // ---------------------------- METHOD IMPLEMENTATIONS HERE----------------------------- //
@@ -50,55 +40,48 @@ export async function storeOutboundMessage({
   headers,
   recipients,
 }: {
-  thread: ThreadBase;
-  mailbox: MailboxBase;
+  thread: IThread;
+  mailbox: IMailbox;
   aiResponse: string;
   aiResponseToHtml: string;
   headers: any;
   recipients: any;
-}): Promise<MessageBase | undefined> {
+}): Promise<IMessage | undefined> {
   return await insertMessage([
     {
       thread_id: thread?.id,
-      role: MessengerRole.ASSISTANT,
-      status: MessageStatus.RESOLVED,
-      message_html: aiResponseToHtml,
-      message_text: aiResponse,
-      attachments: [],
-      origin: MessageOrigin.EMAIL as 'email',
-      owner_id: mailbox.owner_id as string,
-      raw_metadata: JSON.stringify({
+      is_ai_generated: true,
+      direction: "outbound",
+      html_content: aiResponseToHtml,
+      content: aiResponse,
+      postmark_data: {
         headers: headers,
         recipients: recipients,
         stream: MessageStream.OUTBOUND,
-      }),
+      },
     },
   ]);
 }
 
-export async function summarizeContext({ context, messageText }: { context: string; messageText: string }) {
-  const chatCompletion = await openai.createChatCompletion({
-    model: _GPT4_MODEL_11_PREVIEW,
-    messages: [
-      {
-        role: 'system',
-        content:
-          'You are a Jabob, helpful assistant that helps to summarise various sources of information in to a detailed meaning full context based on another context or question the I will give you',
-      },
-      {
-        role: 'user',
-        content: `
-      Summarise these information
-      ${context}
+export async function summarizeContext({
+  context,
+  messageText,
+}: {
+  context: string;
+  messageText: string;
+}) {
+  return await simpleCompletion({
+    name: "Context Summarizer",
+    objective:
+      "Summarize various sources of information into detailed, meaningful context based on another context or question.",
+    text: `Summarize this information:
+${context}
 
-      Based on this given question/context from me:
-     "${messageText}"
-      `,
-      },
-    ],
+Based on this given question/context:
+"${messageText}"`,
+    attachmentContext: "",
+    linksContext: "",
   });
-
-  return chatCompletion.data.choices[0].message.content;
 }
 
 async function getAttachmentContext({
@@ -106,24 +89,49 @@ async function getAttachmentContext({
   attachmentResourceIds,
   messageText,
 }: {
-  mailbox: MailboxBase;
-  attachmentResourceIds: number[];
+  mailbox: IMailbox;
+  attachmentResourceIds: string[];
   messageText: string;
 }): Promise<string> {
-  const path = getOrCreateDBWorkspace({ ownerId: mailbox.owner_id });
-  const namespace = `${path}_${mailbox.unique_address}_${mailbox.id}`;
+  if (attachmentResourceIds.length === 0) return "";
 
-  const context = await fetchFormattedContext({
-    owner_id: mailbox.owner_id,
-    namespace,
-    query: messageText,
-    filterIds: attachmentResourceIds,
-  });
+  const { data: resources } = await supabase
+    .from("resources")
+    .select("raw_content, name, raw_metadata")
+    .in("id", attachmentResourceIds)
+    .eq("owner_id", mailbox.owner_id);
+
+  if (!resources || resources.length === 0) return "";
+
+  const context = resources
+    .map(
+      (resource) => `File: ${resource.name}\nContent: ${resource.raw_content}`
+    )
+    .join("\n\n");
 
   return await summarizeContext({
     context,
     messageText,
   });
+}
+
+async function getMessageHistory({
+  threadId,
+  limit = 10,
+}: {
+  threadId: string;
+  limit?: number;
+}): Promise<string> {
+  const { data: messages } = await supabase
+    .from("messages")
+    .select("direction, content, created_at")
+    .eq("thread_id", threadId)
+    .order("created_at", { ascending: true })
+    .limit(limit);
+
+  if (!messages || messages.length === 0) return "";
+
+  return messages.map((msg) => `${msg.direction}: ${msg.content}`).join("\n\n");
 }
 
 export async function getAIResponse({
@@ -132,14 +140,14 @@ export async function getAIResponse({
   mailbox,
   contact,
   attachmentResourceIds,
-  similaritySearchResults,
+  full_name,
 }: {
-  thread: ThreadBase;
+  thread: IThread;
   messageText: string;
-  mailbox: MailboxBase;
-  contact: ContactBase;
-  attachmentResourceIds?: number[];
-  similaritySearchResults?: any;
+  mailbox: IMailbox;
+  contact: IContact;
+  attachmentResourceIds?: string[];
+  full_name: string;
 }) {
   const attachmentContext = attachmentResourceIds
     ? await getAttachmentContext({
@@ -147,29 +155,38 @@ export async function getAIResponse({
         attachmentResourceIds,
         messageText,
       })
-    : '';
+    : "";
 
-  const linksContext = similaritySearchResults
-    ? await summarizeContext({
-        context: similaritySearchResults,
-        messageText,
-      })
-    : '';
+  const messageHistory = await getMessageHistory({
+    threadId: thread.id.toString(),
+  });
 
-  const config: any = mailbox.config;
-  const memoryDbName = config.collectionName ?? 'pilot';
+  const linksContext = [
+    messageHistory && `Previous conversation:\n${messageHistory}`,
+  ]
+    .filter(Boolean)
+    .join("\n\n");
 
-  const memoryCollectionName = `${mailbox.owner_id}_${thread.namespace}`;
+  const senderName =
+    contact?.first_name && contact?.last_name
+      ? `${contact.first_name} ${contact.last_name}`
+      : "User";
+
+  // Check if we have parsed objectives
+  const objectiveParsed = mailbox.processed_objective
+    ? JSON.parse(mailbox.processed_objective)
+    : null;
 
   const aiResponse = await simpleCompletion({
+    name: senderName,
+    objective:
+      mailbox.raw_objective ||
+      "You are an AI assistant responding via email. Always respond in markdown format.",
+    objectiveParsed,
     text: messageText,
-    name: `${contact?.first_name} ${contact?.last_name}`,
-    objectiveParsed: mailbox.objective_parsed,
-    objective: mailbox.objective_raw as string,
     attachmentContext,
     linksContext,
-    memoryDbName,
-    memoryCollectionName,
+    full_name,
   });
 
   // Convert markdown response to HTML
@@ -184,22 +201,19 @@ async function _storeInboundMessage({
   input,
   messageText,
 }: {
-  thread: ThreadBase;
-  mailbox: MailboxBase;
-  input: PostmanValidateReturnValues['input'];
+  thread: IThread;
+  mailbox: IMailbox;
+  input: PostmanValidateReturnValues["input"];
   messageText: string;
-}): Promise<MessageBase | undefined> {
+}): Promise<IMessage | undefined> {
   return await insertMessage([
     {
       thread_id: thread?.id,
-      role: MessengerRole.RECIPIENT,
-      status: MessageStatus.RESOLVED,
-      message_html: input.HtmlBody,
-      message_text: messageText,
-      origin: MessageOrigin.EMAIL,
-      attachments: [],
-      owner_id: mailbox.owner_id,
-      raw_metadata: JSON.stringify({
+      html_content: input.HtmlBody,
+      content: messageText,
+      direction: "inbound",
+      subject: input.Subject,
+      postmark_data: JSON.stringify({
         stream: input.MessageStream,
         attachments: [],
         headers: input.Headers,
@@ -214,10 +228,10 @@ async function _storeAttachmentReferences({
   resourceIds,
   thread,
 }: {
-  thread: ThreadBase;
-  message: MessageBase;
-  resourceIds: number[];
-}): Promise<MessageAttachmentBase[] | undefined> {
+  thread: IThread;
+  message: IMessage;
+  resourceIds: string[];
+}): Promise<IMessageAttachment[] | undefined> {
   const resourceIdsSet = new Set(resourceIds);
 
   const dataToInsert: any[] = [];
@@ -237,7 +251,9 @@ async function _storeAttachmentReferences({
 // ---------------------------- METHOD IMPLEMENTATIONS HERE----------------------------- //
 // ------------------------------------------------------------------------------------ //
 
-async function handleDispatchCallback(job: Job<any, any, string>): Promise<any> {
+async function handleDispatchCallback(
+  job: Job<any, any, string>
+): Promise<any> {
   try {
     const childVals = await job.getChildrenValues();
     const [data] = Object.values(childVals) as [PostmanPreprocessReturnValues];
@@ -250,8 +266,8 @@ async function handleDispatchCallback(job: Job<any, any, string>): Promise<any> 
       recipients,
       headers,
       subject,
+      owner,
       attachmentResourceIds,
-      similaritySearchResults,
       message: messageText,
     } = data;
 
@@ -259,10 +275,15 @@ async function handleDispatchCallback(job: Job<any, any, string>): Promise<any> 
      * @operation
      * Store the inbound message in the thread
      */
-    const insertInboundMessage = await _storeInboundMessage({ thread, mailbox, input, messageText });
+    const insertInboundMessage = await _storeInboundMessage({
+      thread,
+      mailbox,
+      input,
+      messageText,
+    });
     if (!insertInboundMessage) {
       // If an error occurs while inserting the inbound message, throw an error
-      throw 'Error inserting inbound message';
+      throw "Error inserting inbound message";
     }
 
     /**
@@ -278,7 +299,7 @@ async function handleDispatchCallback(job: Job<any, any, string>): Promise<any> 
 
       if (!insertAttachmentReferences) {
         // If an error occurs while inserting the attachment references, throw an error
-        throw 'Error inserting message attachment references';
+        throw "Error inserting message attachment references";
       }
     }
 
@@ -293,31 +314,30 @@ async function handleDispatchCallback(job: Job<any, any, string>): Promise<any> 
      * @operation
      * Handle AI Response to the conversation
      */
-    const { aiResponse, aiResponseToHtml } =
-      mailbox.unique_address == 'workforce'
-        ? await getAIResponse({
-            thread,
-            messageText,
-            mailbox,
-            contact,
-            attachmentResourceIds,
-            similaritySearchResults,
-          })
-        : await getAIResponse({
-            thread,
-            messageText,
-            mailbox,
-            contact,
-            attachmentResourceIds,
-            similaritySearchResults,
-          });
+    const { aiResponse, aiResponseToHtml } = await getAIResponse({
+      thread,
+      messageText,
+      mailbox,
+      contact,
+      attachmentResourceIds,
+      full_name: owner.full_name!,
+    });
+
+    console.log({
+      From: `${owner.full_name} <${mailbox.unique_address}@${mailbox.dotcom}>`,
+      Headers: headers,
+      Subject: subject,
+      To: input.FromFull.Email,
+      HtmlBody: aiResponseToHtml,
+      TextBody: aiResponse,
+    });
 
     /**
      * @operation
      * Send a response email to the recipient
      */
     await postmark.sendEmail({
-      From: `${mailbox.full_name} <${mailbox.unique_address}@${mailbox.dotcom}>`,
+      From: `${owner.full_name} <${mailbox.unique_address}@${mailbox.dotcom}>`,
       Headers: headers,
       Subject: subject,
       To: input.FromFull.Email,
@@ -348,11 +368,13 @@ async function handleDispatchCallback(job: Job<any, any, string>): Promise<any> 
       subject,
       processMessages,
       thread: unlockedThread,
-      ack: '<><><><><><><><><><><><><>< webhook completion for postman with event flow ><><><><><><><><><><><><><><><><<><><><>',
+      ack: "<><><><><><><><><><><><><>< webhook completion for postman with event flow ><><><><><><><><><><><><><><><><<><><><>",
     };
   } catch (error) {
-    Sentry.captureException(error);
-    console.error(error, 'Error in postman.preprocess.ts [handlePreprocessCallback]');
+    console.error(
+      error,
+      "Error in postman.preprocess.ts [handlePreprocessCallback]"
+    );
     throw error;
   }
 }

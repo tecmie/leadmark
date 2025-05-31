@@ -1,25 +1,29 @@
-import { Job } from 'bullmq';
-import { fromValueHash } from '../../crypto';
-import { supabase } from '../../../supabase/client';
-import { EventConsumerMQ, PostmanEventMQName, PostmanValidateReturnValues } from '../../../events';
-import { contactOperation } from '../../../supabase/base/contact.base';
-import { threadOperation } from '../../../supabase/base/thread.base';
-import { MailboxBase, ContactBase, ThreadBase, UserBase } from '../../../supabase/declared-types';
-import { handleAttachmentsOnReceivedMail } from '../../resources/handlers/handle-attachments-on-received-mail';
-import { parseLinksOnReceivedMail } from '../../resources/handlers/parse-links-on-received-mail';
-import { MailRecipients } from '../helpers';
+import { Job } from "bullmq";
+import {
+  EventConsumerMQ,
+  PostmanEventMQName,
+  PostmanValidateReturnValues,
+} from "../../../events";
+import { IMailbox, IContact, IThread, IUser } from "@repo/types";
+// import { parseLinksOnReceivedMail } from '../../resources/handlers/parse-links-on-received-mail';
+import { MailRecipients } from "../helpers";
+import { fromValueHash } from "~/services/crypto";
+import { supabase } from "~/services/supabase/client";
+import { contactOperation } from "~/services/supabase/base/contact.base";
+import { threadOperation } from "~/services/supabase/base/thread.base";
+import { handleAttachmentsOnReceivedMail } from "~/services/resources/handlers";
 
 export type PostmanPreprocessReturnValues = {
   headers: any[];
   subject: string;
   message: string;
-  input: PostmanValidateReturnValues['input'];
+  input: PostmanValidateReturnValues["input"];
   recipients: MailRecipients;
-  mailbox: MailboxBase;
-  owner: UserBase;
-  contact: ContactBase;
-  thread: ThreadBase;
-  attachmentResourceIds: number[];
+  mailbox: IMailbox;
+  owner: IUser;
+  contact: IContact;
+  thread: IThread;
+  attachmentResourceIds: string[];
   similaritySearchResults: string;
 };
 
@@ -27,7 +31,7 @@ export type PostmanPreprocessReturnValues = {
  * @function _fetchAndLockThread
  * @description Fetch and lock a conversation thread
  *
- * @returns {ThreadBase | undefined}
+ * @returns {IThread | undefined}
  */
 async function _fetchAndLockThread({
   input,
@@ -35,11 +39,11 @@ async function _fetchAndLockThread({
   subject,
   contact,
 }: {
-  input: PostmanValidateReturnValues['input'];
-  mailbox: MailboxBase;
+  input: PostmanValidateReturnValues["input"];
+  mailbox: IMailbox;
   subject: string;
-  contact: ContactBase;
-}): Promise<ThreadBase | undefined> {
+  contact: IContact;
+}): Promise<IThread | undefined> {
   const threadNamespace = fromValueHash(
     JSON.stringify({
       from: input.FromFull.Email,
@@ -64,12 +68,23 @@ async function _fetchAndLockThread({
  * @description Handle the callback for the postman preprocess consumer
  * @returns  {PostmanPreprocessReturnValues}
  */
-async function handlePreprocessCallback(job: Job): Promise<PostmanPreprocessReturnValues> {
+async function handlePreprocessCallback(
+  job: Job
+): Promise<PostmanPreprocessReturnValues> {
   try {
     const childVals = await job.getChildrenValues();
     const [data] = Object.values(childVals) as [PostmanValidateReturnValues];
 
-    const { input, mailbox, recipients, headers, message, attachments, owner, subject } = data;
+    const {
+      input,
+      mailbox,
+      recipients,
+      headers,
+      message,
+      attachments,
+      owner,
+      subject,
+    } = data;
 
     /**
      * @operation
@@ -78,23 +93,33 @@ async function handlePreprocessCallback(job: Job): Promise<PostmanPreprocessRetu
     const contact = await contactOperation({ input, mailbox });
     if (!contact) {
       // If an error occurs while creating the contact, throw an error
-      throw 'Error creating contact';
+      throw "Error creating contact";
     }
 
     /**
      * @operation
      * Get or create a new thread for this email, then lock the conversation thread
      */
-    const thread = await _fetchAndLockThread({ input, mailbox, subject, contact });
+    const thread = await _fetchAndLockThread({
+      input,
+      mailbox,
+      subject,
+      contact,
+    });
     if (!thread) {
       // If an error occurs while creating the thread, throw an error
-      throw 'Error creating thread';
+      throw "Error creating thread";
     }
 
-    console.log({ thread, mailbox, contact, s: 'inside ppmq.preprocess <<><><><><><><><><<>>><><><<><' });
+    console.log({
+      thread,
+      mailbox,
+      contact,
+      s: "inside ppmq.preprocess <<><><><><><><><><<>>><><><<><",
+    });
 
     let attachmentQATool;
-    let attachmentResourceIds: number[] = [];
+    let attachmentResourceIds: string[] = [];
     if (attachments.length != 0) {
       /**
        * @operation
@@ -107,11 +132,14 @@ async function handlePreprocessCallback(job: Job): Promise<PostmanPreprocessRetu
         attachments,
       });
 
-      console.log({ handleAttachmentResults, s: 'inside ppmq.preprocess <<><><><><><><><><<>>><><><<><' });
+      console.log({
+        handleAttachmentResults,
+        s: "inside ppmq.preprocess <<><><><><><><><><<>>><><><<><",
+      });
 
       if (!handleAttachmentResults) {
         // If an error occurs while handling attachments, handleAttactmentResults will be undefined
-        throw 'Error handling attachments';
+        throw "Error handling attachments";
       }
       const result = handleAttachmentResults;
       attachmentResourceIds = result.attachmentResourceIds;
@@ -121,13 +149,13 @@ async function handlePreprocessCallback(job: Job): Promise<PostmanPreprocessRetu
      * @operation
      * Parse links in the received email content
      */
-    const { similaritySearchResults } = await parseLinksOnReceivedMail({
-      mailbox,
-      owner,
-      content: message,
-      query: message,
-      supabase,
-    });
+    // const { similaritySearchResults } = await parseLinksOnReceivedMail({
+    //   mailbox,
+    //   owner,
+    //   content: message,
+    //   query: message,
+    //   supabase,
+    // });
 
     return {
       headers,
@@ -140,10 +168,13 @@ async function handlePreprocessCallback(job: Job): Promise<PostmanPreprocessRetu
       contact,
       thread,
       attachmentResourceIds,
-      similaritySearchResults,
+      similaritySearchResults: "",
     };
   } catch (error) {
-    console.error(error, 'Error in postman.preprocess.ts [handlePreprocessCallback]');
+    console.error(
+      error,
+      "Error in postman.preprocess.ts [handlePreprocessCallback]"
+    );
     throw error;
   }
 }

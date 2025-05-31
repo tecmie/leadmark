@@ -4,7 +4,6 @@ import helmet from "helmet";
 import morgan from "morgan";
 import { MessageResponse } from "~/interfaces/response.interface";
 import api from "./api";
-import { JobsController } from "./controllers/jobs";
 import * as middlewares from "./middlewares";
 
 export function createApp(): express.Application {
@@ -26,11 +25,6 @@ export function createApp(): express.Application {
       message: "🦄🌈✨👋🌎🌍🌏✨🌈🦄",
     });
   });
-
-  const jobsController = new JobsController();
-
-  app.post("/jobs", jobsController.createJob.bind(jobsController));
-  app.get("/jobs/:id", jobsController.getJobStatus.bind(jobsController));
 
   return app;
 }

@@ -1,28 +1,31 @@
-import { FlowProducer, JobNode } from 'bullmq';
-import { postmanFlowProducer } from './bullmq';
-import { InboundMessageDetails } from 'postmark/dist/client/models';
-import { MailboxBaseWithUserBase } from '@repo/types';
+import { FlowProducer, JobNode } from "bullmq";
+import { postmanFlowProducer } from "./bullmq";
+import { InboundMessageDetails } from "postmark/dist/client/models";
+import { IMailboxWithIUser } from "@repo/types";
 
 export interface EventProducerMQOptions {
-  mailbox: MailboxBaseWithUserBase;
+  mailbox: IMailboxWithIUser;
   producer?: FlowProducer;
 }
 
 export enum PostmanEventMQName {
-  VALIDATE = 'ppmq:validate',
-  PREPROCESS = 'ppmq:preprocess',
-  DISPATCH = 'ppmq:dispatch',
+  VALIDATE = "ppmq-validate",
+  PREPROCESS = "ppmq-preprocess",
+  DISPATCH = "ppmq-dispatch",
 }
 
 export default class EventProducerMQ {
   producer: FlowProducer;
-  mailbox: EventProducerMQOptions['mailbox'];
+  mailbox: EventProducerMQOptions["mailbox"];
 
   /**
    * @constructs EventProducerMQ
    * @description Constructs a EventProducerMQ instance.
    */
-  constructor({ mailbox, producer = postmanFlowProducer }: EventProducerMQOptions) {
+  constructor({
+    mailbox,
+    producer = postmanFlowProducer,
+  }: EventProducerMQOptions) {
     this.producer = producer;
     this.mailbox = mailbox;
   }
@@ -34,8 +37,8 @@ export default class EventProducerMQ {
    * @returns {Boolean} True or false
    */
 
-  private async canProcessInboundQuery() {
-    return this.mailbox.status === 'active';
+  private canProcessInboundQuery(): boolean {
+    return this.mailbox.status === "active";
   }
 
   /**
@@ -49,12 +52,12 @@ export default class EventProducerMQ {
    */
   async postman(payload: InboundMessageDetails): Promise<JobNode | undefined> {
     try {
-      if (!(await this.canProcessInboundQuery())) {
-        throw new Error('Mailbox is not active');
+      if (!this.canProcessInboundQuery()) {
+        throw new Error("Mailbox is not active");
       }
 
       return await this.producer.add({
-        name: 'POSTMAN_WEBHOOK_FINAL_JOB',
+        name: "POSTMAN_WEBHOOK_FINAL_JOB",
         queueName: PostmanEventMQName.DISPATCH,
         data: {}, // We use the data from children
         opts: { removeOnComplete: true, delay: 500 },
@@ -76,7 +79,7 @@ export default class EventProducerMQ {
         ],
       });
     } catch (error) {
-      console.error(error, '[EventProducerMQ.postman]');
+      console.error(error, "[EventProducerMQ.postman]");
     }
   }
 
