@@ -2,13 +2,14 @@ import type {
   IUser,
   MailBox,
   OnboardingStatusType,
+  OnboardingStepType,
   Resource,
   Tables,
 } from '@repo/types';
 import type { User } from '@supabase/supabase-js';
 
 type TransformUserOptions = {
-  user: any;//User | Tables<'users'>;
+  user: any; //User | Tables<'users'>;
   metadata: {
     bio?: string;
     link?: string;
@@ -25,6 +26,7 @@ type TransformUserOptions = {
     mailbox?: MailBox;
     forwarderEmail?: string;
     resources?: Resource[];
+    onboardingStep?: OnboardingStepType;
   };
   token?: string;
 };
@@ -43,7 +45,8 @@ export const transformUser = ({
     payment_method = null,
   },
   onboarding: {
-    onboardingStatus = 'account_created',
+    onboardingStatus = 'not_started',
+    onboardingStep = 'not_started',
     forwarderEmail = '',
     mailbox,
     resources = [],

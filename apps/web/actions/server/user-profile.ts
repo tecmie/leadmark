@@ -85,14 +85,16 @@ export const fetchProfileInfo = async (
   }
 
   const status = await checkOnboardingStatus(data[0].id);
+ const step = await checkOnboardingStep(data[0].id);
 
-  const transformedUser = transformUser({
-    user: data[0],
-    metadata: {},
-    onboarding: {
-      onboardingStatus: status,
-    },
-  });
+ const transformedUser = transformUser({
+   user: data[0],
+   metadata: {},
+   onboarding: {
+     onboardingStatus: status,
+     onboardingStep: step,
+   },
+ });
 
   return {
     success: true,

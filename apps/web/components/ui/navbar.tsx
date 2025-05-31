@@ -45,7 +45,7 @@ export const Navbar = ({
   return (
     <div
       className={`items-center justify-between gap-10 sm:px-6 px-4 py-4 bg-transparent w-full h-[88px] ${
-        pathname?.startsWith(routes?.inboxViewer) ? 'hidden sm:flex' : 'flex'
+        pathname?.startsWith(routes?.INBOX_VIEWER) ? 'hidden sm:flex' : 'flex'
       } `}
     >
       <div className="relative items-center justify-center hidden gap-6 sm:flex ">
@@ -69,19 +69,19 @@ export const Navbar = ({
           <Avatar src="" label={initials} className="w-8 h-8 -right-0.5" />
         </div>
       </div> */}
-      {!pathname?.startsWith(routes?.inboxViewer) && (
+      {!pathname?.startsWith(routes?.INBOX_VIEWER) && (
         <div className="relative flex items-center w-full sm:hidden">
           <Input
             startIcon={LucideMenu}
             readOnly
             placeholder={
-              pathname?.startsWith(routes.inboxOverview)
+              pathname?.startsWith(routes.INBOX_OVERVIEW)
                 ? 'Search inbox'
-                : pathname?.startsWith(routes.settings)
+                : pathname?.startsWith(routes.SETTINGS)
                   ? 'Search settings'
-                  : pathname?.startsWith(routes.apps)
+                  : pathname?.startsWith(routes.APPS)
                     ? 'Search applications'
-                    : pathname?.startsWith(routes.profile)
+                    : pathname?.startsWith(routes.PROFILE)
                       ? 'Search profile'
                       : 'search'
             }
@@ -90,33 +90,25 @@ export const Navbar = ({
           />
           <DropdownMenu>
             <DropdownMenuTrigger className="absolute right-1.5">
-              <Avatar
-                src=""
-                label={initials}
-                className="w-8 h-8"
-              />
+              <Avatar src="" label={initials} className="w-8 h-8" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent className='bg-white mr-2'>
-              <div className='text-center'>
-                <ComingSoonTag/>
+            <DropdownMenuContent className="bg-white mr-2">
+              <div className="text-center">
+                <ComingSoonTag />
               </div>
-              <DropdownMenuLabel className='text-primary text-xs'>
+              <DropdownMenuLabel className="text-primary text-xs">
                 Switch Mailbox
               </DropdownMenuLabel>
               <DropdownMenuItem>
-                <Avatar
-                  src=""
-                  label={initials}
-                  className="w-8 h-8"
-                />
-                <div className='flex flex-col text-xs text-black'>
-                  <div className='font-semibold'>{name}</div>
+                <Avatar src="" label={initials} className="w-8 h-8" />
+                <div className="flex flex-col text-xs text-black">
+                  <div className="font-semibold">{name}</div>
                   <div>{email}</div>
                 </div>
               </DropdownMenuItem>
-              <DropdownMenuSeparator className='bg-gray-300' />
-              <DropdownMenuItem className='text-xs'>
-                <LucidePlus size={4} className='w-6 h-6'/>
+              <DropdownMenuSeparator className="bg-gray-300" />
+              <DropdownMenuItem className="text-xs">
+                <LucidePlus size={4} className="w-6 h-6" />
                 <div>Create a new mailbox</div>
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -126,7 +118,6 @@ export const Navbar = ({
             label={initials}
             className="w-8 h-8 absolute right-1.5"
           /> */}
-         
         </div>
       )}
 
@@ -145,31 +136,25 @@ export const Navbar = ({
             </span>
             <DropdownMenu>
               <DropdownMenuTrigger className="-right-0.5">
-                <Avatar
-                  src=""
-                  label={initials}
-                  className="w-8 h-8"
-                />
+                <Avatar src="" label={initials} className="w-8 h-8" />
               </DropdownMenuTrigger>
-              <DropdownMenuContent className='bg-white'>
-              <div className='text-center'>
-              <ComingSoonTag/>
-              </div>
-                <DropdownMenuLabel className='text-primary text-xs'>Switch Mailbox</DropdownMenuLabel>
+              <DropdownMenuContent className="bg-white">
+                <div className="text-center">
+                  <ComingSoonTag />
+                </div>
+                <DropdownMenuLabel className="text-primary text-xs">
+                  Switch Mailbox
+                </DropdownMenuLabel>
                 <DropdownMenuItem>
-                  <Avatar
-                    src=""
-                    label={initials}
-                    className="w-8 h-8"
-                  />
-                  <div className='flex flex-col text-xs text-black'>
-                    <div className='font-semibold'>{name}</div>
+                  <Avatar src="" label={initials} className="w-8 h-8" />
+                  <div className="flex flex-col text-xs text-black">
+                    <div className="font-semibold">{name}</div>
                     <div>{email}</div>
                   </div>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator className='bg-gray-300' />
-                <DropdownMenuItem className='text-xs'>
-                  <LucidePlus size={4} className='w-6 h-6'/>
+                <DropdownMenuSeparator className="bg-gray-300" />
+                <DropdownMenuItem className="text-xs">
+                  <LucidePlus size={4} className="w-6 h-6" />
                   <div>Create a new mailbox</div>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -195,7 +180,7 @@ export const Navbar = ({
 
         <Tooltip content="Settings" side="bottom">
           <Link
-            href={routes.settings}
+            href={routes.SETTINGS}
             className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }))}
           >
             <SettingsNavIcon className="inline-block" />

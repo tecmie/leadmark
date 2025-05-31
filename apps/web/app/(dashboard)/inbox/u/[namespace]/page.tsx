@@ -21,12 +21,12 @@ export default async function Page({
   const session = await getSession();
 
   if (!session) {
-    return redirect(routes.signIn);
+    return redirect(routes.SIGN_IN);
   }
   const { data: mailbox } = await fetchMailbox(session.user.id);
 
   if (!messages || !thread) {
-    redirect(routes.inboxOverview);
+    redirect(routes.INBOX_OVERVIEW);
   }
 
   return (
