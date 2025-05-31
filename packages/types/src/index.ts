@@ -13,18 +13,30 @@ export enum ActionTypeEnum {
   FORWARDER = "MAIL_FORWARDER_ACTION",
 }
 
-export type OnboardingStatusType =
-  | "account_created"
-  | "mailbox_created"
-  | "forwarder_created"
-  | "links_created";
+export enum OnboardingStatusEnum {
+  NOT_STARTED = 'not_started',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+}
 
-export type ViewSignIn = "sign_in";
-export type ViewSignUp = "sign_up";
-export type ViewMagicLink = "magic_link";
-export type ViewForgottenPassword = "forgotten_password";
-export type ViewUpdatePassword = "update_password";
-export type ViewVerifyOtp = "verify_otp";
+export enum OnboardingStepEnum {
+  NOT_STARTED = 'not_started',
+  SETUP_MAIL = 'setup_mail',
+  RESOURCE = 'resource',
+  CHOOSE_TEMPLATE = 'choose_template',
+  CUSTOMIZE = 'customize',
+  WELCOME = 'welcome',
+}
+
+export type OnboardingStatusType = `${OnboardingStatusEnum}`;
+export type OnboardingStepType = `${OnboardingStepEnum}`;
+
+export type ViewSignIn = 'sign_in';
+export type ViewSignUp = 'sign_up';
+export type ViewMagicLink = 'magic_link';
+export type ViewForgottenPassword = 'forgotten_password';
+export type ViewUpdatePassword = 'update_password';
+export type ViewVerifyOtp = 'verify_otp';
 export type ViewType =
   | ViewSignIn
   | ViewSignUp

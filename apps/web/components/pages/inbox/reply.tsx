@@ -8,7 +8,7 @@ import { replyToMessage } from '@/actions/server/messages';
 import { Message, Thread } from '@repo/types';
 import { cn } from '@/utils/ui';
 import { ArrowLeft, Trash2 } from 'lucide-react';
-import { useRouter } from 'next-nprogress-bar';
+import { useRouter } from '@bprogress/next/app';
 import { useState } from 'react';
 import { toast } from 'sonner';
 

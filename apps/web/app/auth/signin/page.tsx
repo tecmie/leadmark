@@ -11,7 +11,7 @@ export default async function Page() {
   } = await supabase.auth.getSession();
 
   if (session) {
-    return redirect(routes.inboxOverview);
+    return redirect(routes.INBOX_OVERVIEW);
   }
   return <SignInPage />;
 }

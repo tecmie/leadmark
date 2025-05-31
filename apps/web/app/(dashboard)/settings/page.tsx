@@ -17,29 +17,29 @@ export default async function Page() {
   const session = await getSession();
 
   if (!session) {
-    return redirect(routes.signIn);
+    return redirect(routes.SIGN_IN);
   }
 
   const SETTINGS_ROUTE = [
     {
       icon: LinkIcon,
-      href: routes.settingsLinks,
+      href: routes.SETTINGS_LINKS,
       label: 'Links',
     },
     {
       icon: DocumentIcon,
-      href: routes.settingsDocuments,
+      href: routes.SETTINGS_DOCUMENTS,
       label: 'Documents',
     },
 
     {
       icon: ActionsIcon,
-      href: routes.settingsActions,
+      href: routes.SETTINGS_ACTIONS,
       label: 'Actions',
     },
     {
       icon: CreditIcon,
-      href: routes.billing,
+      href: routes.BILLING,
       label: 'Billing',
     },
     {

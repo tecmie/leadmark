@@ -26,28 +26,28 @@ const links = [
 const navs = [
   {
     title: 'Home',
-    route: routes.inboxOverview,
+    route: routes.INBOX_OVERVIEW,
     icon: <HomeNavIcon className="inline-block mb-1" />,
-    activeIcon: <ActiveHomeIcon className="inline-block mb-1" />
+    activeIcon: <ActiveHomeIcon className="inline-block mb-1" />,
   },
   {
     title: 'Apps',
-    route: routes.apps,
+    route: routes.APPS,
     icon: <AppsNavIcon className="inline-block mb-1" />,
-    activeIcon: <ActiveAppIcon className="inline-block mb-1" />
+    activeIcon: <ActiveAppIcon className="inline-block mb-1" />,
   },
   {
     title: 'Profile',
-    route: routes.profile,
+    route: routes.PROFILE,
     icon: <ProfileNavIcon className="inline-block mb-1" />,
-    activeIcon: <ActiveProfileIcon className="inline-block mb-1" />
+    activeIcon: <ActiveProfileIcon className="inline-block mb-1" />,
   },
   {
     title: 'Settings',
-    route: routes.settings,
+    route: routes.SETTINGS,
     icon: <SettingsNavIcon className="inline-block mb-1" />,
-    activeIcon: <ActiveSettingsIcon className="inline-block mb-1" />
-  }
+    activeIcon: <ActiveSettingsIcon className="inline-block mb-1" />,
+  },
 ];
 
 interface BottomNavProps extends PropsWithChildren {

@@ -7,7 +7,7 @@ export default async function Layout({ children }: PropsWithChildren) {
   const session = await getSession();
 
   if (!session) {
-    return redirect(routes.signIn);
+    return redirect(routes.SIGN_IN);
   }
 
   return (

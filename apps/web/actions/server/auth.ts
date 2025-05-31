@@ -12,7 +12,7 @@ import {
 import { getURL } from '@/utils/helpers';
 import { transformUser } from '@/utils/transform-user';
 import { AuthError, Session, User } from '@supabase/supabase-js';
-import { checkOnboardingStatus } from './user-profile';
+import { checkOnboardingStatus, checkOnboardingStep } from './user-profile';
 import { createClient } from '@/supabase/client';
 
 const supabase = createClient();
@@ -31,11 +31,15 @@ const _handleUserResponse = async (
   }
 
   const status = await checkOnboardingStatus(data.user.id);
+  const step = await checkOnboardingStep(data.user.id);
 
   const transformedUser = transformUser({
     user: data.user,
     metadata: {},
-    onboarding: { ...status },
+    onboarding: {
+      onboardingStatus: status,
+      onboardingStep: step,
+    },
   });
 
   return {

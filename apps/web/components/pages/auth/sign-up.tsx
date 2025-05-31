@@ -1,39 +1,88 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { LogoMark } from '@/components/ui/logo-mark';
 import { createClient } from '@/supabase/client';
 import { routes } from '@/utils/routes';
 import { Eye, EyeOff, KeyRound, Loader2, Mail, User } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { OnboardingStatusEnum } from '@repo/types';
+import { useRouter } from '@bprogress/next/app';
+
+const signUpSchema = z.object({
+  email: z.string().email('Please enter a valid email address'),
+  password: z
+    .string()
+    .min(1, 'Password is required')
+    .min(8, 'Password must be at least 8 characters')
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+      'Password must contain at least one uppercase letter, one lowercase letter, one number and one special character'
+    ),
+  fullname: z.string().min(1, 'Full name is required'),
+});
+
+type SignUpFormData = z.infer<typeof signUpSchema>;
 
 export const SignUpPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [fullname, setFullname] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [canResendLink, setCanResendLink] = useState(false);
-  const router = useRouter();
   const searchParams = useSearchParams();
   const createSuccess = searchParams?.get('success') === 'true';
+  const email = searchParams?.get('email');
   const supabase = createClient();
+  const router = useRouter();
+  const form = useForm<SignUpFormData>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      fullname: '',
+    },
+  });
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const [resendCountdown, setResendCountdown] = useState(30);
+  const [canResend, setCanResend] = useState(false);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (!canResend && resendCountdown > 0) {
+      timer = setTimeout(() => {
+        setResendCountdown(resendCountdown - 1);
+      }, 1000);
+    } else if (resendCountdown === 0) {
+      setCanResend(true);
+    }
+    return () => clearTimeout(timer);
+  }, [resendCountdown, canResend]);
+
+  const onSubmit = async (data: SignUpFormData) => {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
+      const { data: authData, error } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
         options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
           data: {
-            full_name: fullname,
+            full_name: data.fullname,
+            onboarding_status: OnboardingStatusEnum.NOT_STARTED,
           },
         },
       });
@@ -43,24 +92,23 @@ export const SignUpPage = () => {
         return;
       }
 
-      if (data?.user) {
-        // Create profile
-        const { error: profileError } = await supabase.from('profiles').insert({
-          id: data.user.id,
-          full_name: fullname,
-          email: email,
-          onboarding_status: 'pending',
-        });
+      if (authData?.user) {
+        console.log('authData', authData);
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({ onboarding_status: OnboardingStatusEnum.NOT_STARTED })
+          .eq('id', authData.user.id);
 
         if (profileError) {
           toast.error(profileError.message);
           return;
         }
-
-        router.push(`${routes.signUp}?success=true`);
-        setTimeout(() => {
-          setCanResendLink(true);
-        }, 60 * 1000);
+        form.reset({
+          email: '',
+          password: '',
+          fullname: '',
+        });
+        router.push(routes.SIGN_UP + '?success=true&email=' + data.email);
       }
     } catch (err) {
       toast.error((err as Error).message);
@@ -70,29 +118,26 @@ export const SignUpPage = () => {
   };
 
   const handleResendConfirmationEmail = async () => {
-    setCanResendLink(false);
+    setCanResend(false);
+    setResendCountdown(30);
 
     try {
       const { error } = await supabase.auth.resend({
         type: 'signup',
-        email,
+        email: email || '',
       });
 
       if (error) {
         toast.error(error.message);
-        setCanResendLink(true);
+        setCanResend(true);
         return;
       }
 
       toast.success('Confirmation email resent successfully');
     } catch (err) {
       toast.error((err as Error).message);
-      setCanResendLink(true);
+      setCanResend(true);
     }
-
-    setTimeout(() => {
-      setCanResendLink(true);
-    }, 60 * 1000);
   };
 
   if (createSuccess) {
@@ -108,15 +153,13 @@ export const SignUpPage = () => {
         </div>
         <div>
           Didn&apos;t receive any mail?{' '}
-          <Button
-            variant="link"
-            size="sm"
-            className="text-primary-base"
+          <button
+            className="text-blue-500 font-medium"
             onClick={handleResendConfirmationEmail}
-            disabled={!canResendLink}
+            disabled={!canResend}
           >
-            Resend email
-          </Button>
+            {canResend ? 'Resend email' : `Resend in ${resendCountdown}s`}
+          </button>
         </div>
       </div>
     );
@@ -124,79 +167,92 @@ export const SignUpPage = () => {
 
   return (
     <div className="flex flex-col gap-8 items-center w-full p-6 mx-auto max-w-[400px] text-center">
-      <LogoMark />
       <div className="flex flex-col items-center w-full gap-1">
+        <LogoMark />
         <h2 className="text-2xl font-bold">Create an account</h2>
         <p>Your journey to an AI automated inbox starts here.</p>
       </div>
 
-      <form onSubmit={handleSignUp} className="flex flex-col w-full gap-4">
-        <div className="space-y-2 flex items-start flex-col justify-start">
-          <label htmlFor="fullname" className="text-sm font-medium">
-            Full name
-          </label>
-          <Input
-            id="fullname"
-            type="text"
-            placeholder="Enter your full name"
-            value={fullname}
-            onChange={(e) => setFullname(e.target.value)}
-            startIcon={User}
-            required
-          />
-        </div>
-
-        <div className="space-y-2 flex items-start flex-col justify-start">
-          <label htmlFor="email" className="text-sm font-medium">
-            Email address
-          </label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="Enter your email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            startIcon={Mail}
-            required
-          />
-        </div>
-
-        <div className="space-y-2 flex items-start flex-col justify-start">
-          <label htmlFor="password" className="text-sm font-medium">
-            Password
-          </label>
-          <Input
-            id="password"
-            type={showPassword ? 'text' : 'password'}
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            startIcon={KeyRound}
-            endIcon={showPassword ? EyeOff : Eye}
-            onClickEndIcon={() => setShowPassword(!showPassword)}
-            required
-          />
-          <p className="text-xs text-left text-muted-foreground">
-            Password should be at least 8 characters long
-          </p>
-        </div>
-
-        <Button
-          type="submit"
-          className="w-full bg-black text-white"
-          disabled={loading}
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col w-full gap-4"
         >
-          {loading ? (
-            <Loader2 size={16} className="animate-spin" />
-          ) : (
-            'Create account'
-          )}
-        </Button>
-      </form>
+          <FormField
+            control={form.control}
+            name="fullname"
+            render={({ field }) => (
+              <FormItem className="space-y-2">
+                <FormLabel>Full name</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter your full name"
+                    {...field}
+                    startIcon={User}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem className="space-y-2">
+                <FormLabel>Email address</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter your email address"
+                    {...field}
+                    type="email"
+                    startIcon={Mail}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem className="space-y-2">
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter your password"
+                    {...field}
+                    type={showPassword ? 'text' : 'password'}
+                    startIcon={KeyRound}
+                    endIcon={showPassword ? EyeOff : Eye}
+                    onClickEndIcon={() => setShowPassword(!showPassword)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Button
+            type="submit"
+            className="w-full text-white bg-primary-base"
+            disabled={loading}
+          >
+            {loading ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              'Create account'
+            )}
+          </Button>
+        </form>
+      </Form>
 
       <p>
         Already have an account?{' '}
-        <Link href={routes.signIn} className="text-primary-base">
+        <Link href={routes.SIGN_IN} className="text-blue-500 font-medium">
           Log in
         </Link>
       </p>

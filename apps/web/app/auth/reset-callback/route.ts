@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 
 import type { NextRequest } from 'next/server';
-import { routes } from '@/utils/routes';
 import { getURL } from '@/utils/helpers';
+import { routes } from '@/utils/routes';
 import { createClient } from '@/supabase/client';
 
 export async function GET(request: NextRequest) {
@@ -14,5 +14,5 @@ export async function GET(request: NextRequest) {
     await supabase.auth.exchangeCodeForSession(code);
   }
 
-  return NextResponse.redirect(getURL() + routes.ONBOARDING_GET_STARTED);
+  return NextResponse.redirect(getURL() + routes.RESET_PASSWORD);
 }

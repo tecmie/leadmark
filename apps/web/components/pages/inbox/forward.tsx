@@ -9,7 +9,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Message, Thread } from '@repo/types';
 import { cn } from '@/utils/ui';
 import { ArrowLeft, Trash2 } from 'lucide-react';
-import { useRouter } from 'next-nprogress-bar';
+import { useRouter } from '@bprogress/next/app';
 
 interface InboxMessageItemProps {
   message: Message;

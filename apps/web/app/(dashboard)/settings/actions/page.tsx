@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 export default async function Page() {
   const session = await getSession();
   if (!session) {
-    redirect(routes.signIn);
+    redirect(routes.SIGN_IN);
   }
   const { data: payment } = await fetchPaymentInfo(session.user.id);
   const { data: forwarder } = await fetchForwarderTool(session.user.id);
