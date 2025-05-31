@@ -92,7 +92,7 @@ export default function ConfirmEmailPage() {
   if (!mounted) return null;
 
   return (
-    <div className="min-h-[80vh] bg-white flex items-center justify-center p-6">
+    <div className="flex flex-col gap-8 items-center w-full p-6 mx-auto max-w-[400px] min-h-[80vh] justify-center text-center">
       <div className="max-w-md w-full text-center space-y-8">
         {/* Logo */}
         <div className="flex justify-center">

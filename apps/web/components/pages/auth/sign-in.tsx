@@ -82,7 +82,7 @@ export const SignInPage = () => {
   };
 
   return (
-    <div className="flex flex-col gap-8 items-center w-full p-6 mx-auto max-w-[400px] text-center">
+    <div className="flex flex-col gap-8 items-center w-full p-6 mx-auto max-w-[400px] min-h-[80vh] justify-center text-center">
       <div className="flex flex-col items-center w-full gap-1">
         <LogoMark />
         <h2 className="text-2xl font-bold">Log in to your account</h2>
