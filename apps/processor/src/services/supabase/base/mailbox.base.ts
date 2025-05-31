@@ -1,7 +1,7 @@
 import { supabase } from '../client';
 
 function getNormalizedEmail(email: string) {
-  // Some email clients, E.g "Zoho mail" may send the email TO field as '"paul" <paul@leadmark.com>'
+  // Some email clients, E.g "Zoho mail" may send the email TO field as '"paul" <paul@leadmark.email>'
   email = email.trim().toLowerCase();
   let name;
 

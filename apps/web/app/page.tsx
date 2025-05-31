@@ -147,7 +147,7 @@ export default function LandingPage() {
               How it works
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Three simple steps to transform email into powerful workflows
+              Your AI assistant handles business communications automatically
             </p>
           </div>
           
@@ -158,14 +158,14 @@ export default function LandingPage() {
                 <div className="flex items-center justify-center w-16 h-16 bg-blue-500 text-white rounded-2xl mx-auto mb-6 text-xl font-bold">
                   1
                 </div>
-                <h3 className="text-xl font-semibold text-slate-900 mb-3">Send Email</h3>
+                <h3 className="text-xl font-semibold text-slate-900 mb-3">Golden Opportunity</h3>
                 <p className="text-slate-600 mb-4">
-                  Email task@project.leadmark.dev with your request. Subject becomes the task title, body contains details.
+                  A Fortune 500 company emails expansion@leadmark.email interested in a massive rollout while you're enjoying family dinner.
                 </p>
                 <div className="bg-slate-100 rounded-lg p-4 text-sm text-slate-700">
-                  <div className="font-medium mb-1">To: task@project.leadmark.dev</div>
-                  <div className="font-medium mb-1">Subject: Fix login bug</div>
-                  <div>Priority: High<br/>Assign: @john</div>
+                  <div className="font-medium mb-1">To: expansion@leadmark.email</div>
+                  <div className="font-medium mb-1">Subject: Enterprise rollout for 50,000 users</div>
+                  <div>Hi! We saw your product demo and want to discuss expanding from our pilot to all 50k employees. What's our timeline and pricing for Q1 launch?</div>
                 </div>
               </div>
 
@@ -174,17 +174,18 @@ export default function LandingPage() {
                 <div className="flex items-center justify-center w-16 h-16 bg-purple-500 text-white rounded-2xl mx-auto mb-6 text-xl font-bold">
                   2
                 </div>
-                <h3 className="text-xl font-semibold text-slate-900 mb-3">Postmark Processes</h3>
+                <h3 className="text-xl font-semibold text-slate-900 mb-3">AI Seizes the Moment</h3>
                 <p className="text-slate-600 mb-4">
-                  Postmark instantly parses your email and sends structured JSON to our webhook endpoint.
+                  AI instantly recognizes this as a mega-deal, sends tailored enterprise proposal, implementation timeline, and exclusive pricing.
                 </p>
                 <div className="bg-slate-100 rounded-lg p-4 text-sm text-slate-700 text-left">
-                  <div className="font-mono text-xs">
-                    {`{
-  "Subject": "Fix login bug",
-  "From": "you@company.com",
-  "TextBody": "Priority: High\\nAssign: @john"
-}`}
+                  <div className="text-xs">
+                    <strong>Hi [Name],</strong><br/><br/>
+                    Fantastic timing! For 50k users, here's what we can offer:<br/><br/>
+                    ✅ Custom enterprise pricing: $8/user (vs $15 standard)<br/>
+                    ✅ Dedicated Q1 implementation team<br/>
+                    ✅ White-glove onboarding & training<br/><br/>
+                    I've reserved this pricing for 48 hours and scheduled our enterprise team for a deep-dive tomorrow.
                   </div>
                 </div>
               </div>
@@ -194,17 +195,17 @@ export default function LandingPage() {
                 <div className="flex items-center justify-center w-16 h-16 bg-green-500 text-white rounded-2xl mx-auto mb-6 text-xl font-bold">
                   3
                 </div>
-                <h3 className="text-xl font-semibold text-slate-900 mb-3">Task Created</h3>
+                <h3 className="text-xl font-semibold text-slate-900 mb-3">Million-Dollar Win</h3>
                 <p className="text-slate-600 mb-4">
-                  AI analyzes content, creates the task, assigns team member, and notifies everyone in real-time.
+                  Wake up to an excited response and meeting confirmed. AI captured a $4.8M annual deal opportunity while you were offline.
                 </p>
                 <div className="bg-slate-100 rounded-lg p-4 text-sm text-slate-700">
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                    <span className="font-medium">Fix login bug</span>
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="font-medium">$4.8M Deal Pipeline • Meeting Tomorrow</span>
                   </div>
                   <div className="text-xs text-slate-500">
-                    Assigned to John • High Priority • Just now
+                    Enterprise pricing locked • Implementation team assigned • Deal fast-tracked
                   </div>
                 </div>
               </div>
@@ -212,22 +213,53 @@ export default function LandingPage() {
 
             {/* Real Examples */}
             <div className="mt-16 bg-white rounded-2xl p-8 shadow-sm border">
-              <h3 className="text-xl font-semibold text-slate-900 mb-6 text-center">Real Email Examples</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div className="font-medium text-slate-900">Email Addresses</div>
-                  <div className="space-y-2 text-sm text-slate-600">
-                    <div><span className="font-mono bg-slate-100 px-2 py-1 rounded">task@project.leadmark.dev</span> - Create tasks</div>
-                    <div><span className="font-mono bg-slate-100 px-2 py-1 rounded">support@leadmark.dev</span> - Customer support</div>
-                    <div><span className="font-mono bg-slate-100 px-2 py-1 rounded">ideas@leadmark.dev</span> - Feature requests</div>
+              <h3 className="text-xl font-semibold text-slate-900 mb-6 text-center">Life-Changing Edge Cases That Actually Matter</h3>
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-3">
+                    <div className="font-semibold text-slate-900 flex items-center gap-2">
+                      <span className="font-mono bg-green-100 text-green-700 px-2 py-1 rounded text-xs">vip@leadmark.email</span>
+                    </div>
+                    <div className="text-sm text-slate-600">
+                      <strong>Celebrity Endorsement:</strong> A-list celebrity's manager emails wanting to partner on a major campaign while you're sleeping. AI recognizes the opportunity, sends media kit, usage rights, and books strategy call. <span className="text-green-700 font-medium">$2M brand deal launched.</span>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="font-semibold text-slate-900 flex items-center gap-2">
+                      <span className="font-mono bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">partnership@leadmark.email</span>
+                    </div>
+                    <div className="text-sm text-slate-600">
+                      <strong>Strategic Alliance:</strong> Microsoft emails about integrating your product into Office 365 for 300M users. AI immediately sends technical specs, API docs, and schedules architect meeting—all during your weekend. <span className="text-green-700 font-medium">$50M partnership opportunity.</span>
+                    </div>
                   </div>
                 </div>
-                <div className="space-y-4">
-                  <div className="font-medium text-slate-900">Processing Stats</div>
-                  <div className="space-y-2 text-sm text-slate-600">
-                    <div>• 127 emails processed this week</div>
-                    <div>• 3.2ms average webhook response</div>
-                    <div>• 98% accuracy in task creation</div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-3">
+                    <div className="font-semibold text-slate-900 flex items-center gap-2">
+                      <span className="font-mono bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">investor@leadmark.email</span>
+                    </div>
+                    <div className="text-sm text-slate-600">
+                      <strong>Dream Funding:</strong> Andreessen Horowitz partner emails at 2 AM wanting to lead your Series B after seeing viral product demo. AI sends tailored deck, traction metrics, and books partner dinner. <span className="text-green-700 font-medium">$25M Series B initiated.</span>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="font-semibold text-slate-900 flex items-center gap-2">
+                      <span className="font-mono bg-orange-100 text-orange-700 px-2 py-1 rounded text-xs">media@leadmark.email</span>
+                    </div>
+                    <div className="text-sm text-slate-600">
+                      <strong>Viral Moment:</strong> TechCrunch editor emails asking for exclusive story about your breakthrough AI innovation. AI sends press kit, founder photos, and schedules interview for tomorrow's headline. <span className="text-green-700 font-medium">Front-page feature secured.</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border-t pt-6">
+                  <div className="text-center">
+                    <div className="font-semibold text-slate-900 mb-3">The Reality: Life-Changing Opportunities Happen at 3 AM</div>
+                    <div className="text-sm text-slate-600 max-w-3xl mx-auto">
+                      The biggest deals don't happen during business hours. Game-changing partnerships come from unexpected emails. Your breakthrough moment might arrive while you're sleeping. 
+                      <strong> Your AI assistant ensures you never miss the opportunity that changes everything.</strong>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -258,7 +290,7 @@ export default function LandingPage() {
                   <div className="flex items-center justify-center w-8 h-8 bg-blue-500 text-white rounded-full text-sm font-bold">1</div>
                   <div>
                     <div className="text-white font-medium">Email Sent to Postmark</div>
-                    <div className="text-slate-400 text-sm">User emails: task@project.leadmark.email</div>
+                    <div className="text-slate-400 text-sm">Customer emails: support@leadmark.email</div>
                   </div>
                 </div>
                 

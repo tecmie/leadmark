@@ -305,7 +305,7 @@ export const getUserForms = async (
         isActive: form.is_active,
         createdAt: form.created_at,
         updatedAt: form.updated_at,
-        formUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://app.leadmark.com'}/form/${form.slug}`,
+        formUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://leadmark.email'}/form/${form.slug}`,
         mailboxAddress: mailbox ? `${mailbox.unique_address}@${mailbox.dotcom}` : null,
       };
     });
