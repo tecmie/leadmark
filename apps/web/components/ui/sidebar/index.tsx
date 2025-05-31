@@ -71,19 +71,19 @@ const SIDEBAR_ROUTES: SidebarItem[] = [
   {
     icon: AllInboxIcon,
     href: routes.INBOX_OVERVIEW,
-    label: 'All inboxes'
+    label: 'All inboxes',
   },
   {
     icon: InportantInboxIcon,
     href: routes.INBOX_IMPORTANT,
-    label: 'Important'
+    label: 'Important',
   },
 
   {
     icon: NeedsAttentionIcon,
     href: routes.INBOX_ATTENTION,
-    label: 'Needs attention'
-  }
+    label: 'Needs attention',
+  },
 ];
 
 export const SidebarExternalLinks = () => {

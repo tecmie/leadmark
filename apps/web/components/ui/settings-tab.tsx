@@ -19,18 +19,18 @@ const SETTING_TABS: SettingsTabItem[] = [
   {
     label: 'documents',
     icon: FileText,
-    href: routes.SETTINGS_DOCUMENTS
+    href: routes.SETTINGS_DOCUMENTS,
   },
   {
     label: 'actions',
     icon: FileEdit,
-    href: routes.SETTINGS_ACTIONS
+    href: routes.SETTINGS_ACTIONS,
   },
   {
     label: 'integrations',
     icon: Box,
-    href: routes.SETTINGS_INTEGRATIONS
-  }
+    href: routes.SETTINGS_INTEGRATIONS,
+  },
 ];
 
 interface SettingsTabProps extends PropsWithChildren {
