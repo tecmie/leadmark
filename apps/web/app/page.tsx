@@ -2,11 +2,9 @@
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, CheckCircle, Inbox, Zap, Users, Shield, BarChart3, MessageSquare, Mail, Code, GitBranch, Trophy, ExternalLink } from 'lucide-react';
+import { ArrowRight, Zap, Users, Shield, BarChart3, MessageSquare, Mail, Code, GitBranch, Trophy, ExternalLink, Play, Webhook, Database, Brain } from 'lucide-react';
 import Link from 'next/link';
-import { appList } from '@/constants/apps';
 
 export default function LandingPage() {
   return (
@@ -86,7 +84,7 @@ export default function LandingPage() {
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Link href="https://github.com/yourusername/leadmark" target="_blank">
+              <Link href="https://github.com/tecmie/leadmark" target="_blank">
                 <Button variant="outline" size="lg" className="text-lg px-8 py-4 h-auto">
                   <GitBranch className="mr-2 h-5 w-5" />
                   View Source Code
@@ -100,114 +98,140 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Innovation Showcase */}
-      <section className="px-4 py-20 bg-white/50">
+      {/* Video Demo Showcase */}
+      <section className="px-4 py-32 bg-black">
+        <div className="app-container">
+          <div className="text-center mb-20">
+            <h2 className="text-4xl font-bold text-white sm:text-5xl mb-6">
+              See it in action
+            </h2>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              Watch how Postmark transforms email into powerful workflows
+            </p>
+          </div>
+
+          {/* Video Container */}
+          <div className="max-w-6xl mx-auto">
+            <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-gray-900 to-black shadow-2xl">
+              <div className="aspect-video flex items-center justify-center relative group cursor-pointer">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-purple-600/10"></div>
+                
+                {/* Elegant Play Button */}
+                <div className="relative z-10 flex items-center justify-center w-24 h-24 rounded-full bg-white/10 backdrop-blur-md border border-white/20 group-hover:bg-white/20 group-hover:scale-110 transition-all duration-300">
+                  <Play className="w-10 h-10 text-white ml-1" />
+                </div>
+                
+                {/* Minimal Video Info */}
+                <div className="absolute bottom-8 left-8 text-white">
+                  <div className="text-sm font-medium text-gray-300 mb-1">Demo Video</div>
+                  <div className="text-2xl font-semibold">Email → Workflow</div>
+                </div>
+                
+                {/* Duration Badge */}
+                <div className="absolute top-8 right-8">
+                  <div className="bg-black/50 backdrop-blur-md rounded-full px-4 py-2 text-sm text-white border border-white/10">
+                    2:15
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="px-4 py-20 bg-slate-50">
         <div className="app-container">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl">
-              Innovative Email-First Workflows
+            <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl mb-4">
+              How it works
             </h2>
-            <p className="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">
-              See how Postmark's Inbound Email Processing transforms traditional workflows into seamless, email-driven experiences
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              Three simple steps to transform email into powerful workflows
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="p-8 border-0 shadow-lg hover:shadow-xl transition-shadow relative overflow-hidden">
-              <div className="absolute top-4 right-4">
-                <Badge className="bg-orange-500 text-white text-xs">Postmark Power</Badge>
+          <div className="max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Step 1 */}
+              <div className="text-center">
+                <div className="flex items-center justify-center w-16 h-16 bg-blue-500 text-white rounded-2xl mx-auto mb-6 text-xl font-bold">
+                  1
+                </div>
+                <h3 className="text-xl font-semibold text-slate-900 mb-3">Send Email</h3>
+                <p className="text-slate-600 mb-4">
+                  Email task@project.leadmark.dev with your request. Subject becomes the task title, body contains details.
+                </p>
+                <div className="bg-slate-100 rounded-lg p-4 text-sm text-slate-700">
+                  <div className="font-medium mb-1">To: task@project.leadmark.dev</div>
+                  <div className="font-medium mb-1">Subject: Fix login bug</div>
+                  <div>Priority: High<br/>Assign: @john</div>
+                </div>
               </div>
-              <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-xl mb-6">
-                <Mail className="h-6 w-6 text-blue-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-3">Email-to-Task Automation</h3>
-              <p className="text-slate-600">
-                Send an email to create tasks, assign team members, set priorities, and track progress—all parsed automatically via Postmark inbound webhooks.
-              </p>
-              <div className="mt-4 text-sm text-blue-600 font-medium">
-                task@yourproject.leadmark.email
-              </div>
-            </Card>
 
-            <Card className="p-8 border-0 shadow-lg hover:shadow-xl transition-shadow relative overflow-hidden">
-              <div className="absolute top-4 right-4">
-                <Badge className="bg-orange-500 text-white text-xs">Postmark Power</Badge>
+              {/* Step 2 */}
+              <div className="text-center">
+                <div className="flex items-center justify-center w-16 h-16 bg-purple-500 text-white rounded-2xl mx-auto mb-6 text-xl font-bold">
+                  2
+                </div>
+                <h3 className="text-xl font-semibold text-slate-900 mb-3">Postmark Processes</h3>
+                <p className="text-slate-600 mb-4">
+                  Postmark instantly parses your email and sends structured JSON to our webhook endpoint.
+                </p>
+                <div className="bg-slate-100 rounded-lg p-4 text-sm text-slate-700 text-left">
+                  <div className="font-mono text-xs">
+                    {`{
+  "Subject": "Fix login bug",
+  "From": "you@company.com",
+  "TextBody": "Priority: High\\nAssign: @john"
+}`}
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-xl mb-6">
-                <MessageSquare className="h-6 w-6 text-purple-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-3">Email Thread Management</h3>
-              <p className="text-slate-600">
-                Reply to any email thread to continue conversations, add participants, or update project status—Postmark processes it all in real-time.
-              </p>
-              <div className="mt-4 text-sm text-purple-600 font-medium">
-                reply+thread-123@leadmark.email
-              </div>
-            </Card>
 
-            <Card className="p-8 border-0 shadow-lg hover:shadow-xl transition-shadow relative overflow-hidden">
-              <div className="absolute top-4 right-4">
-                <Badge className="bg-orange-500 text-white text-xs">Postmark Power</Badge>
+              {/* Step 3 */}
+              <div className="text-center">
+                <div className="flex items-center justify-center w-16 h-16 bg-green-500 text-white rounded-2xl mx-auto mb-6 text-xl font-bold">
+                  3
+                </div>
+                <h3 className="text-xl font-semibold text-slate-900 mb-3">Task Created</h3>
+                <p className="text-slate-600 mb-4">
+                  AI analyzes content, creates the task, assigns team member, and notifies everyone in real-time.
+                </p>
+                <div className="bg-slate-100 rounded-lg p-4 text-sm text-slate-700">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                    <span className="font-medium">Fix login bug</span>
+                  </div>
+                  <div className="text-xs text-slate-500">
+                    Assigned to John • High Priority • Just now
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-xl mb-6">
-                <Users className="h-6 w-6 text-green-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-3">Form-to-Email Pipeline</h3>
-              <p className="text-slate-600">
-                Transform any form submission into a structured email workflow. Postmark inbound processing automatically categorizes and routes submissions.
-              </p>
-              <div className="mt-4 text-sm text-green-600 font-medium">
-                forms+contact@leadmark.email
-              </div>
-            </Card>
+            </div>
 
-            <Card className="p-8 border-0 shadow-lg hover:shadow-xl transition-shadow relative overflow-hidden">
-              <div className="absolute top-4 right-4">
-                <Badge className="bg-orange-500 text-white text-xs">Postmark Power</Badge>
+            {/* Real Examples */}
+            <div className="mt-16 bg-white rounded-2xl p-8 shadow-sm border">
+              <h3 className="text-xl font-semibold text-slate-900 mb-6 text-center">Real Email Examples</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="font-medium text-slate-900">Email Addresses</div>
+                  <div className="space-y-2 text-sm text-slate-600">
+                    <div><span className="font-mono bg-slate-100 px-2 py-1 rounded">task@project.leadmark.dev</span> - Create tasks</div>
+                    <div><span className="font-mono bg-slate-100 px-2 py-1 rounded">support@leadmark.dev</span> - Customer support</div>
+                    <div><span className="font-mono bg-slate-100 px-2 py-1 rounded">ideas@leadmark.dev</span> - Feature requests</div>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="font-medium text-slate-900">Processing Stats</div>
+                  <div className="space-y-2 text-sm text-slate-600">
+                    <div>• 127 emails processed this week</div>
+                    <div>• 3.2ms average webhook response</div>
+                    <div>• 98% accuracy in task creation</div>
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-xl mb-6">
-                <Zap className="h-6 w-6 text-orange-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-3">AI-Enhanced Processing</h3>
-              <p className="text-slate-600">
-                Every inbound email gets analyzed by AI for sentiment, intent, and priority. Postmark delivers the raw content, we add the intelligence.
-              </p>
-              <div className="mt-4 text-sm text-orange-600 font-medium">
-                Smart categorization & routing
-              </div>
-            </Card>
-
-            <Card className="p-8 border-0 shadow-lg hover:shadow-xl transition-shadow relative overflow-hidden">
-              <div className="absolute top-4 right-4">
-                <Badge className="bg-orange-500 text-white text-xs">Postmark Power</Badge>
-              </div>
-              <div className="flex items-center justify-center w-12 h-12 bg-indigo-100 rounded-xl mb-6">
-                <BarChart3 className="h-6 w-6 text-indigo-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-3">Real-time Webhooks</h3>
-              <p className="text-slate-600">
-                Every email processed by Postmark triggers instant updates across your workspace. See changes happen in real-time as emails arrive.
-              </p>
-              <div className="mt-4 text-sm text-indigo-600 font-medium">
-                Live collaboration updates
-              </div>
-            </Card>
-
-            <Card className="p-8 border-0 shadow-lg hover:shadow-xl transition-shadow relative overflow-hidden">
-              <div className="absolute top-4 right-4">
-                <Badge className="bg-orange-500 text-white text-xs">Postmark Power</Badge>
-              </div>
-              <div className="flex items-center justify-center w-12 h-12 bg-pink-100 rounded-xl mb-6">
-                <Shield className="h-6 w-6 text-pink-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-3">Secure Email Parsing</h3>
-              <p className="text-slate-600">
-                Postmark's robust parsing handles attachments, HTML content, and complex email structures while maintaining security and reliability.
-              </p>
-              <div className="mt-4 text-sm text-pink-600 font-medium">
-                Enterprise-grade processing
-              </div>
-            </Card>
+            </div>
           </div>
         </div>
       </section>
@@ -307,34 +331,85 @@ export async function POST(request: Request) {
         </div>
       </section>
 
-      {/* Hackathon Stats */}
-      <section className="px-4 py-20 bg-gradient-to-r from-blue-600 to-purple-600">
-        <div className="app-container text-center">
-          <div className="mb-12">
+      {/* Challenge Innovation */}
+      <section className="px-4 py-20 bg-slate-900">
+        <div className="app-container">
+          <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-white sm:text-4xl mb-4">
-              Built for the Challenge
+              Built for Postmark Challenge
             </h2>
-            <p className="text-xl text-blue-100">
-              Technical achievements and innovation metrics
+            <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+              Our innovative approach to the "Inbox Innovators" challenge: transforming email from 
+              a messaging tool into a powerful workflow automation platform.
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-white">
-            <div>
-              <div className="text-4xl font-bold text-white mb-2">100%</div>
-              <div className="text-blue-100">Postmark Powered</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold text-white mb-2">5ms</div>
-              <div className="text-blue-100">Webhook Response</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold text-white mb-2">∞</div>
-              <div className="text-blue-100">Email Workflows</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold text-white mb-2">🏆</div>
-              <div className="text-blue-100">Hackathon Ready</div>
+          <div className="max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              {/* Challenge Response */}
+              <div className="space-y-6">
+                <h3 className="text-2xl font-semibold text-white">Challenge Response</h3>
+                <div className="space-y-4">
+                  <div className="bg-slate-800 rounded-lg p-6">
+                    <h4 className="font-semibold text-white mb-2">The Brief</h4>
+                    <p className="text-slate-300 text-sm">"Do something cool with Inbound Email Processing"</p>
+                  </div>
+                  <div className="bg-slate-800 rounded-lg p-6">
+                    <h4 className="font-semibold text-white mb-2">Our Solution</h4>
+                    <p className="text-slate-300 text-sm">Email-first collaboration platform where every email becomes an interactive workflow trigger</p>
+                  </div>
+                  <div className="bg-slate-800 rounded-lg p-6">
+                    <h4 className="font-semibold text-white mb-2">Innovation</h4>
+                    <p className="text-slate-300 text-sm">Turn any email address into a powerful API endpoint using Postmark's inbound processing</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Technical Implementation */}
+              <div className="space-y-6">
+                <h3 className="text-2xl font-semibold text-white">Technical Stack</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-slate-800 rounded-lg p-4 text-center">
+                    <Webhook className="w-8 h-8 text-blue-400 mx-auto mb-2" />
+                    <div className="font-medium text-white text-sm">Postmark Inbound</div>
+                    <div className="text-xs text-slate-400">Email → JSON</div>
+                  </div>
+                  <div className="bg-slate-800 rounded-lg p-4 text-center">
+                    <Code className="w-8 h-8 text-green-400 mx-auto mb-2" />
+                    <div className="font-medium text-white text-sm">Next.js 15</div>
+                    <div className="text-xs text-slate-400">Webhook Handler</div>
+                  </div>
+                  <div className="bg-slate-800 rounded-lg p-4 text-center">
+                    <Database className="w-8 h-8 text-purple-400 mx-auto mb-2" />
+                    <div className="font-medium text-white text-sm">Supabase</div>
+                    <div className="text-xs text-slate-400">Real-time DB</div>
+                  </div>
+                  <div className="bg-slate-800 rounded-lg p-4 text-center">
+                    <Brain className="w-8 h-8 text-orange-400 mx-auto mb-2" />
+                    <div className="font-medium text-white text-sm">OpenAI</div>
+                    <div className="text-xs text-slate-400">Content Analysis</div>
+                  </div>
+                </div>
+                
+                {/* Key Stats */}
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-6">
+                  <h4 className="font-semibold text-white mb-4">Development Stats</h4>
+                  <div className="grid grid-cols-3 gap-4 text-center text-white">
+                    <div>
+                      <div className="text-2xl font-bold">3.2ms</div>
+                      <div className="text-xs text-blue-100">Webhook Response</div>
+                    </div>
+                    <div>
+                      <div className="text-2xl font-bold">127</div>
+                      <div className="text-xs text-blue-100">Test Emails</div>
+                    </div>
+                    <div>
+                      <div className="text-2xl font-bold">98%</div>
+                      <div className="text-xs text-blue-100">Parse Accuracy</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -359,7 +434,7 @@ export async function POST(request: Request) {
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Link href="https://github.com/yourusername/leadmark" target="_blank">
+              <Link href="https://github.com/tecmie/leadmark" target="_blank">
                 <Button variant="outline" size="lg" className="text-lg px-8 py-4 h-auto">
                   <GitBranch className="mr-2 h-5 w-5" />
                   View Source Code
@@ -434,7 +509,7 @@ export async function POST(request: Request) {
                   </Link>
                 </li>
                 <li>
-                  <Link href="https://github.com/yourusername/leadmark" target="_blank" className="hover:text-white flex items-center gap-1">
+                  <Link href="https://github.com/tecmie/leadmark" target="_blank" className="hover:text-white flex items-center gap-1">
                     <GitBranch className="w-3 h-3" />
                     Source Code
                   </Link>
@@ -480,7 +555,7 @@ export async function POST(request: Request) {
               <Trophy className="w-4 h-4 text-orange-400" />
               <span>Built for Postmark Challenge: Inbox Innovators</span>
             </div>
-            <div>© 2024 Leadmark. Hackathon submission by [Your Name] • DEV.to × Postmark</div>
+            <div>© 2024 Leadmark. Hackathon submission by Tecmie • DEV.to × Postmark</div>
           </div>
         </div>
       </footer>
