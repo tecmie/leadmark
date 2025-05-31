@@ -405,14 +405,16 @@ export default function CustomizePage() {
         </Alert>
       )}
 
-      <div className="flex justify-between mt-8">
+      <div className="flex items-center justify-center gap-4 w-full mt-8">
         <Button
           variant="outline"
+          className="w-full hidden"
           onClick={() => router.push(routes.ONBOARDING_CHOOSE_TEMPLATE)}
         >
           Back to Templates
         </Button>
         <Button
+          className="w-full"
           onClick={handlePublish}
           disabled={isPublishing || !formName.trim()}
         >

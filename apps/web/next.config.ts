@@ -25,7 +25,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  transpilePackages: ['@repo/tailwind-config', '@repo/ui', '@repo/types'],
+  transpilePackages: ['@repo/tailwind-config', '@repo/types'],
 };
 
 export default nextConfig;

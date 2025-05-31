@@ -15,6 +15,10 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+import { updateOnboardingProgress } from '@/actions/server/user-profile';
+import { OnboardingStatusEnum, OnboardingStepEnum } from '@repo/types';
+import { createClient } from '@/supabase/client';
+import { toast } from 'sonner';
 
 interface FormField {
   name: string;
@@ -80,20 +84,45 @@ export default function ChooseTemplatePage() {
     setSelectedTemplate(template);
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (!selectedTemplate) return;
 
-    // Save selected template to session storage
-    const existingData = JSON.parse(
-      sessionStorage.getItem('onboarding-data') || '{}'
-    );
-    const updatedData = {
-      ...existingData,
-      selectedTemplate,
-    };
+    try {
+      // Save selected template to session storage
+      const existingData = JSON.parse(
+        sessionStorage.getItem('onboarding-data') || '{}'
+      );
+      const updatedData = {
+        ...existingData,
+        selectedTemplate,
+      };
 
-    sessionStorage.setItem('onboarding-data', JSON.stringify(updatedData));
-    router.push(routes.ONBOARDING_CUSTOMIZE);
+      sessionStorage.setItem('onboarding-data', JSON.stringify(updatedData));
+
+      // Update onboarding progress
+      const supabase = createClient();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const userId = session?.user?.id;
+      if (userId) {
+        const updateResult = await updateOnboardingProgress(
+          userId,
+          OnboardingStatusEnum.IN_PROGRESS,
+          OnboardingStepEnum.CUSTOMIZE
+        );
+        if (!updateResult.success) {
+          toast.error(
+            updateResult.message || 'Failed to update onboarding progress'
+          );
+          return;
+        }
+      }
+
+      router.push(routes.ONBOARDING_CUSTOMIZE);
+    } catch (error) {
+      toast.error('Failed to save template selection');
+    }
   };
 
   if (isLoading) {
@@ -232,14 +261,19 @@ export default function ChooseTemplatePage() {
         </SheetContent>
       </Sheet>
 
-      <div className="flex justify-between mt-8">
+      <div className="flex justify-between mt-8 w-full">
         <Button
           variant="outline"
+          className="hidden"
           onClick={() => router.push(routes.ONBOARDING_SETUP_RESOURCE)}
         >
           Back to Resources
         </Button>
-        <Button onClick={handleContinue} disabled={!selectedTemplate}>
+        <Button
+          className="w-full"
+          onClick={handleContinue}
+          disabled={!selectedTemplate}
+        >
           Customize Template
         </Button>
       </div>
