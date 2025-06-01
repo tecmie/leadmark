@@ -81,15 +81,15 @@ const MessageAttachment = ({ attachment, ownerId }: MessageAttachmentProps) => {
     triggerDownload(data as Blob, name);
   };
   return (
-    <div className="flex items-center w-full max-w-[412px] gap-3 p-2 pr-4 border rounded-md border-[#0000000A] h-[62px] flex-shrink-0 ">
-      <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-surface-surface-normal">
+    <div className="flex items-center w-full max-w-[412px] gap-3 p-2 pr-4 border rounded-md border-border bg-card h-[62px] flex-shrink-0 ">
+      <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-secondary">
         <FilePdfIcon />
       </div>
       <div className="flex-1">
-        <p className="w-40 text-base capitalize truncate text-neutral-deep sm:w-full">
+        <p className="w-40 text-base capitalize truncate text-foreground sm:w-full">
           {resource.name}
         </p>
-        <p className={cn('text-xs text-black')}>
+        <p className={cn('text-xs text-muted-foreground')}>
           {/* {(size / 1024).toFixed(2) + 'KB'} */}
           {resource.source_type}
         </p>
@@ -151,10 +151,10 @@ const InboxMessageItem = ({
           />
           <div className="flex flex-col gap-0">
             <div className="flex items-center gap-2">
-              <p className="text-base font-medium text-black">{displayName}</p>
-              <p className="text-sm">{formattedDate}</p>
+              <p className="text-base font-medium text-foreground">{displayName}</p>
+              <p className="text-sm text-muted-foreground">{formattedDate}</p>
             </div>
-            <p className="text-sm">
+            <p className="text-sm text-muted-foreground">
               {message.direction === 'inbound' ? senderEmail : receiverEmail}
             </p>
           </div>
@@ -167,13 +167,13 @@ const InboxMessageItem = ({
       <div className="grid w-full gap-4 overflow-hidden text-base">
         {message.html_content ? (
           <div
-            className="overflow-hidden break-words"
+            className="overflow-hidden break-words text-foreground"
             dangerouslySetInnerHTML={{
               __html: message.html_content ? message.html_content : '',
             }}
           />
         ) : (
-          <div className="overflow-hidden break-words whitespace-pre-line">
+          <div className="overflow-hidden break-words whitespace-pre-line text-foreground">
             {message.content}
           </div>
         )}
@@ -319,26 +319,26 @@ export const InboxViewerPage = ({
   };
 
   return (
-    <div className="relative flex flex-col items-stretch w-full h-full gap-8 px-4 overflow-auto">
+    <div className="w-full h-full gap-8 px-4">
       <div className="flex flex-col gap-4">
         <InboxActions />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between">
           <div className="flex flex-col gap-1 py-2">
-            <h3 className="text-xl font-medium text-black sm:text-2xl">
+            <h3 className="text-xl font-medium text-foreground sm:text-2xl">
               {thread?.subject}
             </h3>
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <InboxTagIcon />
               <div className="flex items-center gap-1">
                 <div>Sales</div>
                 <ChevronRight size={16} color={'#000000A3'} />
-                <div className="text-black">Retail</div>
+                <div className="text-foreground">Retail</div>
               </div>
-            </div>
+            </div> */}
           </div>
 
           <div className="flex items-center justify-between gap-2">
-            <div>Auto-responder</div>
+            <div className="text-foreground">Auto-responder</div>
             <Switch
               checked={isAutoResponderEnabled}
               onClick={toggleAutoResponderStatus}
@@ -346,7 +346,7 @@ export const InboxViewerPage = ({
             />
           </div>
         </div>
-        <div className="flex flex-col pb-4 divide-y divide-neutral-200">
+        <div className="pb-4 divide-y divide-border relative flex flex-col items-stretch w-full flex-1 gap-8 overflow-y-auto max-h-[60vh] min-h-[200px]">
           {messages?.map((message, index) => (
             <InboxMessageItem
               senderName={thread?.contactName ?? ''}
@@ -362,8 +362,8 @@ export const InboxViewerPage = ({
         </div>
       </div>
 
-      <div className="self-end inline-block w-full mt-auto bg-white items">
-        <Separator className="bg-[#0000000A] px-4" />
+      <div className="self-end inline-block w-full mt-auto bg-background items">
+        <Separator className="bg-border px-4" />
         <div className="flex items-center gap-4 py-4">
           <Button
             variant={'outline'}

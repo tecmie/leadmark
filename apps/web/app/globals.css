@@ -37,57 +37,79 @@ input {
   @apply max-w-[1440px] mx-auto w-[90%];
 }
 
-/* @import "tailwindcss"; */
-/* 
+/* Apply dark theme globally */
+body {
+  @apply bg-background text-foreground;
+}
+
+/* Deep Black and Yellow Theme */
 @theme {
-  --color-blue-1000: #2a8af6;
-  --color-purple-1000: #a853ba;
-  --color-red-1000: #e92a67;
+  /* Primary Yellow Colors */
+  --color-yellow-500: #fbbf24;
+  --color-yellow-600: #f59e0b;
+  --color-yellow-700: #d97706;
+  --color-yellow-400: #fde047;
+  --color-yellow-300: #fef08a;
 
-  --color-background: white;
-  --color-background-secondary: hsl(205, 57%, 10%, 1);
-  --color-surface-surface-neutral: hsl(204, 60%, 5%, 0.04);
-  --color-surface-surface-normal: hsl(0, 0%, 0%, 0.04);
-  --color-surface: hsl(204, 58%, 68%, 1);
-  --color-surface-strong: hsl(203, 58%, 16%, 1);
-  --color-surface-neutral: hsl(0, 0%, 100%, 0.04);
-  --color-surface-weak: hsl(204, 60%, 5%, 0.04);
-  --color-surface-warning: hsl(39, 58%, 68%, 1);
-  --color-surface-warning-strong: hsl(40, 58%, 16%, 1);
+  /* Deep Black Backgrounds */
+  --color-background: hsl(0, 0%, 4%);
+  --color-background-secondary: hsl(0, 0%, 6%);
+  --color-surface-surface-neutral: hsl(0, 0%, 8%);
+  --color-surface-surface-normal: hsl(0, 0%, 10%);
+  --color-surface: hsl(0, 0%, 12%);
+  --color-surface-strong: hsl(0, 0%, 14%);
+  --color-surface-neutral: hsl(0, 0%, 16%);
+  --color-surface-weak: hsl(0, 0%, 8%);
+  --color-surface-warning: hsl(45, 93%, 47%);
+  --color-surface-warning-strong: hsl(35, 91%, 40%);
 
-  --color-card: hsl(0, 0%, 100%, 1);
-  --color-card-foreground: hsl(222.2, 84%, 4.9%, 1);
+  /* Card Colors */
+  --color-card: hsl(0, 0%, 8%);
+  --color-card-foreground: hsl(0, 0%, 95%);
 
-  --color-popover: hsl(0, 0%, 100%, 1);
-  --color-popover-foreground: hsl(222.2, 84%, 4.9%, 1);
+  /* Popover Colors */
+  --color-popover: hsl(0, 0%, 6%);
+  --color-popover-foreground: hsl(0, 0%, 95%);
 
-  --color-primary-base: hsl(222, 58%, 72%, 1);
-  --color-primary-hover: hsl(222, 58%, 72%, 0.9);
-  --color-link: hsl(204, 58%, 68%, 1);
-  --color-error-weak: hsl(8, 58%, 68%, 1);
+  /* Primary Colors (Yellow) */
+  --color-primary: hsl(45, 93%, 47%);
+  --color-primary-base: hsl(45, 93%, 47%);
+  --color-primary-hover: hsl(45, 93%, 42%);
+  --color-primary-foreground: hsl(0, 0%, 4%);
+  --color-link: hsl(45, 85%, 55%);
+  --color-error-weak: hsl(0, 84%, 60%);
 
-  --color-secondary: hsl(210, 40%, 96.1%, 1);
-  --color-secondary-foreground: hsl(222.2, 47.4%, 11.2%, 1);
+  /* Secondary Colors */
+  --color-secondary: hsl(0, 0%, 12%);
+  --color-secondary-foreground: hsl(0, 0%, 85%);
 
-  --color-muted: hsl(210, 40%, 96.1%, 1);
-  --color-muted-foreground: hsl(215.4, 16.3%, 46.9%, 1);
+  /* Muted Colors */
+  --color-muted: hsl(0, 0%, 10%);
+  --color-muted-foreground: hsl(0, 0%, 65%);
 
-  --color-neutral: hsl(0, 0%, 100%, 0.64);
-  --color-neutral-weak: hsl(0, 0%, 100%, 0.4);
-  --color-neutral-strong: hsl(0, 0%, 100%, 1);
+  /* Text Colors */
+  --color-foreground: hsl(0, 0%, 95%);
+  --color-neutral: hsl(0, 0%, 75%);
+  --color-neutral-weak: hsl(0, 0%, 55%);
+  --color-neutral-strong: hsl(0, 0%, 95%);
 
-  --color-accent: hsl(210, 40%, 96.1%, 1);
-  --color-accent-foreground: hsl(222.2, 47.4%, 11.2%, 1);
+  /* Accent Colors */
+  --color-accent: hsl(0, 0%, 12%);
+  --color-accent-foreground: hsl(45, 85%, 55%);
 
-  --color-destructive: hsl(0, 84.2%, 60.2%, 1);
-  --color-destructive-foreground: hsl(210, 40%, 98%, 1);
+  /* Destructive Colors */
+  --color-destructive: hsl(0, 84%, 60%);
+  --color-destructive-foreground: hsl(0, 0%, 95%);
 
-  --color-border-neutral: hsl(0, 0%, 100%, 0.16);
-  --color-border-neutral-weak: hsl(0, 0%, 100%, 0.08);
-  --color-border-neutral-weaker: hsl(0, 0%, 100%, 0.04);
+  /* Border Colors */
+  --color-border: hsl(0, 0%, 20%);
+  --color-border-neutral: hsl(0, 0%, 18%);
+  --color-border-neutral-weak: hsl(0, 0%, 14%);
+  --color-border-neutral-weaker: hsl(0, 0%, 10%);
 
-  --color-input: hsl(214.3, 31.8%, 91.4%, 1);
-  --color-ring: hsl(222.2, 84%, 4.9%, 1);
+  /* Input Colors */
+  --color-input: hsl(0, 0%, 12%);
+  --color-ring: hsl(45, 93%, 47%);
 
   --color-radius: 0.5rem;
-} */
+}

@@ -9,8 +9,8 @@ function Providers({ children }: React.PropsWithChildren) {
   return (
     <ThemeProvider
       attribute="class"
-      defaultTheme="light"
-      forcedTheme="light"
+      defaultTheme="dark"
+      forcedTheme="dark"
       enableSystem={false}
       disableTransitionOnChange
     >
@@ -34,7 +34,7 @@ function Providers({ children }: React.PropsWithChildren) {
       <ProgressProvider
         options={{ showSpinner: false }}
         shallowRouting
-        color="#8DA6E1"
+        color="#fbbf24"
         height="3px"
       >
         {children}

@@ -143,15 +143,15 @@ export function DataTable<TData, TValue>({
       <ThreadHeader table={table} />
       <div
         className={cn(
-          'h-full w-full flex flex-col overflow-hidden bg-white  pb-14',
+          'h-full w-full flex flex-col overflow-hidden bg-background  pb-14',
           className
         )}
       >
-        <div className="fixed z-20 flex items-center justify-between flex-shrink-0 w-full gap-4 px-4 py-3 bg-white sm:relative">
+        <div className="fixed z-20 flex items-center justify-between flex-shrink-0 w-full gap-4 px-4 py-3 bg-background border-b border-border sm:relative">
           <div className="flex items-center gap-2">
-            <div className="text-xl font-medium text-black">All inboxes</div>
+            <div className="text-xl font-medium text-foreground">All inboxes</div>
             {data.filter((thread: any) => thread.hasNewMessages).length > 0 && (
-              <Badge className="bg-[#adb6f9] text-white">
+              <Badge className="bg-primary text-primary-foreground">
                 {data.filter((thread: any) => thread.hasNewMessages).length} new
               </Badge>
             )}
@@ -159,7 +159,7 @@ export function DataTable<TData, TValue>({
           <FilterMenu />
         </div>
         {/* <div className="border-b h-11 bg-primary-base border-border-neutral-weaker" /> */}
-        <ScrollArea className="h-full overflow-auto border-[#00000012] border-t mt-[74px] sm:mt-0 mb-[74px] sm:mb-0">
+        <ScrollArea className="h-full overflow-auto border-border border-t mt-[74px] sm:mt-0 mb-[74px] sm:mb-0">
           <Table className="w-full h-full">
             <TableBody>
               {table.getRowModel().rows?.length ? (
@@ -179,7 +179,7 @@ export function DataTable<TData, TValue>({
                       <TableCell
                         key={cell.id}
                         className={cn(
-                          'px-0 py-3 cursor-pointer border-b border-[#00000012] ',
+                          'px-0 py-3 cursor-pointer border-b border-border ',
                           {
                             'bg-muted/50':
                               (row.original as EnhancedThread).namespace === id,
@@ -200,7 +200,7 @@ export function DataTable<TData, TValue>({
                     colSpan={columns.length}
                     className="h-24 text-center"
                   >
-                    No emails yet.
+                    <span className="text-muted-foreground">No emails yet.</span>
                   </TableCell>
                 </TableRow>
               )}
@@ -213,7 +213,7 @@ export function DataTable<TData, TValue>({
 }
 
 export const ThreadHeader = ({ table }: { table: any }) => (
-  <div className="absolute top-0 left-0 right-0 z-30 hidden px-4 bg-white rounded-tr-lg sm:flex">
+  <div className="absolute top-0 left-0 right-0 z-30 hidden px-4 bg-background border-b border-border rounded-tr-lg sm:flex">
     <div className="flex items-center py-1 space-x-4 text-sm">
       <div className="flex items-center space-x-2">
         <Checkbox
@@ -226,12 +226,12 @@ export const ThreadHeader = ({ table }: { table: any }) => (
         />
         <label
           htmlFor="select"
-          className="font-normal leading-none text-[#000000A3] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          className="font-normal leading-none text-muted-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
         >
           Select all
         </label>
       </div>
-      <Separator orientation="vertical" className="h-3 bg-[#00000029]" />
+      <Separator orientation="vertical" className="h-3 bg-border" />
       <Button variant="ghost" className="p-0 font-normal text-destructive">
         Delete
         <Trash2 size="sm" className="w-4 h-4" />
@@ -249,7 +249,7 @@ export const ThreadHeader = ({ table }: { table: any }) => (
         />
         <label
           htmlFor="select"
-          className="font-normal leading-none text-black peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          className="font-normal leading-none text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
         >
           Select all
         </label>

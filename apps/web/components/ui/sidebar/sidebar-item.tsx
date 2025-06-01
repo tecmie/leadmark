@@ -30,10 +30,10 @@ export const SidebarItem = ({
       className={cn(
         ' sm:p-2 p-4 rounded-none flex items-center gap-3',
         {
-          ' text-black font-medium': isActive
+          ' text-primary font-medium': isActive
         },
         {
-          'text-[#000000A3]': !isActive
+          'text-primary-base': !isActive
         },
         { 'w-12 justify-center': !isExpanded },
         { 'w-full justify-between': isExpanded }
@@ -44,10 +44,10 @@ export const SidebarItem = ({
           className={cn(
             'w-4 h-4',
             {
-              'text-black justify-center fill-black': isActive
+              'text-primary justify-center fill-primary': isActive
             },
             {
-              'text-[#000000A3] fill-black': !isActive
+              'text-primary-base fill-primary-base': !isActive
             }
           )}
         />
@@ -58,10 +58,10 @@ export const SidebarItem = ({
         className={cn(
           'sm:hidden block w-4 h-4',
           {
-            'text-black': isActive
+            'text-primary': isActive
           },
           {
-            'text-[#000000A3]': !isActive
+            'text-primary-base': !isActive
           },
           { ' hidden': !isExpanded }
         )}

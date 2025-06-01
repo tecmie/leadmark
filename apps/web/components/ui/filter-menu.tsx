@@ -74,11 +74,11 @@ export const FilterMenu = () => {
       <span
         className={cn(
           buttonVariants({ variant: 'link' }),
-          'text-primary-base p-0 flex items-center gap-2 rounded-sm border-none cursor-pointer'
+          'text-primary p-0 flex items-center gap-2 rounded-sm border-none cursor-pointer'
         )}
         onClick={() => onOpen()}
       >
-        Filters <ListFilter size={16} className="text-primary-base" />
+        Filters <ListFilter size={16} className="text-primary" />
       </span>
 
       {isOpen && (
@@ -98,7 +98,7 @@ export const FilterMenu = () => {
           btnOrder="vertical"
           createText={'Filter'}
           content={
-            <div className="flex flex-col gap-6 text-black">
+            <div className="flex flex-col gap-6 text-foreground">
               {/* <div onClick={() => handleSelect('f', 'read')}>
                 <MailOpen size={16} />
                 Read
@@ -108,7 +108,7 @@ export const FilterMenu = () => {
                 Unread
               </div> */}
               <div
-                className="flex items-center justify-between py-4 border-b border-[#0000000A]"
+                className="flex items-center justify-between py-4 border-b border-border"
                 onClick={() => handleSelect('f', 'has_attachment')}
               >
                 <div className="flex items-center space-x-4">
@@ -118,7 +118,7 @@ export const FilterMenu = () => {
                   />
                   <label
                     htmlFor="select"
-                    className="font-normal leading-none text-black capitalize peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    className="font-normal leading-none text-foreground capitalize peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Has attachment
                   </label>
@@ -126,11 +126,11 @@ export const FilterMenu = () => {
                 <Paperclip size={16} />
               </div>
               <div className="flex flex-col">
-                <span className="text-[10px] font-bold uppercase">Sort by</span>
+                <span className="text-[10px] font-bold uppercase text-muted-foreground">Sort by</span>
                 <div className="flex flex-col">
                   {sortOptions.map((option, index) => (
                     <div
-                      className="flex items-center py-4 space-x-4 border-b border-[#0000000A]"
+                      className="flex items-center py-4 space-x-4 border-b border-border"
                       key={index}
                     >
                       <Checkbox
@@ -139,7 +139,7 @@ export const FilterMenu = () => {
                       />
                       <label
                         htmlFor="select"
-                        className="font-normal leading-none text-black capitalize peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        className="font-normal leading-none text-foreground capitalize peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                       >
                         {option}
                       </label>
@@ -148,13 +148,13 @@ export const FilterMenu = () => {
                 </div>
               </div>
               <div className="flex flex-col">
-                <span className="text-[10px] font-bold uppercase">
+                <span className="text-[10px] font-bold uppercase text-muted-foreground">
                   SORT DIRECTION
                 </span>
                 <div className="flex flex-col">
                   {orderOptions.map((option, index) => (
                     <div
-                      className="flex items-center py-4 space-x-4 border-b border-[#0000000A]"
+                      className="flex items-center py-4 space-x-4 border-b border-border"
                       key={index}
                     >
                       <Checkbox
@@ -163,7 +163,7 @@ export const FilterMenu = () => {
                       />
                       <label
                         htmlFor="select"
-                        className="font-normal leading-none text-black capitalize peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        className="font-normal leading-none text-foreground capitalize peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                       >
                         {option} on top
                       </label>

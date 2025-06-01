@@ -362,8 +362,8 @@ export default function FormsPage() {
       <div className="container mx-auto p-6">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading your forms...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading your forms...</p>
           </div>
         </div>
       </div>
@@ -375,8 +375,8 @@ export default function FormsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Forms</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-foreground">Forms</h1>
+          <p className="text-muted-foreground mt-1">
             Manage your lead capture forms and view their performance
           </p>
         </div>
@@ -391,7 +391,7 @@ export default function FormsPage() {
         <Card className="md:col-span-2">
           <CardContent className="p-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
                 placeholder="Search forms..."
                 value={searchQuery}
@@ -406,11 +406,11 @@ export default function FormsPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Forms</p>
-                <p className="text-2xl font-bold text-gray-900">{forms.length}</p>
+                <p className="text-sm font-medium text-muted-foreground">Total Forms</p>
+                <p className="text-2xl font-bold text-foreground">{forms.length}</p>
               </div>
-              <div className="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <LinkIcon className="h-4 w-4 text-blue-600" />
+              <div className="h-8 w-8 bg-primary/10 rounded-full flex items-center justify-center">
+                <LinkIcon className="h-4 w-4 text-primary" />
               </div>
             </div>
           </CardContent>
@@ -420,13 +420,13 @@ export default function FormsPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Responses</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm font-medium text-muted-foreground">Total Responses</p>
+                <p className="text-2xl font-bold text-foreground">
                   {forms.reduce((sum, form) => sum + form.responseCount, 0)}
                 </p>
               </div>
-              <div className="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center">
-                <Users className="h-4 w-4 text-green-600" />
+              <div className="h-8 w-8 bg-primary/10 rounded-full flex items-center justify-center">
+                <Users className="h-4 w-4 text-primary" />
               </div>
             </div>
           </CardContent>
@@ -443,13 +443,13 @@ export default function FormsPage() {
       {/* Empty State */}
       {!isLoading && filteredForms.length === 0 && !error && (
         <div className="text-center py-12">
-          <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <LinkIcon className="h-12 w-12 text-gray-400" />
+          <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+            <LinkIcon className="h-12 w-12 text-muted-foreground" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <h3 className="text-lg font-medium text-foreground mb-2">
             {searchQuery ? 'No forms found' : 'No forms yet'}
           </h3>
-          <p className="text-gray-600 mb-6">
+          <p className="text-muted-foreground mb-6">
             {searchQuery
               ? 'Try adjusting your search criteria'
               : 'Create your first form to start capturing leads'}
@@ -475,7 +475,7 @@ export default function FormsPage() {
                       {form.name}
                     </CardTitle>
                     {form.description && (
-                      <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                      <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
                         {form.description}
                       </p>
                     )}
@@ -517,7 +517,7 @@ export default function FormsPage() {
                           setSelectedForm(form);
                           setDeleteDialogOpen(true);
                         }}
-                        className="flex items-center gap-2 text-red-600"
+                        className="flex items-center gap-2 text-destructive"
                       >
                         <Trash2 className="h-4 w-4" />
                         Delete
@@ -534,7 +534,7 @@ export default function FormsPage() {
                     <Badge variant={form.isActive ? 'default' : 'secondary'}>
                       {form.isActive ? 'Active' : 'Inactive'}
                     </Badge>
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Switch
                         checked={form.isActive}
                         onCheckedChange={() => handleToggleStatus(form.id, form.isActive)}
@@ -545,17 +545,17 @@ export default function FormsPage() {
                   {/* Metrics */}
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <p className="text-gray-600">Fields</p>
+                      <p className="text-muted-foreground">Fields</p>
                       <p className="font-medium">{form.fieldCount}</p>
                     </div>
                     <div>
-                      <p className="text-gray-600">Responses</p>
+                      <p className="text-muted-foreground">Responses</p>
                       <p className="font-medium">{form.responseCount}</p>
                     </div>
                   </div>
 
                   {/* Dates */}
-                  <div className="text-xs text-gray-500 border-t pt-3">
+                  <div className="text-xs text-muted-foreground border-t border-border pt-3">
                     <div className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
                       Created {formatDate(form.createdAt)}
@@ -607,12 +607,12 @@ export default function FormsPage() {
           {selectedForm && (
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-gray-700">Form Name</label>
+                <label className="text-sm font-medium text-foreground">Form Name</label>
                 <p className="text-lg font-semibold">{selectedForm.name}</p>
               </div>
               
               <div>
-                <label className="text-sm font-medium text-gray-700">Form URL</label>
+                <label className="text-sm font-medium text-foreground">Form URL</label>
                 <div className="flex items-center gap-2 mt-1">
                   <Input
                     value={selectedForm.formUrl}
@@ -636,10 +636,10 @@ export default function FormsPage() {
 
               {selectedForm.mailboxAddress && (
                 <div>
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-sm font-medium text-foreground">
                     Responses will be sent to
                   </label>
-                  <p className="text-sm text-gray-600 font-mono">
+                  <p className="text-sm text-muted-foreground font-mono">
                     {selectedForm.mailboxAddress}
                   </p>
                 </div>
@@ -725,8 +725,8 @@ export default function FormsPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="font-medium text-sm text-gray-900">Form Fields</h4>
-                    <p className="text-sm text-gray-600">Your form will include {formFields.length} field{formFields.length !== 1 ? 's' : ''}</p>
+                    <h4 className="font-medium text-sm text-foreground">Form Fields</h4>
+                    <p className="text-sm text-muted-foreground">Your form will include {formFields.length} field{formFields.length !== 1 ? 's' : ''}</p>
                   </div>
                   <div className="flex gap-2">
                     <Button 
@@ -747,14 +747,14 @@ export default function FormsPage() {
                     </Button>
                   </div>
                 </div>
-                <div className="p-4 bg-gray-50 rounded-lg">
+                <div className="p-4 bg-muted rounded-lg">
                   <div className="space-y-2">
                     {formFields.map((field, index) => (
                       <div key={index} className="flex items-center justify-between text-sm">
                         <div className="flex items-center gap-2">
                           <Badge variant="outline" className="text-xs">{field.type}</Badge>
                           <span className="font-medium">{field.label}</span>
-                          {field.required && <span className="text-red-500">*</span>}
+                          {field.required && <span className="text-destructive">*</span>}
                         </div>
                       </div>
                     ))}
@@ -765,8 +765,8 @@ export default function FormsPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="font-medium text-sm text-gray-900">Customize Form Fields</h4>
-                    <p className="text-sm text-gray-600">Add, remove, and configure your form fields</p>
+                    <h4 className="font-medium text-sm text-foreground">Customize Form Fields</h4>
+                    <p className="text-sm text-muted-foreground">Add, remove, and configure your form fields</p>
                   </div>
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" onClick={() => setShowFormPreview(true)}>
@@ -782,7 +782,7 @@ export default function FormsPage() {
                 
                 <div className="space-y-4 max-h-96 overflow-y-auto">
                   {formFields.map((field, index) => (
-                    <div key={index} className="border border-gray-200 rounded-lg p-4 space-y-3">
+                    <div key={index} className="border border-border rounded-lg p-4 space-y-3">
                       <div className="flex items-center justify-between">
                         <Badge variant="outline" className="capitalize text-xs">
                           {field.type}
@@ -916,13 +916,13 @@ export default function FormsPage() {
           </SheetHeader>
           <div className="p-6">
             <h3 className="text-base font-semibold mb-2">{newFormName || 'Form Preview'}</h3>
-            <p className="text-gray-600 mb-6">{newFormDescription || 'Form description...'}</p>
+            <p className="text-muted-foreground mb-6">{newFormDescription || 'Form description...'}</p>
             <div className="space-y-4">
               {formFields.map((field, index) => (
                 <div key={index}>
                   <label className="block text-sm font-medium mb-1">
                     {field.label}
-                    {field.required && <span className="text-red-500 ml-1">*</span>}
+                    {field.required && <span className="text-destructive ml-1">*</span>}
                   </label>
                   {field.type === 'textarea' ? (
                     <textarea

@@ -87,14 +87,14 @@ export const Navbar = ({
                       ? 'Search profile'
                       : 'search'
             }
-            className="w-full rounded-full bg-[#00000012] border-0 placeholder:text-[#000000A3] placeholder:opacity-50"
+            className="w-full rounded-full bg-input border border-border placeholder:text-muted-foreground placeholder:opacity-50"
             onClickStartIcon={() => toggleSidebar()}
           />
           <DropdownMenu>
             <DropdownMenuTrigger className="absolute right-1.5">
               <Avatar src="" label={initials} className="w-8 h-8" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-white mr-2">
+            <DropdownMenuContent className="bg-popover border-border mr-2">
               <div className="text-center">
                 <ComingSoonTag />
               </div>
@@ -103,12 +103,12 @@ export const Navbar = ({
               </DropdownMenuLabel>
               <DropdownMenuItem>
                 <Avatar src="" label={initials} className="w-8 h-8" />
-                <div className="flex flex-col text-xs text-black">
+                <div className="flex flex-col text-xs text-foreground">
                   <div className="font-semibold">{name}</div>
                   <div>{email}</div>
                 </div>
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-gray-300" />
+              <DropdownMenuSeparator className="bg-border" />
               <DropdownMenuItem className="text-xs">
                 <LucidePlus size={4} className="w-6 h-6" />
                 <div>Create a new mailbox</div>
@@ -127,21 +127,21 @@ export const Navbar = ({
         <div className="relative items-center hidden w-full max-w-[500px] justify-start sm:flex">
           <Input
             startIcon={SearchIcon}
-            iconClass="text-[#000000A3] opacity-50"
+iconClass="text-muted-foreground opacity-50"
             placeholder="Search inbox"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-full bg-[#00000012] border-0 placeholder:text-[#000000A3]"
+            className="w-full rounded-full bg-input border border-border placeholder:text-muted-foreground"
           />
           <div className="absolute right-[10px] flex items-center gap-2">
-            <span className="hidden font-medium text-black lg:block">
+            <span className="hidden font-medium text-foreground lg:block">
               {email}
             </span>
             <DropdownMenu>
               <DropdownMenuTrigger className="-right-0.5">
                 <Avatar src="" label={initials} className="w-8 h-8" />
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-white">
+              <DropdownMenuContent className="bg-popover border-border">
                 <div className="text-center">
                   <ComingSoonTag />
                 </div>
@@ -150,12 +150,12 @@ export const Navbar = ({
                 </DropdownMenuLabel>
                 <DropdownMenuItem>
                   <Avatar src="" label={initials} className="w-8 h-8" />
-                  <div className="flex flex-col text-xs text-black">
+                  <div className="flex flex-col text-xs text-foreground">
                     <div className="font-semibold">{name}</div>
                     <div>{email}</div>
                   </div>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-gray-300" />
+                <DropdownMenuSeparator className="bg-border" />
                 <DropdownMenuItem className="text-xs">
                   <LucidePlus size={4} className="w-6 h-6" />
                   <div>Create a new mailbox</div>

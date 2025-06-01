@@ -26,7 +26,7 @@ export const AppsPage = () => {
     <div className="flex flex-col w-full h-full overflow-auto [&::-webkit-scrollbar]:hidden pb-20 sm:pb-0">
       <div className="flex items-center justify-between gap-4 p-4">
         <div className="flex items-center gap-2">
-          <div className="text-xl font-medium text-black">Applications</div>
+          <div className="text-xl font-medium text-primary-base">Applications</div>
           <ComingSoonTag />
         </div>
 
@@ -57,11 +57,11 @@ export const AppsPage = () => {
           >
             <div className="flex items-center gap-4">
               <Avatar src={app?.appIcon} className="w-6 h-6" />
-              <div className="text-base text-black text-medium">
+              <div className="text-base text-primary-base text-medium">
                 {app?.appName}
               </div>
             </div>
-            <ArrowRightCircle className="text-[#adb6f9] w-6 h-6" />
+            <ArrowRightCircle className="text-primary-base w-6 h-6" />
           </Button>
         ))}
       </div>

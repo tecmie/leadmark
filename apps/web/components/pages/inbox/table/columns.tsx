@@ -66,7 +66,7 @@ export const columns: ColumnDef<EnhancedThread>[] = [
               className="bg-blue-300"
             />
           ) : (
-            <LucideCheck className="w-10 h-10 rounded-full bg-primary-200 p-2 text-white" />
+            <LucideCheck className="w-10 h-10 rounded-full bg-primary p-2 text-primary-foreground" />
           )}
         </div>
       );
@@ -121,11 +121,11 @@ export const columns: ColumnDef<EnhancedThread>[] = [
         }
       }
       return (
-        <div className="flex flex-shrink-0 flex-col gap-2 pr-4 text-[#000000A3]">
+        <div className="flex flex-shrink-0 flex-col gap-2 pr-4 text-muted-foreground">
           <div className="flex justify-between w-full gap-1">
             <div className="flex flex-col w-full m-0">
               <div className="flex items-center gap-2">
-                <p className="m-0 text-base">
+                <p className="m-0 text-base text-foreground">
                   {row.original.contactName
                     ? row.original.contactName
                     : row.original.contact_metadata
@@ -137,10 +137,10 @@ export const columns: ColumnDef<EnhancedThread>[] = [
                       : ''}
                 </p>
                 {row.original.hasNewMessages && (
-                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
                 )}
               </div>
-              <p className={`column-message text-ellipsis p-0 m-0 text-sm ${row.original.hasNewMessages ? 'font-semibold text-black' : ''}`}>
+              <p className={`column-message text-ellipsis p-0 m-0 text-sm ${row.original.hasNewMessages ? 'font-semibold text-foreground' : 'text-muted-foreground'}`}>
                 {row.original.subject}
               </p>
             </div>

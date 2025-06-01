@@ -95,7 +95,7 @@ export const ProfilePage = ({
 
   const [editEnabled, setEditEnabled] = useState(false);
 
-  const contactLink = `https://gptinbox.me/contact-me/${uniqueAddress}`;
+  const contactLink = `https://leadmark.email/contact-me/${uniqueAddress}`;
 
   const handleCopying = async () => {
     if (navigator.clipboard) {
@@ -114,10 +114,10 @@ export const ProfilePage = ({
   return (
     <div className="flex flex-col gap-6 w-full h-full overflow-auto [&::-webkit-scrollbar]:hidden  sm:pb-4 pb-[100px] sm:max-w-[400px]">
       <div className="flex items-center justify-between gap-4 p-4 border-b border-[#0000000A]">
-        <h3 className="text-xl font-medium text-black">Profile</h3>
+        <h3 className="text-xl font-medium text-white">Profile</h3>
         <Button
           variant={'ghost'}
-          className={`flex items-center gap-1 py-0 h-0 -mr-3 text-sm text-primary-base ${
+          className={`flex items-center gap-1 py-0 h-0 -mr-3 text-sm text-primary-base hover:text-primary ${
             editEnabled ? 'text-[#D26656]' : ''
           }`}
           onClick={() => setEditEnabled((prev) => !prev)}
@@ -126,22 +126,26 @@ export const ProfilePage = ({
           <PencilIcon className="w-4 h-4" />
         </Button>
       </div>
-      <div className="flex flex-col gap-4 border-b border-[#0000000A] px-4 pb-4">
-        <Avatar src="" label={initials} />
-        <div className="flex flex-col gap-1">
+
+      <div className="flex flex-row gap-4 border-b border-[#0000000A] px-4 pb-4 items-center justify-between">
+        <div className="flex flex-col gap-1 ">
           {fullname ? (
-            <h3 className="text-xl text-black sm:text-2xl ">
+
+            <h3 className="text-xl text-white sm:text-2xl ">
               {fullname}
             </h3>
+            
           ) : (
             <Skeleton className="w-20 h-4 " />
           )}
           {email ? (
-            <p className="text-black">{email}</p>
+            <p className="text-primary">{email}</p>
           ) : (
             <Skeleton className="w-20 h-4 " />
           )}
         </div>
+        <Avatar src="" label={initials} />
+
       </div>
       <Form {...form}>
         <form
@@ -210,8 +214,8 @@ export const ProfilePage = ({
                 )}
               />
               <div className="flex items-start w-full gap-2">
-                <p className="text-xs">
-                  This helps us customize your GPTInbox experience to meet your
+                <p className="text-xs text-white">
+                  This helps us customize your Leadmark experience to meet your
                   specific needs.
                 </p>
               </div>
@@ -234,7 +238,7 @@ export const ProfilePage = ({
           </div>
           <div className="flex flex-col gap-4 border-b border-[#0000000A] px-4 pb-4">
             <div className="flex flex-col gap-1">
-              <h3 className="text-base text-black ">
+              <h3 className="text-base text-white ">
                 Link
               </h3>
               <p>

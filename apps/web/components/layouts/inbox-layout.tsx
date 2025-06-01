@@ -68,7 +68,7 @@ export const InboxLayout = ({
 
   return (
     <SearchProvider>
-      <main className="relative h-[100dvh] overflow-hidden flex flex-col bg-white sm:bg-transparent">
+      <main className="relative h-[100dvh] overflow-hidden flex flex-col bg-background">
       {showNavbar ? (
         <Navbar
           name={fullname as string}
@@ -93,7 +93,7 @@ export const InboxLayout = ({
             />
           </div>
 
-          <div className="block p-4 bg-white sm:hidden">
+          <div className="block p-4 bg-background sm:hidden">
             <Button onClick={() => router.back()} variant={'ghost'} size="icon">
               <GoBackIcon />
             </Button>
@@ -101,7 +101,7 @@ export const InboxLayout = ({
         </>
       )}
 
-      <div className="flex items-stretch flex-1 w-full p-0 overflow-hidden sm:px-4 border-t-border-neutral-weaker">
+      <div className="flex items-stretch flex-1 w-full p-0 overflow-hidden sm:px-4 border-t-border">
         <Sidebar
           isExpanded={isExpanded}
           toggleSidebar={toggleSidebar}
@@ -116,7 +116,7 @@ export const InboxLayout = ({
           {layoutState.showApp && (
             <div
               className={cn(
-                'w-full h-full overflow-auto bg-white max-w-[400px] [&::-webkit-scrollbar]:hidden rounded-none sm:rounded-lg transition-all duration-300 ease-in-out ',
+                'w-full h-full overflow-auto bg-background max-w-[400px] [&::-webkit-scrollbar]:hidden rounded-none sm:rounded-lg transition-all duration-300 ease-in-out ',
                 {
                   'hidden sm:block ': layoutState.showApp
                 },
@@ -129,7 +129,7 @@ export const InboxLayout = ({
           {layoutState.showProfile && (
             <div
               className={cn(
-                'w-full h-full overflow-auto bg-white max-w-[400px] [&::-webkit-scrollbar]:hidden rounded-none sm:rounded-lg transition-all duration-300 ease-in-out ',
+                'w-full h-full overflow-auto bg-background max-w-[400px] [&::-webkit-scrollbar]:hidden rounded-none sm:rounded-lg transition-all duration-300 ease-in-out ',
                 {
                   'hidden sm:block ': layoutState.showProfile
                 },

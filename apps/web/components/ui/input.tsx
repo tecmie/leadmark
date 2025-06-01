@@ -56,7 +56,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             <input
               type={type}
               className={cn(
-                'flex outline-none text-black dark:text-inherit h-full w-full rounded-lg border border-[#00000029] bg-transparent py-4 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground  disabled:cursor-not-allowed disabled:opacity-50',
+                'flex outline-none text-foreground h-full w-full rounded-lg border border-border bg-input py-4 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50',
                 className,
                 StartIcon && EndIcon
                   ? 'pl-10 pr-10'
@@ -80,7 +80,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <input
             type={type}
             className={cn(
-              'flex outline-none h-11 text-black dark:text-black w-full rounded-md border border-[#00000029] p-4 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground  disabled:cursor-not-allowed disabled:opacity-50',
+              'flex outline-none h-11 text-foreground w-full rounded-md border border-border bg-input p-4 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50',
               className
             )}
             ref={ref}
@@ -102,7 +102,7 @@ const LabelledInput = React.forwardRef<HTMLInputElement, LabelledInputProps>(
     <div className="flex flex-col w-full gap-2">
       <Label
         htmlFor={name}
-        className="text-xs text-left text-[#000000A3] "
+        className="text-xs text-left text-muted-foreground"
       >
         {label}
       </Label>
@@ -129,7 +129,7 @@ const EmailInput = React.forwardRef<HTMLInputElement, InputProps>(
         type={type}
         name={name}
         className={cn(
-          'flex h-full w-full rounded-lg border border-[#00000029] bg-transparent py-3 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50',
+          'flex h-full w-full rounded-lg border border-border bg-input text-foreground py-3 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50',
           className,
           'pl-3 sm:pl-10 pr-28'
         )}
@@ -137,7 +137,7 @@ const EmailInput = React.forwardRef<HTMLInputElement, InputProps>(
       />
 
       <span
-        className={cn(InputVariants({ iconPosition: 'right' }), 'text-link')}
+        className={cn(InputVariants({ iconPosition: 'right' }), 'text-primary')}
       >
         @{props.title}
       </span>
@@ -151,7 +151,7 @@ const LinkInput = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, name, onClickEndIcon, ...props }, ref) => (
     <div className="relative inline-block w-full h-11">
       <span
-        className={cn(InputVariants({ iconPosition: 'left' }), 'text-link')}
+        className={cn(InputVariants({ iconPosition: 'left' }), 'text-primary')}
       >
         inbox.me/
       </span>
@@ -161,7 +161,7 @@ const LinkInput = React.forwardRef<HTMLInputElement, InputProps>(
         type={type}
         name={name}
         className={cn(
-          'flex h-full w-full rounded-lg border bg-transparent py-3 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50',
+          'flex h-full w-full rounded-lg border border-border bg-input text-foreground py-3 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50',
           className,
           'pl-20 pr-10'
         )}

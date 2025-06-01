@@ -1,9 +1,9 @@
-import { InboxOverviewPage } from '@/components/pages/inbox/overview';
-import { fetchInboxThreads } from '@/actions/server/threads';
-import { getOrAddToWaitlist, getUser } from '@/actions/server/auth';
-import { routes } from '@/utils/routes';
-import { redirect } from 'next/navigation';
-import { PropsWithChildren } from 'react';
+import { InboxOverviewPage } from "@/components/pages/inbox/overview";
+import { fetchInboxThreads } from "@/actions/server/threads";
+import { getOrAddToWaitlist, getUser } from "@/actions/server/auth";
+import { routes } from "@/utils/routes";
+import { redirect } from "next/navigation";
+import { PropsWithChildren } from "react";
 
 export default async function Layout({ children }: PropsWithChildren) {
   // const session = await getUser();
@@ -20,7 +20,7 @@ export default async function Layout({ children }: PropsWithChildren) {
         <div className="sm:block hidden max-w-[350px] w-full">
           <InboxOverviewPage data={threads ?? []} />
         </div>
-        <div className="sm:border-l border-[#0000000A] pb-2 flex flex-col sm:justify-center justify-start items-center w-full mb-14 bg-white sm:rounded-br-lg">
+        <div className="sm:border-l border-[#0000000A] pb-2 flex flex-col sm:justify-center justify-start items-center w-full mb-14 sm:rounded-br-lg">
           {children}
         </div>
       </div>
