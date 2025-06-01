@@ -310,7 +310,7 @@ export const InboxViewerPage = ({
             />
           </div>
         </div>
-        <div className="pb-4 divide-y divide-border relative flex flex-col items-stretch w-full flex-1 gap-8 overflow-y-auto max-h-[60vh] min-h-[200px]">
+        <div className="pb-4 divide-y divide-border relative flex flex-col items-stretch w-full flex-1 gap-8 overflow-y-auto max-h-[65vh] min-h-[200px]">
           {messages?.map((message, index) => (
             <InboxMessageItem
               senderName={thread?.contactName ?? ""}

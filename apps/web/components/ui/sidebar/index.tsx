@@ -230,7 +230,7 @@ export const Sidebar = ({
   return (
     <aside
       className={cn(
-        ' transition-all ease-in-out hidden max-w-[200px] bg-background sm:rounded-l-lg sm:flex flex-col flex-shrink-0 gap-5 ',
+        ' transition-all ease-in-out hidden max-w-[200px] bg-background sm:rounded-l-lg sm:flex flex-col flex-shrink-0 gap-5 mt-2',
         { 'w-[60px] duration-300 ': !isExpanded },
         { 'w-full duration-700 p-2': isExpanded }
       )}

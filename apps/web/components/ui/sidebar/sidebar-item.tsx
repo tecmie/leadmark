@@ -28,7 +28,7 @@ export const SidebarItem = ({
     <Link
       href={href}
       className={cn(
-        ' sm:p-2 p-4 rounded-none flex items-center gap-3',
+        ' sm:p-2 py-4 rounded-none flex items-center gap-3 pl-0',
         {
           ' text-primary font-medium': isActive
         },

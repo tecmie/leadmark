@@ -371,9 +371,9 @@ export default function FormsPage() {
   }
 
   return (
-    <div className="container mx-auto p-6 max-w-7xl">
+    <div className="container mx-auto p-6 px-12 pt-8">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Forms</h1>
           <p className="text-muted-foreground mt-1">

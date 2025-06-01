@@ -1,22 +1,29 @@
-'use client';
+"use client";
 
-import { routes } from '@/utils/routes';
-import { LucideMenu, LucidePlus, SearchIcon } from 'lucide-react';
-import { useSearch } from '@/contexts/search-context';
-import { usePathname } from 'next/navigation';
+import { routes } from "@/utils/routes";
+import { LucideMenu, LucidePlus, SearchIcon } from "lucide-react";
+import { useSearch } from "@/contexts/search-context";
+import { usePathname } from "next/navigation";
 import {
   ActiveAppIcon,
   ActiveProfileIcon,
   AppsNavIcon,
-  ProfileNavIcon
-} from '../icons/NavIcons';
-import { Avatar } from './avatar';
-import { Button } from './button';
-import { Input } from './input';
-import { LogoMark } from './logo-mark';
-import { Tooltip } from './tooltip';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './dropdown-menu';
-import { ComingSoonTag } from './coming-soon';
+  ProfileNavIcon,
+} from "../icons/NavIcons";
+import { Avatar } from "./avatar";
+import { Button } from "./button";
+import { Input } from "./input";
+import { LogoMark } from "./logo-mark";
+import { Tooltip } from "./tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./dropdown-menu";
+import { ComingSoonTag } from "./coming-soon";
 
 interface NavbarProps {
   toggleSidebar: () => void;
@@ -39,7 +46,7 @@ export const Navbar = ({
   setProfile,
   email,
   action,
-  name
+  name,
 }: NavbarProps) => {
   const pathname = usePathname();
   const { searchQuery, setSearchQuery } = useSearch();
@@ -47,16 +54,39 @@ export const Navbar = ({
   return (
     <div
       className={`items-center justify-between gap-10 sm:px-6 px-4 py-4 bg-transparent w-full h-[88px] ${
-        pathname?.startsWith(routes?.INBOX_VIEWER) ? 'hidden sm:flex' : 'flex'
+        pathname?.startsWith(routes?.INBOX_VIEWER) ? "hidden sm:flex" : "flex"
       } `}
     >
-      <div className="relative items-center justify-center hidden gap-6 sm:flex ">
-        <Button size="icon" variant="ghost" onClick={() => toggleSidebar()}>
-          <LucideMenu size={16} />
-        </Button>
-        <div className="m-auto">
-          <LogoMark />
+
+      <div className="flex items-center gap-2">
+
+        <LogoMark />
+
+        <div className="flex gap-4 ml-6">
+            {[
+            { label: "Inbox", path: routes.INBOX_VIEWER },
+            { label: "Contacts", path: routes.APPS },
+            { label: "Forms", path: routes.FORMS },
+            { label: "Insights", path: routes.FORMS },
+            ].map((item) => {
+            const isActive = pathname?.startsWith(item.path);
+            return (
+              <button
+              key={item.label}
+              type="button"
+              onClick={() => (window.location.href = item.path)}
+              className={`text-sm font-medium px-2 py-1 rounded transition-colors cursor-pointer ${
+                isActive
+                ? "text-primary bg-muted"
+                : "text-muted-foreground hover:text-primary"
+              }`}
+              >
+              {item.label}
+              </button>
+            );
+            })}
         </div>
+
       </div>
       {/* <div className="relative items-center hidden w-full max-w-[500px] justify-start sm:flex">
         <Input
@@ -71,21 +101,21 @@ export const Navbar = ({
           <Avatar src="" label={initials} className="w-8 h-8 -right-0.5" />
         </div>
       </div> */}
-      {!pathname?.startsWith(routes?.INBOX_VIEWER) && (
+      {pathname?.startsWith(routes?.INBOX_VIEWER) && (
         <div className="relative flex items-center w-full sm:hidden">
           <Input
             startIcon={LucideMenu}
             readOnly
             placeholder={
               pathname?.startsWith(routes.INBOX_OVERVIEW)
-                ? 'Search inbox'
+                ? "Search inbox"
                 : pathname?.startsWith(routes.SETTINGS)
-                  ? 'Search settings'
+                  ? "Search settings"
                   : pathname?.startsWith(routes.APPS)
-                    ? 'Search applications'
+                    ? "Search applications"
                     : pathname?.startsWith(routes.PROFILE)
-                      ? 'Search profile'
-                      : 'search'
+                      ? "Search profile"
+                      : "search"
             }
             className="w-full rounded-full bg-input border border-border placeholder:text-muted-foreground placeholder:opacity-50"
             onClickStartIcon={() => toggleSidebar()}
@@ -127,7 +157,7 @@ export const Navbar = ({
         <div className="relative items-center hidden w-full max-w-[500px] justify-start sm:flex">
           <Input
             startIcon={SearchIcon}
-iconClass="text-muted-foreground opacity-50"
+            iconClass="text-muted-foreground opacity-50"
             placeholder="Search inbox"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -181,7 +211,7 @@ iconClass="text-muted-foreground opacity-50"
           )}
         </Tooltip>
 
-        <div className="mr-4"></div>
+        <div ></div>
 
         {/* <Tooltip content="Settings" side="bottom">
           <Link
