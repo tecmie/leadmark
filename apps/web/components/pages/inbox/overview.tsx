@@ -132,54 +132,8 @@ export const InboxOverviewPage = ({
       )
       .subscribe();
 
-    // Subscribe to message changes (new messages in existing threads)
-    const messagesChannel = supabase
-      .channel("inboxMessages")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "messages" },
-        async (payload) => {
-          console.log("New message received:", payload);
-
-          // Get the current user to filter
-          const {
-            data: { user },
-          } = await supabase.auth.getUser();
-          if (!user) return;
-
-          // Check if this message belongs to user's thread
-          const threadExists = inboxOverviewData.find(
-            (thread) =>
-              thread.id === payload.new.thread_id && thread.owner_id === user.id
-          );
-          if (!threadExists) return;
-
-          // Update the thread's last_updated time and mark as having new messages
-          setInboxOverviewData((prev) =>
-            prev.map((thread) =>
-              thread.id === payload.new.thread_id
-                ? {
-                    ...thread,
-                    last_updated: payload.new.created_at,
-                    hasNewMessages: true,
-                  }
-                : thread
-            )
-          );
-
-          // Mark thread as having new messages
-          if (payload.new.thread_id) {
-            setNewThreadIds(
-              (prev) => new Set([...prev, payload.new.thread_id])
-            );
-          }
-        }
-      )
-      .subscribe();
-
     return () => {
       supabase.removeChannel(threadsChannel);
-      supabase.removeChannel(messagesChannel);
     };
   }, [supabase]);
 

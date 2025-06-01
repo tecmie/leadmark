@@ -156,44 +156,10 @@ export const InboxViewerPage = ({
   const [composedReply, setComposedReply] = useState('');
   const [currentMessages, setCurrentMessages] = useState<EnhancedMessage[]>(messages || []);
 
-  // Real-time updates for new messages in this thread
+  // Real-time updates now handled via threads table updates
   useEffect(() => {
-    if (!thread?.namespace) return;
-
-    const messagesChannel = supabase
-      .channel(`thread-messages-${thread.namespace}`)
-      .on(
-        'postgres_changes',
-        { 
-          event: 'INSERT', 
-          schema: 'public', 
-          table: 'messages',
-          filter: `thread_id=eq.${thread.id}`
-        },
-        async (payload) => {
-          console.log('New message in thread:', payload);
-          
-          // Refresh messages for this thread
-          try {
-            const result = await fetchMessagesByThreadNamespace(thread.namespace);
-            if (result.success && result.data) {
-              setCurrentMessages(result.data);
-              
-              // Show notification for new incoming messages
-              if (payload.new.direction === 'inbound') {
-                toast.success('New message received!');
-              }
-            }
-          } catch (error) {
-            console.error('Error refreshing messages:', error);
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(messagesChannel);
-    };
+    // Messages will be refetched when threads table is updated with new last_message_id
+    // No direct message listeners needed
   }, [thread?.namespace, thread?.id, supabase]);
 
   // Update current messages when props change

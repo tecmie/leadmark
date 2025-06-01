@@ -26,8 +26,8 @@ Content-Type: application/json
   "BccFull": [],
   "Subject": "Property Enquiry XYZ",
   "Date": "Fri, 20 Oct 2023 19:44:08 +0000",
-  "TextBody": "Hello James,\n\nregarding the property investment details we discussed. Please let me know if you need any additional information from my end.\n\nBest regards,\nPaul",
-  "StrippedTextReply": "Hello James,\n\nregarding the property investment details we discussed. Please let me know if you need any additional information from my end.\n\nBest regards,\nPaul",
+  "TextBody": "Hello James,\n\nr know if you need any additional information from my end.\n\nBest regards,\nPaul",
+  "StrippedTextReply": "Hello James,\n\nregnt. Please let me know if you need any additional information from my end.\n\nBest regards,\nPaul",
   "Headers": [
     {
       "Name": "Return-Path",

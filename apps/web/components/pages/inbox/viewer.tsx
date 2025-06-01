@@ -1,18 +1,22 @@
-'use client';
+"use client";
 
 import {
   ArrowBendUpLeft,
   ArrowBendUpRight,
   InboxTagIcon,
-} from '@/components/icons/InboxIcons';
-import { FilePdfIcon } from '@/components/icons/settings';
+} from "@/components/icons/InboxIcons";
+import { FilePdfIcon } from "@/components/icons/settings";
 // import { AttachmentsViewer } from '@/components/ui/attachments-viewer';
-import { Avatar } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { Switch } from '@/components/ui/switch';
-import { toggleAutoResponderByNamespace } from '@/actions/server/threads';
-import { type IMessage, type TypeMessageAttachment, IThread } from '@repo/types';
+import { Avatar } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { toggleAutoResponderByNamespace } from "@/actions/server/threads";
+import {
+  type IMessage,
+  type TypeMessageAttachment,
+  IThread,
+} from "@repo/types";
 
 // Extended message type that includes the additional properties returned by server actions
 type EnhancedMessage = IMessage & {
@@ -26,14 +30,14 @@ type EnhancedMessage = IMessage & {
     };
   }[];
 };
-import { triggerDownload } from '@/utils/helpers';
-import { cn } from '@/utils/ui';
-import { createClient } from '@/supabase/client';
-import { ArrowLeft, ChevronRight, DownloadCloud, Trash2 } from 'lucide-react';
-import { useRouter } from '@bprogress/next/app';
-import { useState, useEffect } from 'react';
-import { toast } from 'sonner';
-import { fetchMessagesByThreadNamespace } from '@/actions/server/threads';
+import { triggerDownload } from "@/utils/helpers";
+import { cn } from "@/utils/ui";
+import { createClient } from "@/supabase/client";
+import { ArrowLeft, ChevronRight, DownloadCloud, Trash2 } from "lucide-react";
+import { useRouter } from "@bprogress/next/app";
+import { useState, useEffect, useRef } from "react";
+import { toast } from "sonner";
+import { fetchMessagesByThreadNamespace } from "@/actions/server/threads";
 
 interface InboxMessageItemProps {
   message: EnhancedMessage;
@@ -63,18 +67,20 @@ const MessageAttachment = ({ attachment, ownerId }: MessageAttachmentProps) => {
   const resource = attachment?.resource;
 
   const handleFileDownload = async (name: string) => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user?.id) {
-      toast.error('User not logged in.');
+      toast.error("User not logged in.");
       return;
     }
     const { data, error } = await supabase.storage
-      .from('leadmark/attachments')
+      .from("leadmark/attachments")
       .download(`${ownerId}/${resource.source_url}`);
 
     if (error || !data) {
-      toast.error('Error downloading file');
+      toast.error("Error downloading file");
       return;
     }
 
@@ -89,15 +95,15 @@ const MessageAttachment = ({ attachment, ownerId }: MessageAttachmentProps) => {
         <p className="w-40 text-base capitalize truncate text-foreground sm:w-full">
           {resource.name}
         </p>
-        <p className={cn('text-xs text-muted-foreground')}>
+        <p className={cn("text-xs text-muted-foreground")}>
           {/* {(size / 1024).toFixed(2) + 'KB'} */}
           {resource.source_type}
         </p>
       </div>
       <div className="flex items-center gap-3">
         <Button
-          variant={'ghost'}
-          size={'icon'}
+          variant={"ghost"}
+          size={"icon"}
           onClick={() => handleFileDownload(resource.name)}
         >
           <DownloadCloud size={16} />
@@ -133,16 +139,17 @@ const InboxMessageItem = ({
   receiverName,
   ownerId,
 }: InboxMessageItemProps) => {
-  const displayName = message.direction === 'inbound' ? senderName : receiverName;
+  const displayName =
+    message.direction === "inbound" ? senderName : receiverName;
   const date = new Date(sendDate);
-  const formattedDate = date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
+  const formattedDate = date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
   });
   const attachments = message.message_attachments;
 
   return (
-    <article className={cn(' flex flex-col items-start py-4 gap-4')}>
+    <article className={cn(" flex flex-col items-start py-4 gap-4")}>
       <div className="flex justify-between w-full ">
         <div className="flex items-center gap-4">
           <Avatar
@@ -151,11 +158,13 @@ const InboxMessageItem = ({
           />
           <div className="flex flex-col gap-0">
             <div className="flex items-center gap-2">
-              <p className="text-base font-medium text-foreground">{displayName}</p>
+              <p className="text-base font-medium text-foreground">
+                {displayName}
+              </p>
               <p className="text-sm text-muted-foreground">{formattedDate}</p>
             </div>
             <p className="text-sm text-muted-foreground">
-              {message.direction === 'inbound' ? senderEmail : receiverEmail}
+              {message.direction === "inbound" ? senderEmail : receiverEmail}
             </p>
           </div>
         </div>
@@ -169,7 +178,7 @@ const InboxMessageItem = ({
           <div
             className="overflow-hidden break-words text-foreground"
             dangerouslySetInnerHTML={{
-              __html: message.html_content ? message.html_content : '',
+              __html: message.html_content ? message.html_content : "",
             }}
           />
         ) : (
@@ -184,7 +193,7 @@ const InboxMessageItem = ({
               <MessageAttachment
                 key={index}
                 attachment={item}
-                ownerId={String(ownerId || '')}
+                ownerId={String(ownerId || "")}
               />
             ))}
         </div>
@@ -203,108 +212,63 @@ export const InboxViewerPage = ({
   const router = useRouter();
   const supabase = createClient();
 
-  const [messages, setMessages] = useState<EnhancedMessage[]>(initialMessages || []);
-  const [isAutoResponderEnabled, setIsAutoResponderEnabled] = useState(
-    thread?.status != 'closed'
+  const [messages, setMessages] = useState<EnhancedMessage[]>(
+    initialMessages || []
   );
+  const [isAutoResponderEnabled, setIsAutoResponderEnabled] = useState(
+    thread?.status != "closed"
+  );
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Real-time message updates
+  // Real-time message updates via threads table
   useEffect(() => {
     if (!thread?.id || !namespace) return;
 
-    const messagesChannel = supabase
-      .channel(`thread-${thread.id}-messages`)
+    const threadsChannel = supabase
+      .channel(`thread-viewer-${thread.id}`)
       .on(
-        'postgres_changes',
-        { 
-          event: 'INSERT', 
-          schema: 'public', 
-          table: 'messages',
-          filter: `thread_id=eq.${thread.id}`
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "threads",
+          filter: `id=eq.${thread.id}`,
         },
         async (payload) => {
-          console.log('New message received in thread:', payload);
-          
+          console.log("Thread updated in viewer:", payload);
+
           // Get the current user to filter
-          const { data: { user } } = await supabase.auth.getUser();
-          if (!user) return;
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
+          if (!user || payload.new.owner_id !== user.id) return;
 
-          // Check if this thread belongs to the current user
-          if (thread.owner_id !== user.id) return;
-
-          try {
-            // Fetch the complete message with attachments
-            const { data: newMessage, error } = await supabase
-              .from('messages')
-              .select(`
-                *,
-                message_attachments (
-                  id,
-                  resource:resource_id (
-                    id,
-                    name,
-                    file_path,
-                    type
-                  )
-                )
-              `)
-              .eq('id', payload.new.id)
-              .single();
-
-            if (!error && newMessage) {
-              // Add the new message to the messages list
-              setMessages(prev => [...prev, newMessage as EnhancedMessage]);
-              
-              // Show notification for inbound messages
-              if (payload.new.direction === 'inbound') {
-                toast.success('New message received!', {
-                  description: 'You have a new incoming message',
-                });
-              }
-            } else {
-              // Fallback: refresh all messages for this thread
+          // Check if last_message_id changed (indicating new message)
+          if (payload.new.last_message_id !== payload.old.last_message_id) {
+            try {
+              // Refetch all messages for this thread
               const result = await fetchMessagesByThreadNamespace(namespace);
-              if (result.data) {
+              if (result.success && result.data) {
+                const previousMessageCount = messages.length;
                 setMessages(result.data);
               }
-            }
-          } catch (error) {
-            console.error('Error fetching new message:', error);
-            // Fallback: refresh all messages for this thread
-            const result = await fetchMessagesByThreadNamespace(namespace);
-            if (result.data) {
-              setMessages(result.data);
+            } catch (error) {
+              console.error("Error refetching messages:", error);
             }
           }
-        }
-      )
-      .on(
-        'postgres_changes',
-        { 
-          event: 'UPDATE', 
-          schema: 'public', 
-          table: 'messages',
-          filter: `thread_id=eq.${thread.id}`
-        },
-        async (payload) => {
-          console.log('Message updated in thread:', payload);
-          
-          // Update the specific message in the list
-          setMessages(prev => 
-            prev.map(message => 
-              message.id === payload.new.id 
-                ? { ...message, ...payload.new } as EnhancedMessage
-                : message
-            )
-          );
         }
       )
       .subscribe();
 
     return () => {
-      supabase.removeChannel(messagesChannel);
+      supabase.removeChannel(threadsChannel);
     };
-  }, [thread?.id, namespace, supabase]);
+  }, [thread?.id, namespace, supabase, messages.length]);
+
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages.length]);
 
   const toggleAutoResponderStatus = async () => {
     if (thread) {
@@ -349,9 +313,9 @@ export const InboxViewerPage = ({
         <div className="pb-4 divide-y divide-border relative flex flex-col items-stretch w-full flex-1 gap-8 overflow-y-auto max-h-[60vh] min-h-[200px]">
           {messages?.map((message, index) => (
             <InboxMessageItem
-              senderName={thread?.contactName ?? ''}
-              senderEmail={thread?.contactEmail ?? ''}
-              sendDate={thread?.created_at ?? ''}
+              senderName={thread?.contactName ?? ""}
+              senderEmail={thread?.contactEmail ?? ""}
+              sendDate={thread?.created_at ?? ""}
               message={message}
               key={index}
               receiverName={fullname}
@@ -359,6 +323,7 @@ export const InboxViewerPage = ({
               ownerId={thread?.owner_id}
             />
           ))}
+          <div ref={messagesEndRef} />
         </div>
       </div>
 
@@ -366,7 +331,7 @@ export const InboxViewerPage = ({
         <Separator className="bg-border px-4" />
         <div className="flex items-center gap-4 py-4">
           <Button
-            variant={'outline'}
+            variant={"outline"}
             className="w-full px-8 rounded-full"
             onClick={() => router.push(`/inbox/u/${namespace}/forward`)}
           >
@@ -374,7 +339,7 @@ export const InboxViewerPage = ({
             <ArrowBendUpRight />
           </Button>
           <Button
-            variant={'outline'}
+            variant={"outline"}
             className="w-full px-8 rounded-full"
             onClick={() => router.push(`/inbox/u/${namespace}/reply`)}
           >
