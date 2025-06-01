@@ -64,8 +64,8 @@ export const Navbar = ({
 
         <div className="flex gap-4 ml-6">
             {[
-            { label: "Inbox", path: routes.INBOX_VIEWER },
-            { label: "Contacts", path: routes.APPS },
+            { label: "Inbox", path: routes.INBOX_OVERVIEW },
+            { label: "Contacts", path: routes.CONTACTS },
             { label: "Forms", path: routes.FORMS },
             { label: "Insights", path: routes.FORMS },
             ].map((item) => {
@@ -195,7 +195,7 @@ export const Navbar = ({
             {/* <Avatar src="" label={initials} className="w-8 h-8 -right-0.5" /> */}
           </div>
         </div>
-        <Tooltip content="Apps" side="bottom">
+        <Tooltip content="Apps" side="bottom" className="cursor-pointer">
           {action.showApp ? (
             <ActiveAppIcon onClick={setApp} className="inline-block" />
           ) : (
@@ -203,7 +203,7 @@ export const Navbar = ({
           )}
         </Tooltip>
 
-        <Tooltip content="Profile" side="bottom">
+        <Tooltip content="Profile" side="bottom" className="cursor-pointer">
           {action.showProfile ? (
             <ActiveProfileIcon onClick={setProfile} className="inline-block" />
           ) : (

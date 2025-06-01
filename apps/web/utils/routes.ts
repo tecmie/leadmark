@@ -36,4 +36,7 @@ export const routes = {
 
   // Forms routes  
   FORMS: '/forms',
+
+  // Contacts routes
+  CONTACTS: '/contacts',
 };
