@@ -457,3 +457,100 @@ export const getFormResponses = async (
     };
   }
 };
+
+// Create a new form directly (not through onboarding)
+export const createNewForm = async ({
+  userId,
+  name,
+  description,
+  fields,
+}: {
+  userId: string;
+  name: string;
+  description: string;
+  fields: FormField[];
+}): Promise<BackendResponse<{ formId: string; formUrl: string }>> => {
+  try {
+    const supabase = await createClient();
+
+    // First get user's mailbox
+    const { data: mailbox, error: mailboxError } = await supabase
+      .from('mailboxes')
+      .select('id, unique_address, dotcom')
+      .eq('owner_id', userId)
+      .single();
+
+    if (mailboxError || !mailbox) {
+      return {
+        success: false,
+        message: 'User mailbox not found. Please complete onboarding first.',
+      };
+    }
+
+    // Generate slug from form name
+    const baseSlug = name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+
+    // Check if slug exists and make it unique
+    let slug = baseSlug;
+    let counter = 1;
+    while (true) {
+      const { data: existingForm } = await supabase
+        .from('forms')
+        .select('id')
+        .eq('slug', slug)
+        .eq('mailbox_id', mailbox.id)
+        .maybeSingle();
+
+      if (!existingForm) break;
+      slug = `${baseSlug}-${counter}`;
+      counter++;
+    }
+
+    // Create form fields object
+    const formFields = {
+      name,
+      description,
+      fields,
+    };
+
+    const { data, error } = await supabase
+      .from('forms')
+      .insert({
+        mailbox_id: mailbox.id,
+        name,
+        slug,
+        form_fields: formFields as any,
+        is_active: true,
+      })
+      .select('id')
+      .single();
+
+    if (error) {
+      console.error('Error creating form:', error);
+      return {
+        success: false,
+        message: 'Error creating form',
+      };
+    }
+
+    const formUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://leadmark.email'}/form/${slug}`;
+
+    return {
+      success: true,
+      message: 'Form created successfully',
+      data: {
+        formId: data.id,
+        formUrl,
+      },
+    };
+  } catch (error) {
+    console.error('Error creating form:', error);
+    return {
+      success: false,
+      message: 'Error creating form',
+    };
+  }
+};

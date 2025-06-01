@@ -31,8 +31,9 @@ import { cn } from '@/utils/ui';
 import { createClient } from '@/supabase/client';
 import { ArrowLeft, ChevronRight, DownloadCloud, Trash2 } from 'lucide-react';
 import { useRouter } from '@bprogress/next/app';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import { fetchMessagesByThreadNamespace } from '@/actions/server/threads';
 
 interface InboxMessageItemProps {
   message: EnhancedMessage;
@@ -193,17 +194,117 @@ const InboxMessageItem = ({
 };
 
 export const InboxViewerPage = ({
-  messages,
+  messages: initialMessages,
   thread,
   namespace,
   email,
   fullname,
 }: InboxViewerPageProps) => {
   const router = useRouter();
+  const supabase = createClient();
 
+  const [messages, setMessages] = useState<EnhancedMessage[]>(initialMessages || []);
   const [isAutoResponderEnabled, setIsAutoResponderEnabled] = useState(
     thread?.status != 'closed'
   );
+
+  // Real-time message updates
+  useEffect(() => {
+    if (!thread?.id || !namespace) return;
+
+    const messagesChannel = supabase
+      .channel(`thread-${thread.id}-messages`)
+      .on(
+        'postgres_changes',
+        { 
+          event: 'INSERT', 
+          schema: 'public', 
+          table: 'messages',
+          filter: `thread_id=eq.${thread.id}`
+        },
+        async (payload) => {
+          console.log('New message received in thread:', payload);
+          
+          // Get the current user to filter
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) return;
+
+          // Check if this thread belongs to the current user
+          if (thread.owner_id !== user.id) return;
+
+          try {
+            // Fetch the complete message with attachments
+            const { data: newMessage, error } = await supabase
+              .from('messages')
+              .select(`
+                *,
+                message_attachments (
+                  id,
+                  resource:resource_id (
+                    id,
+                    name,
+                    file_path,
+                    type
+                  )
+                )
+              `)
+              .eq('id', payload.new.id)
+              .single();
+
+            if (!error && newMessage) {
+              // Add the new message to the messages list
+              setMessages(prev => [...prev, newMessage as EnhancedMessage]);
+              
+              // Show notification for inbound messages
+              if (payload.new.direction === 'inbound') {
+                toast.success('New message received!', {
+                  description: 'You have a new incoming message',
+                });
+              }
+            } else {
+              // Fallback: refresh all messages for this thread
+              const result = await fetchMessagesByThreadNamespace(namespace);
+              if (result.data) {
+                setMessages(result.data);
+              }
+            }
+          } catch (error) {
+            console.error('Error fetching new message:', error);
+            // Fallback: refresh all messages for this thread
+            const result = await fetchMessagesByThreadNamespace(namespace);
+            if (result.data) {
+              setMessages(result.data);
+            }
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        { 
+          event: 'UPDATE', 
+          schema: 'public', 
+          table: 'messages',
+          filter: `thread_id=eq.${thread.id}`
+        },
+        async (payload) => {
+          console.log('Message updated in thread:', payload);
+          
+          // Update the specific message in the list
+          setMessages(prev => 
+            prev.map(message => 
+              message.id === payload.new.id 
+                ? { ...message, ...payload.new } as EnhancedMessage
+                : message
+            )
+          );
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(messagesChannel);
+    };
+  }, [thread?.id, namespace, supabase]);
 
   const toggleAutoResponderStatus = async () => {
     if (thread) {

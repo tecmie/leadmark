@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { replyToMessage } from '@/actions/server/messages';
 import { IMessage, IThread } from '@repo/types';
+import { createClient } from '@/supabase/client';
+import { fetchMessagesByThreadNamespace } from '@/actions/server/threads';
 
 // Extended message type that includes the additional properties returned by server actions
 type EnhancedMessage = IMessage & {
@@ -23,7 +25,7 @@ type EnhancedMessage = IMessage & {
 import { cn } from '@/utils/ui';
 import { ArrowLeft, Trash2 } from 'lucide-react';
 import { useRouter } from '@bprogress/next/app';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 
 interface InboxMessageItemProps {
@@ -149,8 +151,55 @@ export const InboxViewerPage = ({
   email,
 }: InboxViewerPageProps) => {
   const router = useRouter();
+  const supabase = createClient();
 
   const [composedReply, setComposedReply] = useState('');
+  const [currentMessages, setCurrentMessages] = useState<EnhancedMessage[]>(messages || []);
+
+  // Real-time updates for new messages in this thread
+  useEffect(() => {
+    if (!thread?.namespace) return;
+
+    const messagesChannel = supabase
+      .channel(`thread-messages-${thread.namespace}`)
+      .on(
+        'postgres_changes',
+        { 
+          event: 'INSERT', 
+          schema: 'public', 
+          table: 'messages',
+          filter: `thread_id=eq.${thread.id}`
+        },
+        async (payload) => {
+          console.log('New message in thread:', payload);
+          
+          // Refresh messages for this thread
+          try {
+            const result = await fetchMessagesByThreadNamespace(thread.namespace);
+            if (result.success && result.data) {
+              setCurrentMessages(result.data);
+              
+              // Show notification for new incoming messages
+              if (payload.new.direction === 'inbound') {
+                toast.success('New message received!');
+              }
+            }
+          } catch (error) {
+            console.error('Error refreshing messages:', error);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(messagesChannel);
+    };
+  }, [thread?.namespace, thread?.id, supabase]);
+
+  // Update current messages when props change
+  useEffect(() => {
+    setCurrentMessages(messages || []);
+  }, [messages]);
 
   const submitReply = async () => {
     if (composedReply) {
@@ -159,7 +208,7 @@ export const InboxViewerPage = ({
         const { success, message } = await replyToMessage({
           threadId: thread!.id,
           lastMessageHeaders: JSON.parse(
-            (messages?.[messages.length - 1]?.raw_metadata as string) || '{}'
+            (currentMessages?.[currentMessages.length - 1]?.raw_metadata as string) || '{}'
           ).headers,
           ownerId: thread!.owner_id,
           replyToEmailWithDomain: thread!.contactEmail ?? '',
@@ -199,7 +248,7 @@ export const InboxViewerPage = ({
         </h3>
       </div>
       <div className="flex flex-col pb-4 divide-y divide-neutral-200">
-        {messages?.map((message, index) => (
+        {currentMessages?.map((message, index) => (
           <InboxMessageItem
             senderName={thread?.contactName ?? ''}
             senderEmail={thread?.contactEmail ?? ''}

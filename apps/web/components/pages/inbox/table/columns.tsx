@@ -12,6 +12,7 @@ type EnhancedThread = IThread & {
   contactName: string;
   fullName: string;
   contact_metadata?: { [key: string]: string };
+  hasNewMessages?: boolean;
 };
 
 export const columns: ColumnDef<EnhancedThread>[] = [
@@ -123,18 +124,23 @@ export const columns: ColumnDef<EnhancedThread>[] = [
         <div className="flex flex-shrink-0 flex-col gap-2 pr-4 text-[#000000A3]">
           <div className="flex justify-between w-full gap-1">
             <div className="flex flex-col w-full m-0">
-              <p className="m-0 text-base">
-                {row.original.contactName
-                  ? row.original.contactName
-                  : row.original.contact_metadata
-                    ? (
-                        row.original.contact_metadata as {
-                          [key: string]: string;
-                        }
-                      )?.Name
-                    : ''}
-              </p>
-              <p className={`column-message text-ellipsis p-0 m-0 text-sm`}>
+              <div className="flex items-center gap-2">
+                <p className="m-0 text-base">
+                  {row.original.contactName
+                    ? row.original.contactName
+                    : row.original.contact_metadata
+                      ? (
+                          row.original.contact_metadata as {
+                            [key: string]: string;
+                          }
+                        )?.Name
+                      : ''}
+                </p>
+                {row.original.hasNewMessages && (
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+                )}
+              </div>
+              <p className={`column-message text-ellipsis p-0 m-0 text-sm ${row.original.hasNewMessages ? 'font-semibold text-black' : ''}`}>
                 {row.original.subject}
               </p>
             </div>

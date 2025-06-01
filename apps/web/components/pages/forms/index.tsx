@@ -15,6 +15,22 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
+import { createNewForm } from '@/actions/server/forms';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,21 +43,34 @@ import {
   ExternalLink,
   Copy,
   MoreHorizontal,
-  Eye,
   Trash2,
-  BarChart3,
   Search,
   Calendar,
   Users,
   Share,
   Link as LinkIcon,
   CheckCircle,
+  X,
+  Eye,
+  Settings,
 } from 'lucide-react';
 import { createClient } from '@/supabase/client';
-import { getUserForms, toggleFormStatus, deleteForm, getFormResponses } from '@/actions/server/forms';
-import { routes } from '@/utils/routes';
+import { getUserForms, toggleFormStatus, deleteForm } from '@/actions/server/forms';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+
+interface FormField {
+  name: string;
+  type: string;
+  label: string;
+  required: boolean;
+  options?: string[];
+  placeholder?: string;
+  min?: string | number;
+  max?: string | number;
+  step?: string | number;
+  pattern?: string;
+}
 
 interface FormData {
   id: string;
@@ -68,6 +97,35 @@ export default function FormsPage() {
   const [selectedForm, setSelectedForm] = useState<FormData | null>(null);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [newFormName, setNewFormName] = useState('');
+  const [newFormDescription, setNewFormDescription] = useState('');
+  const [formFields, setFormFields] = useState<FormField[]>([
+    {
+      name: 'name',
+      type: 'text',
+      label: 'Name',
+      required: true,
+      placeholder: 'Enter your name'
+    },
+    {
+      name: 'email',
+      type: 'email',
+      label: 'Email',
+      required: true,
+      placeholder: 'Enter your email'
+    },
+    {
+      name: 'message',
+      type: 'textarea',
+      label: 'Message',
+      required: false,
+      placeholder: 'Enter your message'
+    }
+  ]);
+  const [isCreating, setIsCreating] = useState(false);
+  const [showFieldEditor, setShowFieldEditor] = useState(false);
+  const [showFormPreview, setShowFormPreview] = useState(false);
 
   useEffect(() => {
     loadForms();
@@ -150,8 +208,145 @@ export default function FormsPage() {
     }
   };
 
+  const updateField = (index: number, updates: Partial<FormField>) => {
+    const updatedFields = [...formFields];
+    updatedFields[index] = { ...updatedFields[index], ...updates } as FormField;
+    setFormFields(updatedFields);
+  };
+
+  const addField = () => {
+    const newField: FormField = {
+      name: `field_${Date.now()}`,
+      type: 'text',
+      label: 'New Field',
+      required: false,
+      placeholder: '',
+    };
+    setFormFields([...formFields, newField]);
+  };
+
+  const removeField = (index: number) => {
+    setFormFields(formFields.filter((_, i) => i !== index));
+  };
+
+  const addOption = (fieldIndex: number) => {
+    const updatedFields = [...formFields];
+    if (!updatedFields[fieldIndex]?.options) {
+      updatedFields[fieldIndex]!.options = [];
+    }
+    updatedFields[fieldIndex]!.options!.push('New Option');
+    setFormFields(updatedFields);
+  };
+
+  const updateOption = (
+    fieldIndex: number,
+    optionIndex: number,
+    value: string
+  ) => {
+    const updatedFields = [...formFields];
+    updatedFields[fieldIndex]!.options![optionIndex] = value;
+    setFormFields(updatedFields);
+  };
+
+  const removeOption = (fieldIndex: number, optionIndex: number) => {
+    const updatedFields = [...formFields];
+    updatedFields[fieldIndex]!.options = updatedFields[
+      fieldIndex
+    ]!.options!.filter((_, i) => i !== optionIndex);
+    setFormFields(updatedFields);
+  };
+
   const handleCreateNewForm = () => {
-    router.push(routes.ONBOARDING_CHOOSE_TEMPLATE);
+    setCreateDialogOpen(true);
+    setShowFieldEditor(false);
+    setNewFormName('');
+    setNewFormDescription('');
+    setFormFields([
+      {
+        name: 'name',
+        type: 'text',
+        label: 'Name',
+        required: true,
+        placeholder: 'Enter your name'
+      },
+      {
+        name: 'email',
+        type: 'email',
+        label: 'Email',
+        required: true,
+        placeholder: 'Enter your email'
+      },
+      {
+        name: 'message',
+        type: 'textarea',
+        label: 'Message',
+        required: false,
+        placeholder: 'Enter your message'
+      }
+    ]);
+  };
+
+  const handleCreateForm = async () => {
+    if (!newFormName.trim()) {
+      toast.error('Please enter a form name');
+      return;
+    }
+
+    setIsCreating(true);
+    try {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        toast.error('Please log in to create a form');
+        return;
+      }
+
+      const result = await createNewForm({
+        userId: user.id,
+        name: newFormName,
+        description: newFormDescription || 'A simple contact form',
+        fields: formFields
+      });
+
+      if (result.success) {
+        toast.success(result.message);
+        setCreateDialogOpen(false);
+        setNewFormName('');
+        setNewFormDescription('');
+        setShowFieldEditor(false);
+        setFormFields([
+          {
+            name: 'name',
+            type: 'text',
+            label: 'Name',
+            required: true,
+            placeholder: 'Enter your name'
+          },
+          {
+            name: 'email',
+            type: 'email',
+            label: 'Email',
+            required: true,
+            placeholder: 'Enter your email'
+          },
+          {
+            name: 'message',
+            type: 'textarea',
+            label: 'Message',
+            required: false,
+            placeholder: 'Enter your message'
+          }
+        ]);
+        loadForms(); // Refresh the forms list
+      } else {
+        toast.error(result.message);
+      }
+    } catch {
+      toast.error('Failed to create form');
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -187,7 +382,7 @@ export default function FormsPage() {
         </div>
         <Button onClick={handleCreateNewForm} className="flex items-center gap-2">
           <Plus className="h-4 w-4" />
-          Create New Form
+          Create Form
         </Button>
       </div>
 
@@ -400,7 +595,8 @@ export default function FormsPage() {
 
       {/* Share Dialog */}
       <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
-        <DialogContent>
+             <DialogContent className="bg-white p-6 dark:bg-background text-neutral sm:max-w-[425px] border-none rounded-t-[40px] sm:rounded-[40px] translate-y-0 sm:translate-y-[-50%] bottom-0 sm:top-[50%] sm:h-fit data-[state=closed]:slide-out-to-bottom-[48%] data-[state=open]:slide-in-from-bottom-[48%]">
+
           <DialogHeader>
             <DialogTitle>Share Form</DialogTitle>
             <DialogDescription>
@@ -467,7 +663,8 @@ export default function FormsPage() {
 
       {/* Delete Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
+                  <DialogContent className="bg-white p-6 dark:bg-background text-neutral sm:max-w-[425px] border-none rounded-t-[40px] sm:rounded-[40px] translate-y-0 sm:translate-y-[-50%] bottom-0 sm:top-[50%] sm:h-fit data-[state=closed]:slide-out-to-bottom-[48%] data-[state=open]:slide-in-from-bottom-[48%]">
+
           <DialogHeader>
             <DialogTitle>Delete Form</DialogTitle>
             <DialogDescription>
@@ -487,6 +684,294 @@ export default function FormsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Create Form Dialog */}
+      <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+        <DialogContent className="bg-white p-6 dark:bg-background text-neutral sm:max-w-[900px] border-none rounded-t-[40px] sm:rounded-[40px] translate-y-0 sm:translate-y-[-50%] bottom-0 sm:top-[50%] sm:h-fit data-[state=closed]:slide-out-to-bottom-[48%] data-[state=open]:slide-in-from-bottom-[48%] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Create New Form</DialogTitle>
+            <DialogDescription>
+              Create and customize your contact form.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-6">
+            {/* Basic Form Info */}
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="form-name">Form Name</Label>
+                <Input
+                  id="form-name"
+                  placeholder="e.g., Contact Form, Lead Capture, Demo Request"
+                  value={newFormName}
+                  onChange={(e) => setNewFormName(e.target.value)}
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="form-description">Description (Optional)</Label>
+                <Textarea
+                  id="form-description"
+                  placeholder="Brief description of what this form is for..."
+                  value={newFormDescription}
+                  onChange={(e) => setNewFormDescription(e.target.value)}
+                  rows={3}
+                />
+              </div>
+            </div>
+
+            {/* Form Fields Section */}
+            {!showFieldEditor ? (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium text-sm text-gray-900">Form Fields</h4>
+                    <p className="text-sm text-gray-600">Your form will include {formFields.length} field{formFields.length !== 1 ? 's' : ''}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => setShowFormPreview(true)}
+                    >
+                      <Eye className="h-4 w-4 mr-1" />
+                      Preview
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => setShowFieldEditor(true)}
+                    >
+                      <Settings className="h-4 w-4 mr-1" />
+                      Customize Fields
+                    </Button>
+                  </div>
+                </div>
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <div className="space-y-2">
+                    {formFields.map((field, index) => (
+                      <div key={index} className="flex items-center justify-between text-sm">
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="text-xs">{field.type}</Badge>
+                          <span className="font-medium">{field.label}</span>
+                          {field.required && <span className="text-red-500">*</span>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium text-sm text-gray-900">Customize Form Fields</h4>
+                    <p className="text-sm text-gray-600">Add, remove, and configure your form fields</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm" onClick={() => setShowFormPreview(true)}>
+                      <Eye className="h-4 w-4 mr-1" />
+                      Preview
+                    </Button>
+                    <Button size="sm" onClick={addField}>
+                      <Plus className="h-4 w-4 mr-1" />
+                      Add Field
+                    </Button>
+                  </div>
+                </div>
+                
+                <div className="space-y-4 max-h-96 overflow-y-auto">
+                  {formFields.map((field, index) => (
+                    <div key={index} className="border border-gray-200 rounded-lg p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Badge variant="outline" className="capitalize text-xs">
+                          {field.type}
+                        </Badge>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeField(index)}
+                          disabled={formFields.length <= 1}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <Label>Label</Label>
+                          <Input
+                            value={field.label}
+                            onChange={(e) => updateField(index, { label: e.target.value })}
+                          />
+                        </div>
+                        <div>
+                          <Label>Type</Label>
+                          <Select
+                            value={field.type}
+                            onValueChange={(value) => updateField(index, { type: value })}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="text">Text</SelectItem>
+                              <SelectItem value="email">Email</SelectItem>
+                              <SelectItem value="tel">Phone</SelectItem>
+                              <SelectItem value="number">Number</SelectItem>
+                              <SelectItem value="date">Date</SelectItem>
+                              <SelectItem value="url">URL</SelectItem>
+                              <SelectItem value="textarea">Textarea</SelectItem>
+                              <SelectItem value="select">Select</SelectItem>
+                              <SelectItem value="checkbox">Checkbox</SelectItem>
+                              <SelectItem value="radio">Radio</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label>Placeholder</Label>
+                        <Input
+                          value={field.placeholder || ''}
+                          onChange={(e) => updateField(index, { placeholder: e.target.value })}
+                        />
+                      </div>
+
+                      <div className="flex items-center space-x-2">
+                        <Switch
+                          checked={field.required}
+                          onCheckedChange={(checked) => updateField(index, { required: checked })}
+                        />
+                        <Label>Required field</Label>
+                      </div>
+
+                      {(field.type === 'select' || field.type === 'radio') && (
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <Label>Options</Label>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => addOption(index)}
+                            >
+                              <Plus className="h-3 w-3 mr-1" />
+                              Add
+                            </Button>
+                          </div>
+                          <div className="space-y-2">
+                            {field.options?.map((option, optionIndex) => (
+                              <div key={optionIndex} className="flex items-center space-x-2">
+                                <Input
+                                  value={option}
+                                  onChange={(e) => updateOption(index, optionIndex, e.target.value)}
+                                  className="flex-1"
+                                />
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => removeOption(index, optionIndex)}
+                                >
+                                  <X className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowFieldEditor(false)}
+                  className="w-full"
+                >
+                  Done Customizing
+                </Button>
+              </div>
+            )}
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleCreateForm}
+              disabled={!newFormName.trim() || isCreating}
+            >
+              {isCreating ? 'Creating...' : 'Create Form'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Form Preview Sheet */}
+      <Sheet open={showFormPreview} onOpenChange={setShowFormPreview}>
+        <SheetContent className="max-w-lg w-full">
+          <SheetHeader>
+            <SheetTitle>Form Preview</SheetTitle>
+          </SheetHeader>
+          <div className="p-6">
+            <h3 className="text-base font-semibold mb-2">{newFormName || 'Form Preview'}</h3>
+            <p className="text-gray-600 mb-6">{newFormDescription || 'Form description...'}</p>
+            <div className="space-y-4">
+              {formFields.map((field, index) => (
+                <div key={index}>
+                  <label className="block text-sm font-medium mb-1">
+                    {field.label}
+                    {field.required && <span className="text-red-500 ml-1">*</span>}
+                  </label>
+                  {field.type === 'textarea' ? (
+                    <textarea
+                      className="w-full p-2 border rounded-md"
+                      placeholder={field.placeholder}
+                      rows={3}
+                      disabled
+                    />
+                  ) : field.type === 'select' ? (
+                    <select className="w-full p-2 border rounded-md" disabled>
+                      <option>{field.placeholder || 'Select an option'}</option>
+                      {field.options?.map((option, i) => (
+                        <option key={i}>{option}</option>
+                      ))}
+                    </select>
+                  ) : field.type === 'checkbox' ? (
+                    <div className="flex items-center space-x-2">
+                      <input type="checkbox" disabled />
+                      <span className="text-sm">{field.placeholder || field.label}</span>
+                    </div>
+                  ) : field.type === 'radio' ? (
+                    <div className="space-y-2">
+                      {field.options?.map((option, i) => (
+                        <div key={i} className="flex items-center space-x-2">
+                          <input type="radio" name={field.name} disabled />
+                          <span className="text-sm">{option}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <input
+                      type={field.type}
+                      className="w-full p-2 border rounded-md"
+                      placeholder={field.placeholder}
+                      min={field.min}
+                      max={field.max}
+                      step={field.step}
+                      disabled
+                    />
+                  )}
+                </div>
+              ))}
+              <Button className="w-full" disabled>
+                Submit
+              </Button>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

@@ -36,3 +36,58 @@ input {
 .app-container {
   @apply max-w-[1440px] mx-auto w-[90%];
 }
+
+/* @import "tailwindcss"; */
+/* 
+@theme {
+  --color-blue-1000: #2a8af6;
+  --color-purple-1000: #a853ba;
+  --color-red-1000: #e92a67;
+
+  --color-background: white;
+  --color-background-secondary: hsl(205, 57%, 10%, 1);
+  --color-surface-surface-neutral: hsl(204, 60%, 5%, 0.04);
+  --color-surface-surface-normal: hsl(0, 0%, 0%, 0.04);
+  --color-surface: hsl(204, 58%, 68%, 1);
+  --color-surface-strong: hsl(203, 58%, 16%, 1);
+  --color-surface-neutral: hsl(0, 0%, 100%, 0.04);
+  --color-surface-weak: hsl(204, 60%, 5%, 0.04);
+  --color-surface-warning: hsl(39, 58%, 68%, 1);
+  --color-surface-warning-strong: hsl(40, 58%, 16%, 1);
+
+  --color-card: hsl(0, 0%, 100%, 1);
+  --color-card-foreground: hsl(222.2, 84%, 4.9%, 1);
+
+  --color-popover: hsl(0, 0%, 100%, 1);
+  --color-popover-foreground: hsl(222.2, 84%, 4.9%, 1);
+
+  --color-primary-base: hsl(222, 58%, 72%, 1);
+  --color-primary-hover: hsl(222, 58%, 72%, 0.9);
+  --color-link: hsl(204, 58%, 68%, 1);
+  --color-error-weak: hsl(8, 58%, 68%, 1);
+
+  --color-secondary: hsl(210, 40%, 96.1%, 1);
+  --color-secondary-foreground: hsl(222.2, 47.4%, 11.2%, 1);
+
+  --color-muted: hsl(210, 40%, 96.1%, 1);
+  --color-muted-foreground: hsl(215.4, 16.3%, 46.9%, 1);
+
+  --color-neutral: hsl(0, 0%, 100%, 0.64);
+  --color-neutral-weak: hsl(0, 0%, 100%, 0.4);
+  --color-neutral-strong: hsl(0, 0%, 100%, 1);
+
+  --color-accent: hsl(210, 40%, 96.1%, 1);
+  --color-accent-foreground: hsl(222.2, 47.4%, 11.2%, 1);
+
+  --color-destructive: hsl(0, 84.2%, 60.2%, 1);
+  --color-destructive-foreground: hsl(210, 40%, 98%, 1);
+
+  --color-border-neutral: hsl(0, 0%, 100%, 0.16);
+  --color-border-neutral-weak: hsl(0, 0%, 100%, 0.08);
+  --color-border-neutral-weaker: hsl(0, 0%, 100%, 0.04);
+
+  --color-input: hsl(214.3, 31.8%, 91.4%, 1);
+  --color-ring: hsl(222.2, 84%, 4.9%, 1);
+
+  --color-radius: 0.5rem;
+} */

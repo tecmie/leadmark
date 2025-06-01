@@ -6,6 +6,7 @@ import { Avatar } from '@/components/ui/avatar';
 import { Button, ButtonProps } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { forwardMessage } from '@/actions/server/messages';
 import { IMessage, IThread } from '@repo/types';
 
 // Extended message type that includes the additional properties returned by server actions
@@ -23,6 +24,8 @@ type EnhancedMessage = IMessage & {
 import { cn } from '@/utils/ui';
 import { ArrowLeft, Trash2 } from 'lucide-react';
 import { useRouter } from '@bprogress/next/app';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface InboxMessageItemProps {
   message: EnhancedMessage;
@@ -45,7 +48,7 @@ interface InboxActionsProps extends ButtonProps {
   mobileOnly?: boolean;
 }
 
-const InboxActions = ({}: InboxActionsProps) => {
+const InboxActions = () => {
   const router = useRouter();
   return (
     <div className="flex justify-between py-4">
@@ -150,6 +153,10 @@ export const InboxViewerPage = ({
   email,
   fullname,
 }: InboxViewerPageProps) => {
+  const router = useRouter();
+  const [toEmail, setToEmail] = useState('');
+  const [forwardContent, setForwardContent] = useState('');
+
   const formatDateToCustomString = (date: Date) => {
     return new Intl.DateTimeFormat('en-US', {
       year: 'numeric',
@@ -165,6 +172,48 @@ export const InboxViewerPage = ({
     new Date(thread?.created_at ?? '')
   );
 
+  const handleForward = async () => {
+    if (!toEmail.trim()) {
+      toast.error('Please enter a recipient email');
+      return;
+    }
+
+    if (!messages || messages.length === 0) {
+      toast.error('No message to forward');
+      return;
+    }
+
+    const lastMessage = messages[messages.length - 1];
+    
+    if (!lastMessage) {
+      toast.error('No message to forward');
+      return;
+    }
+    
+    try {
+      const result = await forwardMessage({
+        messageId: lastMessage.id,
+        messageText: lastMessage.content || lastMessage.html_content || '',
+        threadId: thread!.id,
+        toEmail: toEmail.trim(),
+        fromEmail: email,
+        subject: `Fwd: ${thread?.subject || 'No Subject'}`,
+        content: forwardContent || `Forwarded message:\n\n${lastMessage.content || lastMessage.html_content || ''}`,
+      });
+
+      if (result.success) {
+        toast.success(result.message);
+        setToEmail('');
+        setForwardContent('');
+        router.refresh();
+      } else {
+        toast.error(result.message);
+      }
+    } catch {
+      toast.error('Failed to forward message');
+    }
+  };
+
   return (
     <ScrollArea className="relative flex flex-col w-full h-full gap-8 px-4 overflow-auto">
       {/* <div className="sticky top-0 z-10 flex items-center gap-3 p-3 sm:gap-4 bg-background">
@@ -174,16 +223,25 @@ export const InboxViewerPage = ({
           Forward <CornerUpRight size={16} />
         </Button>
       </div> */}
-      <InboxActions mobileOnly />
+      <InboxActions />
 
       <div className="py-2">
         <div className="flex gap-1 border-[#00000012] border-b border-t  py-2 items-center text-base">
           <div>From</div>
-          <Input className="h-6 px-2 text-base border-0 focus-visible:ring-0" />
+          <Input 
+            className="h-6 px-2 text-base border-0 focus-visible:ring-0" 
+            value={email}
+            readOnly
+          />
         </div>
         <div className="flex gap-1 border-[#00000012] border-b  py-2 items-center text-base">
           <div>To</div>
-          <Input className="h-6 px-2 text-base border-0 focus-visible:ring-0" />
+          <Input 
+            className="h-6 px-2 text-base border-0 focus-visible:ring-0"
+            value={toEmail}
+            onChange={(e) => setToEmail(e.target.value)}
+            placeholder="Enter recipient email"
+          />
         </div>
         {/* <div className="flex gap-1 border-[#00000012] border-b  py-2 items-center text-base">
           <div>Cc</div>
@@ -200,8 +258,10 @@ export const InboxViewerPage = ({
       {/* rich text editor to replace textarea */}
       <div className=" py-4 mb-2 border-b border-[#00000012]">
         <textarea
-          placeholder="Compose email"
+          placeholder="Add your message..."
           className="p-0 w-full focus-within:outline-0 text-base min-h-[120px]"
+          value={forwardContent}
+          onChange={(e) => setForwardContent(e.target.value)}
         />
       </div>
 
@@ -282,14 +342,15 @@ export const InboxViewerPage = ({
       </div>
 
       <div className="flex justify-center w-full gap-4 py-4">
-        <Button variant={'outline'} className="w-full rounded-full">
+        <Button 
+          variant={'outline'} 
+          className="w-full rounded-full"
+          onClick={handleForward}
+          disabled={!toEmail.trim()}
+        >
           Forward
           <ArrowBendUpRight />
         </Button>
-        {/* <Button variant={"outline"} className='w-full px-8 rounded-full'>
-          Reply
-          <ArrowBendUpLeft/>
-        </Button> */}
       </div>
 
       {/* Assuming the AttachmentsViewer is related to the last message */}

@@ -2,6 +2,7 @@
 
 import { cn } from '@/utils/ui';
 import { PropsWithChildren, useState } from 'react';
+import { SearchProvider } from '@/contexts/search-context';
 // import { Footer } from '../ui/footer';
 // // import { Navbar } from '../ui/navbar';
 import { IThread } from '@repo/types';
@@ -66,7 +67,8 @@ export const InboxLayout = ({
   };
 
   return (
-    <main className="relative h-[100dvh] overflow-hidden flex flex-col bg-white sm:bg-transparent">
+    <SearchProvider>
+      <main className="relative h-[100dvh] overflow-hidden flex flex-col bg-white sm:bg-transparent">
       {showNavbar ? (
         <Navbar
           name={fullname as string}
@@ -148,5 +150,6 @@ export const InboxLayout = ({
       </div>
       <BottomNav threadCount={threads?.length} />
     </main>
+    </SearchProvider>
   );
 };

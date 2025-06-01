@@ -68,6 +68,28 @@ export const replyToMessage = async ({
   );
   const stream = 'outbound';
   const supabase = await createClient();
+  
+  // Mock implementation - simulates sending the reply
+  const mockMessage: IMessage = {
+    id: `mock_reply_${Date.now()}`,
+    thread_id: threadId,
+    direction: 'outbound',
+    content: content,
+    html_content: contentAsHtml,
+    created_at: new Date().toISOString(),
+    in_reply_to: null,
+    is_ai_generated: null,
+    message_id: null,
+    subject: null,
+    postmark_data: {
+      headers,
+      recipients,
+      stream,
+    } as any,
+  };
+
+  // In a real implementation, this would call the backend API
+  // For now, we'll just save to the database without actually sending
   const { data, error } = await supabase.from('messages').insert([
     {
       thread_id: threadId,
@@ -78,30 +100,80 @@ export const replyToMessage = async ({
         headers,
         recipients,
         stream,
+        mock: true, // Flag to indicate this is a mock
       })),
     },
-  ]);
+  ]).select().single();
 
   if (error || !data) return { success: false, message: error?.message || 'Failed to send reply' };
 
   return {
     success: true,
-    message: 'Reply sent',
-    data,
+    message: 'Reply sent (mock implementation - will be handled by custom backend)',
+    data: data as IMessage,
   };
 };
 
 export const forwardMessage = async ({
   messageId,
   messageText,
+  threadId,
+  toEmail,
+  fromEmail,
+  subject,
+  content,
 }: {
   messageId: string;
   messageText: string;
+  threadId: string;
+  toEmail: string;
+  fromEmail: string;
+  subject: string;
+  content: string;
 }): Promise<BackendResponse<IMessage>> => {
-  // TODO: Implement forwarded message functionality
-  // The forwarded_messages table doesn't exist in the current schema
+  const supabase = await createClient();
+  const contentAsHtml = converter.makeHtml(content);
+
+  // Mock implementation - simulates forwarding the message
+  const mockForwardData = {
+    originalMessageId: messageId,
+    originalText: messageText,
+    forwardedTo: toEmail,
+    forwardedFrom: fromEmail,
+    forwardedAt: new Date().toISOString(),
+  };
+
+  // Create a new message with forward data
+  const { data, error } = await supabase.from('messages').insert([
+    {
+      thread_id: threadId,
+      direction: 'outbound',
+      content: content,
+      html_content: contentAsHtml,
+      postmark_data: JSON.parse(JSON.stringify({
+        type: 'forward',
+        mock: true, // Flag to indicate this is a mock
+        forward_data: mockForwardData,
+        headers: [
+          { name: 'X-Forwarded-Message-ID', value: messageId },
+          { name: 'X-Original-Subject', value: subject },
+        ],
+        recipients: [{ email: toEmail, type: 'to' }],
+        stream: 'outbound',
+      })),
+    },
+  ]).select().single();
+
+  if (error || !data) {
+    return {
+      success: false,
+      message: error?.message || 'Failed to forward message',
+    };
+  }
+
   return {
-    success: false,
-    message: 'Forward message functionality not yet implemented',
+    success: true,
+    message: 'Message forwarded (mock implementation - will be handled by custom backend)',
+    data: data as IMessage,
   };
 };

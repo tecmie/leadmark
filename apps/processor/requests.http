@@ -1,7 +1,7 @@
 ### Embedded Request with JSON Body
 
 
-POST http://localhost:3000/api/postman HTTP/1.1
+POST http://localhost:4000/api/postman HTTP/1.1
 Content-Type: application/json
 
 {
@@ -24,10 +24,10 @@ Content-Type: application/json
   "CcFull": [],
   "Bcc": "",
   "BccFull": [],
-  "Subject": "Property Investment Inquiry",
+  "Subject": "Property Enquiry XYZ",
   "Date": "Fri, 20 Oct 2023 19:44:08 +0000",
-  "TextBody": "Hi James,\n\nLet's do June 1, 9:00 AM for the meeting \n\nBest regards,\nPaul",
-  "StrippedTextReply": "Hi James,\n\nLet's do June 1, 9:00 AM for the meeting\n\nBest regards,\nPaul",
+  "TextBody": "Hello James,\n\nregarding the property investment details we discussed. Please let me know if you need any additional information from my end.\n\nBest regards,\nPaul",
+  "StrippedTextReply": "Hello James,\n\nregarding the property investment details we discussed. Please let me know if you need any additional information from my end.\n\nBest regards,\nPaul",
   "Headers": [
     {
       "Name": "Return-Path",
@@ -65,7 +65,7 @@ Content-Type: application/json
 ###
 ### Request to postman using a JSON file with the request body
 
-POST http://localhost:3000/api/postman HTTP/1.1
+POST http://localhost:4000/api/postman HTTP/1.1
 Host: localhost
 Content-Type: application/json
 

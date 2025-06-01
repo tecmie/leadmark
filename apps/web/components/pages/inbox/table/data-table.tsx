@@ -28,6 +28,7 @@ import {
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
+  getFilteredRowModel,
   useReactTable,
   SortingFn,
 } from '@tanstack/react-table';
@@ -35,6 +36,7 @@ import { useRouter } from '@bprogress/next/app';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Trash2 } from 'lucide-react';
+import { useSearch } from '@/contexts/search-context';
 
 interface DataTableProps<TData, TValue> {
   className?: string;
@@ -51,6 +53,7 @@ export function DataTable<TData, TValue>({
   const router = useRouter();
   const { isMobile } = useMediaQuery();
   const params = useParams();
+  const { searchQuery } = useSearch();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const id = Array.isArray(params?.namespace)
@@ -74,17 +77,31 @@ export function DataTable<TData, TValue>({
     data,
     columns,
     onSortingChange: setSorting,
+    onGlobalFilterChange: () => {}, // No-op since we handle this via context
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     onRowSelectionChange: setRowSelection,
     onColumnVisibilityChange: setColumnVisibility,
     state: {
       columnVisibility,
       sorting,
       rowSelection,
+      globalFilter: searchQuery,
     },
     sortingFns: {
       customSorting: sortTable,
+    },
+    globalFilterFn: (row, _columnId, filterValue) => {
+      const thread = row.original as EnhancedThread;
+      const searchValue = filterValue.toLowerCase();
+      
+      return (
+        thread.subject?.toLowerCase().includes(searchValue) ||
+        thread.contactName?.toLowerCase().includes(searchValue) ||
+        thread.contactEmail?.toLowerCase().includes(searchValue) ||
+        thread.fullName?.toLowerCase().includes(searchValue)
+      );
     },
   });
   // const handleTableOrdering = (key: OrderCriteria) => {
@@ -117,7 +134,7 @@ export function DataTable<TData, TValue>({
   }, [searchParams]);
 
   useEffect(() => {
-    table.getColumn('actions')?.toggleVisibility(!isMobile);
+    // table.getColumn('actions')?.toggleVisibility(!isMobile);
     table.getColumn('select')?.toggleVisibility(!isMobile);
   }, [isMobile]);
 
@@ -133,9 +150,11 @@ export function DataTable<TData, TValue>({
         <div className="fixed z-20 flex items-center justify-between flex-shrink-0 w-full gap-4 px-4 py-3 bg-white sm:relative">
           <div className="flex items-center gap-2">
             <div className="text-xl font-medium text-black">All inboxes</div>
-            <Badge className="bg-[#adb6f9] text-white hidden">
-              2 unattended
-            </Badge>
+            {data.filter((thread: any) => thread.hasNewMessages).length > 0 && (
+              <Badge className="bg-[#adb6f9] text-white">
+                {data.filter((thread: any) => thread.hasNewMessages).length} new
+              </Badge>
+            )}
           </div>
           <FilterMenu />
         </div>

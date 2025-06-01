@@ -1,19 +1,17 @@
 'use client';
 
 import { routes } from '@/utils/routes';
-import { cn } from '@/utils/ui';
 import { LucideMenu, LucidePlus, SearchIcon } from 'lucide-react';
-import Link from 'next/link';
+import { useSearch } from '@/contexts/search-context';
 import { usePathname } from 'next/navigation';
 import {
   ActiveAppIcon,
   ActiveProfileIcon,
   AppsNavIcon,
-  ProfileNavIcon,
-  SettingsNavIcon
+  ProfileNavIcon
 } from '../icons/NavIcons';
 import { Avatar } from './avatar';
-import { Button, buttonVariants } from './button';
+import { Button } from './button';
 import { Input } from './input';
 import { LogoMark } from './logo-mark';
 import { Tooltip } from './tooltip';
@@ -28,7 +26,10 @@ interface NavbarProps {
   initials: string;
   setApp: () => void;
   setProfile: () => void;
-  action: any;
+  action: {
+    showProfile: boolean;
+    showApp: boolean;
+  };
 }
 
 export const Navbar = ({
@@ -41,6 +42,7 @@ export const Navbar = ({
   name
 }: NavbarProps) => {
   const pathname = usePathname();
+  const { searchQuery, setSearchQuery } = useSearch();
 
   return (
     <div
@@ -126,8 +128,9 @@ export const Navbar = ({
           <Input
             startIcon={SearchIcon}
             iconClass="text-[#000000A3] opacity-50"
-            disabled
             placeholder="Search inbox"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full rounded-full bg-[#00000012] border-0 placeholder:text-[#000000A3]"
           />
           <div className="absolute right-[10px] flex items-center gap-2">
