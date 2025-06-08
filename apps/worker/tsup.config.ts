@@ -10,6 +10,8 @@ export default defineConfig({
   minify: true,
   target: "node18",
   platform: "node",
+  outDir: "dist",
+  noExternal: ["@repo/*"],
   esbuildOptions(options) {
     options.banner = {
       js: '"use client";',
