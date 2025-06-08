@@ -5,7 +5,6 @@
     "buildCommand": "pnpm run build:worker"
   },
   "deploy": {
-    "rootDir": "apps/worker",
     "startCommand": "pnpm start:worker",
     "healthcheckPath": "/",
     "healthcheckTimeout": 100,

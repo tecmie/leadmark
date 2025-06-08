@@ -4,8 +4,9 @@
   "scripts": {
     "build": "turbo run build",
     "build:worker": "turbo run build --filter=@repo/types --filter=@leadmark/worker ",
-    "start:worker": "turbo run start --filter=@leadmark/worker",
+    "start:processor": "turbo run start --filter=@leadmark/worker",
     "dev": "turbo run dev",
+    "start:worker": "cd apps/worker && pnpm start:prod",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
