@@ -163,7 +163,7 @@ export default function SetupMailPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div className="text-center w-full">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          <h1 className="text-2xl font-bold mb-2">
             Setup Your Mail Account
           </h1>
           <p className="text-gray-600">
@@ -176,7 +176,7 @@ export default function SetupMailPage() {
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Username Section */}
           <div className="space-y-2">
-            <Label htmlFor="username" className="font-medium text-xs">
+            <Label htmlFor="username" className="font-medium text-xs text-gray-900">
               Choose Username
             </Label>
             <div className="relative">
@@ -185,12 +185,12 @@ export default function SetupMailPage() {
                 value={username}
                 onChange={(e) => handleUsernameChange(e.target.value)}
                 placeholder="paul"
-                className="pr-10 focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all"
+                className="pr-10 focus:ring-2 transition-all bg-white/90 border border-gray-200 p-3 text-black"
                 autoComplete="off"
               />
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                 {usernameStatus === 'checking' && (
-                  <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
+                  <Loader2 className="h-4 w-4 animate-spin " />
                 )}
                 {usernameStatus === 'available' && (
                   <CheckCircle2 className="h-4 w-4 text-green-500" />
@@ -216,7 +216,7 @@ export default function SetupMailPage() {
                       type="button"
                       variant="outline"
                       size="sm"
-                      className="hover:bg-blue-50 border-blue-200"
+                      className="hover:bg-yellow-50 border-yellow-200"
                       onClick={() => {
                         setUsername(suggestion);
                         setUsernameStatus('checking');
@@ -232,13 +232,13 @@ export default function SetupMailPage() {
 
           {/* Objective Section */}
           <div className="space-y-4">
-            <Label className="font-medium text-xs">Mailbox Objective</Label>
+            <Label className="font-medium text-xs text-gray-900">Mailbox Objective</Label>
             <Textarea
               value={objective}
               onChange={(e) => setObjective(e.target.value)}
               placeholder="Describe what you want to use this mailbox for, e.g. 'I want to qualify leads for my SaaS product and schedule calls with potential customers.'"
               rows={7}
-              className="resize-none focus:ring-2 p-3 transition-all"
+              className="resize-none focus:ring-3 focus:ring-accent-foreground transition-all bg-white/90 border-none   p-3 text-black"
             />
             <div className="flex items-center space-x-4">
               <button
@@ -256,14 +256,14 @@ export default function SetupMailPage() {
                 className="hidden"
               />
             </div>
-            <div className="bg-blue-50/80 p-5 rounded-xl border border-blue-100 mt-2">
-              <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+            <div className="bg-yellow-50/80 p-5 rounded-xl border border-yellow-100 mt-2">
+              <h4 className="font-semibold text-yellow-900 mb-2 flex items-center gap-2">
                 <span role="img" aria-label="lightbulb">
                   💡
                 </span>{' '}
                 Tips for a great objective:
               </h4>
-              <ul className="text-sm text-blue-800 space-y-1 list-disc pl-5">
+              <ul className="text-sm text-yellow-800 space-y-1 list-disc pl-5">
                 <li>
                   Be specific about your business goals and target audience
                 </li>

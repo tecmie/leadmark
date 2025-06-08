@@ -126,7 +126,7 @@ export default function ChooseTemplatePage() {
     return (
       <div className="mt-30 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
+          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
           <h3 className="text-lg font-medium mb-2">Generating Templates</h3>
           <p className="text-gray-600">
             Our AI is creating custom form templates based on your business...
@@ -139,7 +139,7 @@ export default function ChooseTemplatePage() {
   return (
     <div className="pt-8 sm:px-4 w-full">
       <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl font-bold  mb-2">
           Choose Your Form Template
         </h1>
         <p className="text-gray-600">
@@ -162,7 +162,7 @@ export default function ChooseTemplatePage() {
               key={index}
               onClick={() => handleSelectTemplate(template)}
               className={`relative group border rounded-2xl p-6 bg-white transition-all duration-300 cursor-pointer
-                  ${isSelected ? 'border-blue-600 shadow-lg bg-blue-50 scale-[1.03]' : 'border-gray-200 hover:border-blue-300 hover:shadow-md'}
+                  ${isSelected ? 'border-primary shadow-lg bg-yellow-50 scale-[1.03]' : 'border-gray-200 hover:border-yellow-300 hover:shadow-md'}
                   hover:scale-[1.01] active:scale-100
                 `}
               style={{ minHeight: 170 }}
@@ -172,7 +172,7 @@ export default function ChooseTemplatePage() {
                 className={`absolute top-4 right-4 transition-all duration-300 ${isSelected ? 'opacity-100 scale-100' : 'opacity-0 scale-75 group-hover:opacity-30'}`}
               >
                 <CheckCircleFilledIcon
-                  className={`h-6 w-6 ${isSelected ? 'text-blue-600' : 'text-gray-300'}`}
+                  className={`h-6 w-6 ${isSelected ? 'text-primary' : 'text-gray-300'}`}
                 />
               </span>
               <div className="flex items-center mb-4">
@@ -193,20 +193,20 @@ export default function ChooseTemplatePage() {
                       <Badge
                         key={fieldIndex}
                         variant="secondary"
-                        className="text-xs"
+                        className="text-xs text-primary bg-black"
                       >
                         {field.label}
                       </Badge>
                     ))}
                     {template.fields.length > 4 && (
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs border-primary text-primary">
                         +{template.fields.length - 4} more
                       </Badge>
                     )}
                   </div>
                 </div>
-                <div className="pt-3 border-t border-gray-100">
-                  <div className="flex items-center justify-between text-xs text-gray-500">
+                <div className="pt-3 border-t border-gray-200">
+                  <div className="flex items-center justify-between text-xs text-primary">
                     <span>{template.fields.length} fields</span>
                     <span>
                       {template.fields.filter((f) => f.required).length}{' '}

@@ -186,7 +186,7 @@ export const SignUpPage = () => {
 
           <Button
             type="submit"
-            className="w-full text-white bg-primary-base"
+            className="w-full"
             disabled={loading}
           >
             {loading ? (
@@ -200,7 +200,7 @@ export const SignUpPage = () => {
 
       <p>
         Already have an account?{' '}
-        <Link href={routes.SIGN_IN} className="text-blue-500 font-medium">
+        <Link href={routes.SIGN_IN} className="text-primary font-medium">
           Log in
         </Link>
       </p>

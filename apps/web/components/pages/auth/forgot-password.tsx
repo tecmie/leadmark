@@ -138,7 +138,7 @@ export const ForgotPasswordPage = () => {
 
       <p>
         Remember your password?{' '}
-        <Link href={routes.SIGN_IN} className="text-blue-500 font-medium">
+        <Link href={routes.SIGN_IN} className="text-primary font-medium">
           Log in
         </Link>
       </p>

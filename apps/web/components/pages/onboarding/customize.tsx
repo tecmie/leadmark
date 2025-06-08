@@ -1,31 +1,31 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Switch } from '@/components/ui/switch';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Loader2, Plus, X, Eye, Save } from 'lucide-react';
-import { completeOnboardingWorkflow } from '@/actions/server/onboarding';
-import { routes } from '@/utils/routes';
-import { createClient } from '@/supabase/client';
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Loader2, Plus, X, Eye, Save } from "lucide-react";
+import { completeOnboardingWorkflow } from "@/actions/server/onboarding";
+import { routes } from "@/utils/routes";
+import { createClient } from "@/supabase/client";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
-} from '@/components/ui/sheet';
+} from "@/components/ui/sheet";
 
 interface FormField {
   name: string;
@@ -50,16 +50,16 @@ export default function CustomizePage() {
   const router = useRouter();
 
   const [template, setTemplate] = useState<FormTemplate | null>(null);
-  const [formName, setFormName] = useState('');
-  const [formDescription, setFormDescription] = useState('');
+  const [formName, setFormName] = useState("");
+  const [formDescription, setFormDescription] = useState("");
   const [fields, setFields] = useState<FormField[]>([]);
   const [isPublishing, setIsPublishing] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [showPreview, setShowPreview] = useState(false);
 
   useEffect(() => {
     // Load selected template from session storage
-    const onboardingData = sessionStorage.getItem('onboarding-data');
+    const onboardingData = sessionStorage.getItem("onboarding-data");
     if (!onboardingData) {
       router.push(routes.ONBOARDING_SETUP_MAIL_ACCOUNT);
       return;
@@ -87,10 +87,10 @@ export default function CustomizePage() {
   const addField = () => {
     const newField: FormField = {
       name: `field_${Date.now()}`,
-      type: 'text',
-      label: 'New Field',
+      type: "text",
+      label: "New Field",
       required: false,
-      placeholder: '',
+      placeholder: "",
     };
     setFields([...fields, newField]);
   };
@@ -104,7 +104,7 @@ export default function CustomizePage() {
     if (!updatedFields[fieldIndex]?.options) {
       updatedFields[fieldIndex]!.options = [];
     }
-    updatedFields[fieldIndex]!.options!.push('New Option');
+    updatedFields[fieldIndex]!.options!.push("New Option");
     setFields(updatedFields);
   };
 
@@ -128,20 +128,22 @@ export default function CustomizePage() {
 
   const handlePublish = async () => {
     setIsPublishing(true);
-    setError('');
+    setError("");
 
     try {
       // Get all onboarding data
       const onboardingData = JSON.parse(
-        sessionStorage.getItem('onboarding-data') || '{}'
+        sessionStorage.getItem("onboarding-data") || "{}"
       );
 
       // Get current user
       const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       if (!user) {
-        setError('User not authenticated');
+        setError("User not authenticated");
         return;
       }
 
@@ -160,15 +162,15 @@ export default function CustomizePage() {
 
       if (result.success) {
         // Clear session storage
-        sessionStorage.removeItem('onboarding-data');
+        sessionStorage.removeItem("onboarding-data");
 
         // Redirect to dashboard page
         router.push(routes.INBOX_OVERVIEW);
       } else {
-        setError(result.message || 'Failed to publish form');
+        setError(result.message || "Failed to publish form");
       }
     } catch {
-      setError('An unexpected error occurred');
+      setError("An unexpected error occurred");
     } finally {
       setIsPublishing(false);
     }
@@ -176,9 +178,9 @@ export default function CustomizePage() {
 
   if (!template) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
           <p>Loading template...</p>
         </div>
       </div>
@@ -293,7 +295,7 @@ export default function CustomizePage() {
                   <div>
                     <Label>Placeholder</Label>
                     <Input
-                      value={field.placeholder || ''}
+                      value={field.placeholder || ""}
                       onChange={(e) =>
                         updateField(index, { placeholder: e.target.value })
                       }
@@ -301,36 +303,44 @@ export default function CustomizePage() {
                   </div>
 
                   {/* Additional field properties for number/date fields */}
-                  {(field.type === 'number' || field.type === 'date') && (
+                  {(field.type === "number" || field.type === "date") && (
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <Label>Min {field.type === 'date' ? 'Date' : 'Value'}</Label>
+                        <Label>
+                          Min {field.type === "date" ? "Date" : "Value"}
+                        </Label>
                         <Input
-                          type={field.type === 'date' ? 'date' : 'number'}
-                          value={field.min || ''}
+                          type={field.type === "date" ? "date" : "number"}
+                          value={field.min || ""}
                           onChange={(e) =>
                             updateField(index, { min: e.target.value })
                           }
-                          placeholder={field.type === 'date' ? 'YYYY-MM-DD' : '0'}
+                          placeholder={
+                            field.type === "date" ? "YYYY-MM-DD" : "0"
+                          }
                         />
                       </div>
                       <div>
-                        <Label>Max {field.type === 'date' ? 'Date' : 'Value'}</Label>
+                        <Label>
+                          Max {field.type === "date" ? "Date" : "Value"}
+                        </Label>
                         <Input
-                          type={field.type === 'date' ? 'date' : 'number'}
-                          value={field.max || ''}
+                          type={field.type === "date" ? "date" : "number"}
+                          value={field.max || ""}
                           onChange={(e) =>
                             updateField(index, { max: e.target.value })
                           }
-                          placeholder={field.type === 'date' ? 'YYYY-MM-DD' : '100'}
+                          placeholder={
+                            field.type === "date" ? "YYYY-MM-DD" : "100"
+                          }
                         />
                       </div>
-                      {field.type === 'number' && (
+                      {field.type === "number" && (
                         <div className="col-span-2">
                           <Label>Step</Label>
                           <Input
                             type="number"
-                            value={field.step || ''}
+                            value={field.step || ""}
                             onChange={(e) =>
                               updateField(index, { step: e.target.value })
                             }
@@ -351,7 +361,7 @@ export default function CustomizePage() {
                     <Label>Required field</Label>
                   </div>
 
-                  {(field.type === 'select' || field.type === 'radio') && (
+                  {(field.type === "select" || field.type === "radio") && (
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <Label>Options</Label>
@@ -414,28 +424,28 @@ export default function CustomizePage() {
                       <span className="text-red-500 ml-1">*</span>
                     )}
                   </label>
-                  {field.type === 'textarea' ? (
+                  {field.type === "textarea" ? (
                     <textarea
                       className="w-full p-2 border rounded-md"
                       placeholder={field.placeholder}
                       rows={3}
                       disabled
                     />
-                  ) : field.type === 'select' ? (
+                  ) : field.type === "select" ? (
                     <select className="w-full p-2 border rounded-md" disabled>
-                      <option>{field.placeholder || 'Select an option'}</option>
+                      <option>{field.placeholder || "Select an option"}</option>
                       {field.options?.map((option, i) => (
                         <option key={i}>{option}</option>
                       ))}
                     </select>
-                  ) : field.type === 'checkbox' ? (
+                  ) : field.type === "checkbox" ? (
                     <div className="flex items-center space-x-2">
                       <input type="checkbox" disabled />
                       <span className="text-sm">
                         {field.placeholder || field.label}
                       </span>
                     </div>
-                  ) : field.type === 'radio' ? (
+                  ) : field.type === "radio" ? (
                     <div className="space-y-2">
                       {field.options?.map((option, i) => (
                         <div key={i} className="flex items-center space-x-2">

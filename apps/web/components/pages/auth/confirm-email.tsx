@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { createClient } from '@/supabase/client';
 import { Loader2, Mail, RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const RESEND_INTERVAL = 60; // seconds
 const STORAGE_KEY = 'resendEmailEndTime';
@@ -101,22 +102,22 @@ export default function ConfirmEmailPage() {
 
         {/* Email Icon */}
         <div className="flex justify-center">
-          <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center">
-            <Mail className="w-8 h-8 text-blue-500" />
+          <div className="w-16 h-16 bg-yellow-50 rounded-full flex items-center justify-center">
+            <Mail className="w-8 h-8 text-primary" />
           </div>
         </div>
 
         {/* Main Message */}
         <div className="space-y-4">
-          <h1 className="text-2xl font-semibold text-gray-900">
+          <h1 className="text-2xl font-semibold ">
             Check your email
           </h1>
-          <p className="text-gray-600 text-lg leading-relaxed">
+          <p className=" text-lg leading-relaxed">
             An email confirmation link has been sent to your email address{' '}
             {email && (
               <a
                 href={`mailto:${email}`}
-                className="font-medium text-gray-900 underline"
+                className="font-medium  underline"
               >
                 ({email})
               </a>
@@ -127,8 +128,8 @@ export default function ConfirmEmailPage() {
         </div>
 
         {/* Additional Instructions */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <p className="text-sm text-blue-800">
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <p className="text-sm text-primary">
             <strong>Don&apos;t see the email?</strong> Check your spam folder or
             try searching for Leadmark in your inbox.
           </p>
@@ -136,14 +137,14 @@ export default function ConfirmEmailPage() {
 
         {/* Resend Section */}
         <div className="pt-4">
-          <p className="text-gray-600 mb-4">Didn&apos;t receive any mail?</p>
+          <p className=" mb-4">Didn&apos;t receive any mail?</p>
 
-          <button
+          <Button
             onClick={handleResendConfirmationEmail}
             disabled={!canResend || isResending}
             className={`inline-flex items-center px-6 py-3 rounded-lg font-medium transition-all ${
               canResend && !isResending
-                ? 'bg-primary-base text-white hover:bg-primary-base/80 focus:ring-4 focus:ring-primary-base/20'
+                ? 'bg-primary  focus:ring-4 focus:ring-primary-base/20'
                 : 'bg-gray-100 text-gray-400 cursor-not-allowed'
             }`}
           >
@@ -163,7 +164,7 @@ export default function ConfirmEmailPage() {
                 Resend in {resendCountdown}s
               </>
             )}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

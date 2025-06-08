@@ -120,7 +120,7 @@ export default function ResourcePage() {
   return (
     <div className="max-w-4xl mx-auto pt-8">
       <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl font-bold  mb-2">
           Upload Business Resources
         </h1>
         <p className="text-gray-600">
@@ -131,7 +131,7 @@ export default function ResourcePage() {
       {/* Upload Files */}
       <div className="mb-4">
         <div className="flex items-center mb-6">
-          <h2 className="text-lg font-semibold text-gray-900">Upload Files</h2>
+          <h2 className="text-lg font-semibold ">Upload Files</h2>
         </div>
 
         <div
@@ -139,7 +139,7 @@ export default function ResourcePage() {
           onClick={() => fileInputRef.current?.click()}
         >
           <Upload className="h-8 w-8 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-700 font-medium mb-1">
+          <p className=" font-medium mb-1">
             Click to upload files
           </p>
           <p className="text-sm text-gray-500">
@@ -157,7 +157,7 @@ export default function ResourcePage() {
         />
 
         <div>
-          <h3 className="font-medium text-gray-900 mb-3">
+          <h3 className="font-medium  mb-3">
             Suggested Resources:
           </h3>
           <ul className="text-sm text-gray-600 space-y-2">
@@ -173,7 +173,7 @@ export default function ResourcePage() {
       {/* Resources List */}
       {resources.length > 0 && (
         <div className="mb-8">
-          <h3 className="text-base font-semibold text-gray-900 mb-4">
+          <h3 className="text-base font-semibold  mb-4">
             Added Resources ({resources.length})
           </h3>
           <div className="space-y-3">
@@ -185,7 +185,7 @@ export default function ResourcePage() {
                 <div className="flex items-center space-x-3">
                   <FileText className="h-5 w-5 text-gray-500" />
                   <div>
-                    <p className="font-medium text-gray-900">{resource.name}</p>
+                    <p className="font-medium ">{resource.name}</p>
                     <p className="text-sm text-gray-500">
                       {resource.type === 'file' && resource.file
                         ? `File upload • ${formatFileSize(resource.file.size)}`
