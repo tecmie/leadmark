@@ -5,8 +5,7 @@
     "buildCommand": "pnpm run build:worker"
   },
   "deploy": {
-    "rootDir": "apps/worker",
-    "startCommand": "pnpm start",
+    "startCommand": "cd apps/worker && pnpm start",
     "healthcheckTimeout": 100,
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
