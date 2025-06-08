@@ -6,7 +6,7 @@
   },
   "deploy": {
     "rootDir": "apps/worker",
-    "startCommand": "pnpm start",
+    "startCommand": "pnpm start:worker",
     "healthcheckPath": "/",
     "healthcheckTimeout": 100,
     "restartPolicyType": "ON_FAILURE",
