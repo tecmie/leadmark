@@ -3,6 +3,8 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "build:worker": "turbo run build --filter=@repo/types --filter=@leadmark/worker ",
+    "start:worker": "turbo run start --filter=@leadmark/worker",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
