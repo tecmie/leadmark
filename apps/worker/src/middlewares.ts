@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { ErrorResponse } from './interfaces/response.interface';
+import { ErrorResponse } from './interfaces/response.interface.js';
 // import * as Sentry from "@sentry/node";
 
 

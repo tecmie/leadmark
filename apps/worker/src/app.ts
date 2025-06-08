@@ -2,9 +2,9 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
-import { MessageResponse } from "~/interfaces/response.interface";
-import api from "./api";
-import * as middlewares from "./middlewares";
+import { MessageResponse } from "~/interfaces/response.interface.js";
+import api from "~/api/index.js";
+import * as middlewares from "./middlewares.js";
 
 export function createApp(): express.Application {
   const app = express();
