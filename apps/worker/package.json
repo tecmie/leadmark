@@ -5,7 +5,8 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsup",
+    "clean": "rm -rf dist",
     "start": "tsx src/index.ts",
     "start:prod": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
@@ -42,6 +43,7 @@
     "@types/node": "^22.15.3",
     "@types/showdown": "^2.0.6",
     "@types/xxhashjs": "^0.2.4",
+    "tsup": "^8.5.0",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
   }
