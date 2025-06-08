@@ -1,5 +1,5 @@
 {
-  "name": "processor",
+  "name": "@leadmark/worker",
   "version": "1.0.0",
   "description": "",
   "type": "module",
