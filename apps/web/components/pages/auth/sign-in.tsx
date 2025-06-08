@@ -145,7 +145,7 @@ export const SignInPage = () => {
 
           <Button
             type="submit"
-            className="w-full text-white bg-primary-base"
+            className="w-full "
             disabled={loading}
           >
             {loading ? (
@@ -159,7 +159,7 @@ export const SignInPage = () => {
 
       <p>
         Don&apos;t have an account yet?{' '}
-        <Link href={routes.SIGN_UP} className="text-blue-500 font-medium">
+        <Link href={routes.SIGN_UP} className="text-primary font-medium">
           Create an account
         </Link>
       </p>

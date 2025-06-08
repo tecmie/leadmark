@@ -11,7 +11,7 @@ export default async function OnboardingPage() {
       <div className="max-w-md text-center space-y-6">
         <div className="flex items-center justify-center">
           <Image
-            className="w-full h-full object-contain"
+            className="w-full h-full object-contain text-primary"
             src="/get-started.svg"
             alt="Leadmark"
             width={300}
