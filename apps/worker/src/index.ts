@@ -1,5 +1,5 @@
-import { createApp } from "./app";
-import secrets from "./secrets";
+import { createApp } from "./app.js";
+import secrets from "./secrets.js";
 
 async function startServer(): Promise<void> {
   try {
