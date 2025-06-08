@@ -35,7 +35,6 @@ export const GoogleCalendarIntegration = ({ onBack }: GoogleCalendarIntegrationP
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   const CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-  const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
   const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
   const SCOPES = [
     'https://www.googleapis.com/auth/calendar.readonly',
@@ -115,7 +114,6 @@ export const GoogleCalendarIntegration = ({ onBack }: GoogleCalendarIntegrationP
 
       async function initializeGapiClient() {
         await window.gapi.client.init({
-          apiKey: API_KEY,
           discoveryDocs: [DISCOVERY_DOC],
         });
         setGapiInited(true);
