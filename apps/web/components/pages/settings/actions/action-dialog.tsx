@@ -64,13 +64,13 @@ export const ActionDialog: React.FC<ActionDialogProps> = ({
     <Dialog open={openDialog} onOpenChange={closeDialog}>
       <DialogContent className="bg-white p-6 dark:bg-background text-neutral sm:max-w-[425px] border-none rounded-t-[40px] sm:rounded-[40px] translate-y-0 sm:translate-y-[-50%] bottom-0 sm:top-[50%] sm:h-fit">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-normal text-[#000000A3] dark:text-neutral-strong">
+          <DialogTitle className="text-2xl font-normal text-[#000000A3] ">
             {title}
           </DialogTitle>
         </DialogHeader>
         {description && (
           <div className="my-2">
-            <p className="text-[#000000A3] dark:text-neutral-strong">
+            <p className="text-[#000000A3] ">
               {description}
             </p>
           </div>

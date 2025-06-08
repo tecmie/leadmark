@@ -56,8 +56,8 @@ interface AvatarComponentProps {
 const AvatarComponent = ({ className, src, label }: AvatarComponentProps) => {
 
   const initials = label?.split(' ').map((word) => word[0]).join('').substring(0, 2);
-  const avatarBG = stringToHslColor(label || "wootiv", 27, 83);
-  const avatarFG = stringToHslColor(label || "wootiv", 25, 20);
+  const avatarBG = stringToHslColor(label || "leadmark", 27, 83);
+  const avatarFG = stringToHslColor(label || "leadmark", 25, 20);
 
   return (
     <Avatar style={{ backgroundColor: avatarBG }} className={cn(`w-10 h-10`, className)}>

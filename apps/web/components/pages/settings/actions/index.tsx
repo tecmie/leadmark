@@ -91,7 +91,7 @@ export const SharePaymentCard = ({
     setIsLoading(true);
     const { message, success } = await updatePaymentDetailsAction({
       userId,
-      payment: { option, information, link }
+      payment: { amount: 0, currency: 'USD', description: information }
     });
 
     if (success) {
@@ -292,7 +292,7 @@ export const SettingsActionsPage = ({
     <>
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-1">
-          <h3 className="px-6 py-4 text-xl text-black sm:text-2xl dark:text-neutral-strong">
+          <h3 className="px-6 py-4 text-xl text-black sm:text-2xl ">
             Actions
           </h3>
           <p className="p-6 border-y border-surface-surface-normal">
@@ -303,7 +303,7 @@ export const SettingsActionsPage = ({
         </div>
         <div className="flex flex-col gap-4 px-6">
           <div className="flex flex-col gap-1">
-            <h3 className="text-base text-black dark:text-neutral-strong">
+            <h3 className="text-base text-black ">
               Default actions
             </h3>
             <p>Click on any action to set it up or make changes</p>

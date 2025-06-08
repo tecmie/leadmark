@@ -1,7 +1,4 @@
 import { env } from '@/env.mjs';
-import { Database } from '@repo/types/database';
-
-type Price = Database['public']['Tables']['prices']['Row'];
 
 export const getURL = () => {
   let url =
@@ -17,10 +14,10 @@ export const getURL = () => {
 
 export const postData = async ({
   url,
-  data
+  data,
 }: {
   url: string;
-  data?: { price: Price };
+  data?: { price: any };
 }) => {
   console.log('posting,', url, data);
 
@@ -28,7 +25,7 @@ export const postData = async ({
     method: 'POST',
     headers: new Headers({ 'Content-Type': 'application/json' }),
     credentials: 'same-origin',
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   });
 
   if (!res.ok) {

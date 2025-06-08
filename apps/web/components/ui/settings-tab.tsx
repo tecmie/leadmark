@@ -15,22 +15,22 @@ interface SettingsTabItem {
 }
 
 const SETTING_TABS: SettingsTabItem[] = [
-  { label: 'profile', icon: User, href: routes.profile },
+  { label: 'profile', icon: User, href: routes.PROFILE },
   {
     label: 'documents',
     icon: FileText,
-    href: routes.settingsDocuments
+    href: routes.SETTINGS_DOCUMENTS,
   },
   {
     label: 'actions',
     icon: FileEdit,
-    href: routes.settingsActions
+    href: routes.SETTINGS_ACTIONS,
   },
   {
     label: 'integrations',
     icon: Box,
-    href: routes.settingsIntegrations
-  }
+    href: routes.SETTINGS_INTEGRATIONS,
+  },
 ];
 
 interface SettingsTabProps extends PropsWithChildren {

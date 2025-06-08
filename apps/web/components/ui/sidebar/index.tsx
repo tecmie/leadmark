@@ -13,7 +13,9 @@ import {
   AllInboxIcon,
   ExternalLinkIcon,
   InportantInboxIcon,
-  NeedsAttentionIcon
+  NeedsAttentionIcon,
+  LinkIcon,
+  ContactsIcon
 } from '../../icons/sidebar';
 import { Avatar } from '../avatar';
 import { LogoMark } from '../logo-mark';
@@ -46,21 +48,21 @@ export const SidebarEmailCounter = ({
       className={cn(
         'flex gap-2 justify-center ',
         { 'flex-row w-full items-center': isBottom },
-        { ' border-t border-[#0000000A] flex-col h-[119px]': !isBottom }
+        { ' border-t border-border flex-col h-[119px]': !isBottom }
       )}
     >
       <Progress className="w-32" value={computedMails} />
-      <div className="items-center flex-shrink-0 hidden gap-1 text-[#000000A3] sm:flex ">
-        <span className="font-bold text-black">{mailsSent}</span> of{' '}
-        <span className="font-bold text-black">{mailsTotal}</span>
+      <div className="items-center flex-shrink-0 hidden gap-1 text-muted-foreground sm:flex ">
+        <span className="font-bold text-foreground">{mailsSent}</span> of{' '}
+        <span className="font-bold text-foreground">{mailsTotal}</span>
         mails received
       </div>
-      <p className="block text-black sm:hidden">
-        <span className="font-bold text-black">{mailsSent}</span> of{' '}
-        <span className="font-bold text-black">{mailsTotal}</span> mails
+      <p className="block text-foreground sm:hidden">
+        <span className="font-bold text-foreground">{mailsSent}</span> of{' '}
+        <span className="font-bold text-foreground">{mailsTotal}</span> mails
         received
       </p>
-      <Link href={routes.billing} className="w-full text-primary-base">
+      <Link href={routes.BILLING} className="w-full text-primary">
         Get more mails
       </Link>
     </div>
@@ -70,20 +72,30 @@ export const SidebarEmailCounter = ({
 const SIDEBAR_ROUTES: SidebarItem[] = [
   {
     icon: AllInboxIcon,
-    href: routes.inboxOverview,
-    label: 'All inboxes'
+    href: routes.INBOX_OVERVIEW,
+    label: 'All inboxes',
   },
   {
     icon: InportantInboxIcon,
-    href: routes.inboxImportant,
-    label: 'Important'
+    href: routes.INBOX_IMPORTANT,
+    label: 'Important',
   },
 
   {
     icon: NeedsAttentionIcon,
-    href: routes.inboxAttention,
-    label: 'Needs attention'
-  }
+    href: routes.INBOX_ATTENTION,
+    label: 'Needs attention',
+  },
+  {
+    icon: ContactsIcon,
+    href: routes.CONTACTS,
+    label: 'Contacts',
+  },
+  {
+    icon: LinkIcon,
+    href: routes.FORMS,
+    label: 'Forms',
+  },
 ];
 
 export const SidebarExternalLinks = () => {
@@ -92,7 +104,7 @@ export const SidebarExternalLinks = () => {
     { label: 'Privacy policy', href: '#' }
   ];
   return (
-    <div className="p-4 sm:h-full flex flex-row sm:flex-col text-[#56A0D2] items-center sm:items-start justify-start sm:justify-center gap-4 border-t border-[#0000000A] ">
+    <div className="p-4 sm:h-full flex flex-row sm:flex-col text-primary items-center sm:items-start justify-start sm:justify-center gap-4 border-t border-border ">
       {links.map((link, index) => (
         <Button
           key={index}
@@ -154,14 +166,14 @@ export const Sidebar = ({
       >
         <div
           className={cn(
-            'bg-[#FFFFFF] dark:bg-background-secondary h-full w-full border-r border-r-border-neutral-weaker py-0 flex flex-col flex-shrink-0 z-10'
+            'bg-background h-full w-full border-r border-border py-0 flex flex-col flex-shrink-0 z-10'
           )}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex flex-col gap-4 p-4 bg-[#92C2E229]">
-            <div className="w-full rounded-full p-2 flex justify-between items-center bg-[#00000012] text-black font-bold">
+          <div className="flex flex-col gap-4 p-4 bg-secondary">
+            <div className="w-full rounded-full p-2 flex justify-between items-center bg-input text-foreground font-bold">
               <LucideX
-                className="text-[#000000a3] w-4 h-4 ml-2"
+                className="text-muted-foreground w-4 h-4 ml-2"
                 onClick={() => toggleSidebar()}
               />
               <div>{email}</div>
@@ -177,7 +189,7 @@ export const Sidebar = ({
             ))}
           </div>
           <div className="flex flex-col overflow-auto">
-            <span className=" px-4 flex flex-shrink-0 items-center text-black uppercase text-[10px] tracking-[4%]  mt-4 font-bold">
+            <span className=" px-4 flex flex-shrink-0 items-center text-foreground uppercase text-[10px] tracking-[4%]  mt-4 font-bold">
               Folders
               <ComingSoonTag className="ml-4" />
             </span>
@@ -188,7 +200,7 @@ export const Sidebar = ({
             {isExpanded && (
               <button
                 onClick={() => onOpen()}
-                className="flex items-center flex-shrink-0 w-full p-4 text-sm font-medium text-primary-base "
+                className="flex items-center flex-shrink-0 w-full p-4 text-sm font-medium text-primary "
               >
                 Add a folder
               </button>
@@ -224,7 +236,7 @@ export const Sidebar = ({
   return (
     <aside
       className={cn(
-        ' transition-all ease-in-out hidden max-w-[200px] bg-[#FFFFFFA3] sm:rounded-l-lg dark:bg-background sm:flex flex-col flex-shrink-0 gap-5 ',
+        ' transition-all ease-in-out hidden max-w-[200px] bg-background sm:rounded-l-lg sm:flex flex-col flex-shrink-0 gap-5 mt-2',
         { 'w-[60px] duration-300 ': !isExpanded },
         { 'w-full duration-700 p-2': isExpanded }
       )}
@@ -241,7 +253,7 @@ export const Sidebar = ({
           } w-full`}
         >
           {isExpanded && (
-            <span className="flex items-center flex-shrink-0 text-[10px] tracking-[0.4px] leading-3 font-bold text-black uppercase dark:text-white">
+            <span className="flex items-center flex-shrink-0 text-[10px] tracking-[0.4px] leading-3 font-bold text-foreground uppercase ">
               Folders
             </span>
           )}
@@ -251,7 +263,7 @@ export const Sidebar = ({
               size="icon"
               className="bg-transparent "
             >
-              <PlusIcon className="w-4 h-4 text-[#000000A3]" />
+              <PlusIcon className="w-4 h-4 text-muted-foreground" />
             </Button>
           )}
         </div>
@@ -260,7 +272,7 @@ export const Sidebar = ({
         {isExpanded && (
           <button
             onClick={() => onOpen()}
-            className="flex items-center flex-shrink-0 w-full p-2 text-sm font-medium text-primary-base dark:text-white"
+            className="flex items-center flex-shrink-0 w-full p-2 text-sm font-medium text-primary "
           >
             Add a folder
           </button>

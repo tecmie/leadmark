@@ -35,7 +35,7 @@ export function ModeToggle(isExpanded: { isExpanded: boolean }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="dark:text-primary-100 text-nuetral bg-primary-base dark:bg-surface-strong"
+        className=" text-nuetral bg-primary-base dark:bg-surface-strong"
       >
         <DropdownMenuItem onClick={() => setTheme('light')}>
           Light

@@ -26,28 +26,28 @@ const links = [
 const navs = [
   {
     title: 'Home',
-    route: routes.inboxOverview,
+    route: routes.INBOX_OVERVIEW,
     icon: <HomeNavIcon className="inline-block mb-1" />,
-    activeIcon: <ActiveHomeIcon className="inline-block mb-1" />
+    activeIcon: <ActiveHomeIcon className="inline-block mb-1" />,
   },
   {
     title: 'Apps',
-    route: routes.apps,
+    route: routes.APPS,
     icon: <AppsNavIcon className="inline-block mb-1" />,
-    activeIcon: <ActiveAppIcon className="inline-block mb-1" />
+    activeIcon: <ActiveAppIcon className="inline-block mb-1" />,
   },
   {
     title: 'Profile',
-    route: routes.profile,
+    route: routes.PROFILE,
     icon: <ProfileNavIcon className="inline-block mb-1" />,
-    activeIcon: <ActiveProfileIcon className="inline-block mb-1" />
+    activeIcon: <ActiveProfileIcon className="inline-block mb-1" />,
   },
   {
     title: 'Settings',
-    route: routes.settings,
+    route: routes.SETTINGS,
     icon: <SettingsNavIcon className="inline-block mb-1" />,
-    activeIcon: <ActiveSettingsIcon className="inline-block mb-1" />
-  }
+    activeIcon: <ActiveSettingsIcon className="inline-block mb-1" />,
+  },
 ];
 
 interface BottomNavProps extends PropsWithChildren {
@@ -67,7 +67,7 @@ const BottomNav = ({ threadCount }: BottomNavProps) => {
             <Button
               key={index}
               variant={'link'}
-              className="p-0 text-sm text-primary-base"
+              className="p-0 text-sm text-primary"
               asChild
             >
               <a href={link.href} target="_blank">
@@ -79,13 +79,13 @@ const BottomNav = ({ threadCount }: BottomNavProps) => {
       </div>
       <section
         id="bottom-navigation"
-        className="sm:hidden block fixed inset-x-0 bottom-0 z-2 shadow py-3 px-2 bg-white dark:bg-transparent border-t border-[#00000012]"
+        className="sm:hidden block fixed inset-x-0 bottom-0 z-2 shadow py-3 px-2 bg-background border-t border-border"
       >
         <div id="tabs" className="flex justify-between">
           {navs?.map((nav, index) => (
             <Link
               href={nav.route}
-              className="justify-center inline-block w-full pt-2 pb-1 text-center text-primary-base"
+              className="justify-center inline-block w-full pt-2 pb-1 text-center text-primary"
               key={index}
             >
               {pathname && pathname.startsWith(nav.route)

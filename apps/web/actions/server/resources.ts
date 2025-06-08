@@ -3,15 +3,25 @@
 import { createClient } from '@/supabase/server';
 import {
   BackendResponse,
-  Resource,
-  UploadResourceOptions
+  IResource
 } from '@repo/types';
+
+type UploadResourceOptions = {
+  userId: string;
+  resources: {
+    name: string;
+    contextSpace: string;
+    resourceUrl: string;
+    resourceType: string;
+    rawMetadata: any;
+  }[];
+};
 import { fetchMailbox } from './mailbox';
 
 
 export const fetchGlobalLinks = async (
   userId: string
-): Promise<BackendResponse<Resource[]>> => {
+): Promise<BackendResponse<IResource[]>> => {
   const supabase = await createClient();
 
   const mailboxId = (await fetchMailbox(userId)).data?.id;
@@ -23,8 +33,7 @@ export const fetchGlobalLinks = async (
     .select()
     .eq('mailbox_id', mailboxId)
     .eq('owner_id', userId)
-    .eq('source_type', 'link')
-    .eq('context_space', 'global');
+    .eq('type', 'link');
 
   if (error) {
     return {
@@ -42,7 +51,7 @@ export const fetchGlobalLinks = async (
 
 export const fetchGlobalDocuments = async (
   userId: string
-): Promise<BackendResponse<Resource[]>> => {
+): Promise<BackendResponse<IResource[]>> => {
   const supabase = await createClient();
 
   const mailboxId = (await fetchMailbox(userId)).data?.id;
@@ -54,8 +63,7 @@ export const fetchGlobalDocuments = async (
     .select()
     .eq('mailbox_id', mailboxId)
     .eq('owner_id', userId)
-    .neq('source_type', 'link')
-    .eq('context_space', 'global');
+    .neq('type', 'link');
 
   if (error) {
     return {
@@ -73,7 +81,7 @@ export const fetchGlobalDocuments = async (
 
 export const fetchResources = async (
   userId: string
-): Promise<BackendResponse<Resource[]>> => {
+): Promise<BackendResponse<IResource[]>> => {
     const supabase = await createClient();
   
   const mailboxId = (await fetchMailbox(userId)).data?.id;
@@ -101,7 +109,7 @@ export const fetchResources = async (
 };
 
 export const deleteResource = async (
-  resourceId: number
+  resourceId: string
 ): Promise<BackendResponse<boolean>> => {
   const supabase = await createClient();
 
@@ -123,25 +131,22 @@ export const deleteResource = async (
 export const uploadResources = async ({
   userId,
   resources
-}: UploadResourceOptions): Promise<BackendResponse<Resource[]>> => {
+}: UploadResourceOptions): Promise<BackendResponse<IResource[]>> => {
   const supabase = await createClient();
 
   const mailboxId = (await fetchMailbox(userId)).data?.id;
 
-  const processedResources = resources.map((resource) => {
+  const processedResources = resources.map((resource: any) => {
     // TODO: parse instruction here
     const instruction = '';
 
     return {
       name: resource.name,
-      context_space: resource.contextSpace,
-      source_url: resource.resourceUrl,
-      source_type: resource.resourceType,
-      instructions: instruction,
-      mailbox_id: mailboxId,
-      status: 'pending' as const,
+      type: resource.resourceType,
+      mailbox_id: mailboxId!,
       owner_id: userId,
-      raw_metadata: resource.rawMetadata
+      raw_metadata: resource.rawMetadata,
+      file_path: resource.resourceUrl
     };
   });
 

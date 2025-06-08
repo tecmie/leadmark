@@ -4,7 +4,7 @@ import {
   deleteFileResource,
   uploadFileResource,
 } from "@/actions/server/storage";
-import { Resource } from "@repo/types";
+import { IResource } from "@repo/types";
 import { triggerDownload } from "@/utils/helpers";
 import { cn } from "@/utils/ui";
 import { createClient } from "@/supabase/client";
@@ -28,17 +28,17 @@ interface FileInputProps
     React.InputHTMLAttributes<HTMLInputElement>,
     "type" | "onChange"
   > {
-  onUpload: (file: Resource) => void;
+  onUpload: (file: IResource) => void;
 }
 
 interface FileUploadItemProps {
-  resource: Resource;
-  actions?: { label: FileUploadActions; onClick?: (name: Resource) => void }[];
+  resource: IResource;
+  actions?: { label: FileUploadActions; onClick?: (name: IResource) => void }[];
   isUploading?: boolean;
 }
 
 interface FileUploadProps {
-  documents: Resource[];
+  documents: IResource[];
 }
 
 const targetSizeInMB = 2;
@@ -64,9 +64,9 @@ export const FileInput = ({
       if (file.size > MAX_FILE_SIZE) {
         throw new Error("File too large!");
       }
-      const { data: session } = await supabase.auth.getSession();
+      const { data: { user } } = await supabase.auth.getUser();
 
-      if (!session.session?.user.id) {
+      if (!user?.id) {
         throw new Error("You must be authenticated to upload a resource");
       }
 
@@ -76,8 +76,8 @@ export const FileInput = ({
 
       const { success, message, data } = await uploadFileResource({
         form,
-        bucket: "wootiv",
-        userId: session.session.user.id,
+        bucket: "leadmark",
+        userId: user.id,
       });
 
       if (!success) {
@@ -195,11 +195,11 @@ export const FileUpload = ({
 }: FileUploadProps) => {
   const supabase = createClient();
   const [documents, setDocuments] = useState(resourceDocuments);
-  const handleFileUpload = (document: Resource) => {
+  const handleFileUpload = (document: IResource) => {
     setDocuments([document, ...documents]);
   };
 
-  const handleFileDelete = async (resource: Resource) => {
+  const handleFileDelete = async (resource: IResource) => {
     // @Note: Mimic optimistic update
     const oldDocuments = documents;
     const updatedDocuments = documents.filter(
@@ -207,9 +207,9 @@ export const FileUpload = ({
     );
     setDocuments(updatedDocuments);
 
-    const { data: sessionInfo } = await supabase.auth.getSession();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    if (!sessionInfo.session?.user.id) {
+    if (!user?.id) {
       toast.error("User not logged in.");
       return;
     }
@@ -225,10 +225,10 @@ export const FileUpload = ({
     toast.success(message);
   };
 
-  const handleFileDownload = async (resource: Resource) => {
-    const { data: sessionInfo } = await supabase.auth.getSession();
+  const handleFileDownload = async (resource: IResource) => {
+    const { data: { user } } = await supabase.auth.getUser();
 
-    if (!sessionInfo.session?.user.id) {
+    if (!user?.id) {
       toast.error("User not logged in.");
       return;
     }

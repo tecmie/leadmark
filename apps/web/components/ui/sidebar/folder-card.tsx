@@ -23,10 +23,10 @@ const FolderCard: React.FC<FolderProps> = ({ folder, isExpanded }) => {
   return (
     <li
       className={cn(
-        'w-full flex flex-shrink-0 justify-center py-4 px-4 sm:px-2 sm:py-2 flex-col text-sm text-black capitalize dark:text-white',
+        'w-full flex flex-shrink-0 justify-center py-4 px-4 sm:px-2 sm:py-2 flex-col text-sm text-white capitalize ',
         { 'py-4': isCollapsed },
-        { 'text-black font-medium': folder.id === activeId },
-        { 'text-[#000000A3]': folder.id !== activeId }
+        { 'text-white font-medium': folder.id === activeId },
+        { 'text-white': folder.id !== activeId }
       )}
       key={folder.id}
     >
@@ -39,11 +39,11 @@ const FolderCard: React.FC<FolderProps> = ({ folder, isExpanded }) => {
         onClick={handleToggleCollapse}
       >
         <div className="flex items-center gap-3">
-          <FolderTagIcon className="text-[#adb6f9]" />
+          <FolderTagIcon className="text-primary" />
           {isExpanded && <span className="">{folder.display}</span>}
         </div>
 
-        {isExpanded && <HamburgerIcon className="mr-2.5" />}
+        {isExpanded && <HamburgerIcon className="mr-2.5 " />}
       </div>
 
       {!isCollapsed && folder?.children?.length > 0 && (
@@ -78,8 +78,8 @@ const ChildFolderCard: React.FC<FolderProps> = ({ folder, isExpanded }) => {
         'flex justify-center flex-col mt-4 text-xs text- capitalize',
         { 'pl-0': !isExpanded },
         { 'pl-3': isExpanded },
-        { 'text-black font-medium': folder.id === activeId },
-        { 'text-[#000000A3]': folder.id !== activeId }
+        { 'text-white font-medium': folder.id === activeId },
+        { 'text-white': folder.id !== activeId }
       )}
       key={folder.id}
     >

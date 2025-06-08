@@ -45,22 +45,23 @@ export const SettingsLinkPage = ({
       return;
     }
 
-    const session = await supabase.auth.getSession();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    if (!session) {
+    if (!user) {
       return;
     }
 
     const processedLinks: {
-      name?: string;
+      name: string;
       resourceUrl: string;
-      resourceType: any;
-      contextSpace: any;
+      resourceType: string;
+      contextSpace: string;
       rawMetadata: {
         fullUrl: string;
         sizeInBytes: number;
       };
     }[] = links.map((link) => ({
+      name: link || 'unnamed-link',
       resourceUrl: link,
       resourceType: 'link',
       contextSpace: 'global',
@@ -71,7 +72,7 @@ export const SettingsLinkPage = ({
     }));
 
     const { success, message } = await uploadResources({
-      userId: session.data.session?.user.id ?? '',
+      userId: user?.id ?? '',
       resources: processedLinks
     });
 
@@ -89,7 +90,7 @@ export const SettingsLinkPage = ({
   return (
     <div className="flex flex-col gap-6 ">
       <div className="flex flex-col gap-1">
-        <h3 className="px-6 py-4 text-xl text-black sm:text-2xl dark:text-neutral-strong">
+        <h3 className="px-6 py-4 text-xl text-black sm:text-2xl ">
           Links
         </h3>
         <p className="p-6 border-y border-surface-surface-normal">

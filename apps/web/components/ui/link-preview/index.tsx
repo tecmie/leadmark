@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { LinkPreviewData, getLinkPreviewData } from '@/utils/link-preview';
@@ -18,7 +19,7 @@ interface LinkPreviewItemProps extends LinkPreviewData {
 }
 
 export const LinkPreviewItemSkeleton = ({
-  orientation
+  orientation,
 }: {
   orientation: 'fixed' | 'full';
 }) => {
@@ -51,7 +52,7 @@ export const LinkPreviewItem = ({
   domain,
   sitename,
   image,
-  orientation
+  orientation,
 }: LinkPreviewItemProps) => {
   return (
     <div
@@ -96,7 +97,7 @@ export const LinkPreview = ({
   links,
   setLinks,
   isPreview = true,
-  orientation = 'fixed'
+  orientation = 'fixed',
 }: LinkPreviewProps) => {
   const [showLinkPreviews, setShowLinkPreviews] = useState(true);
   const [value] = useDebounce(links, 500);
@@ -146,7 +147,7 @@ export const LinkPreview = ({
             newLinkPreviews[index] = data.data;
             setLinkPreviews(newLinkPreviews);
           }
-        } catch (err) {
+        } catch {
           // toast.error(`${link} is invalid!`);
         }
       });
@@ -174,7 +175,7 @@ export const LinkPreview = ({
         {isPreview && (
           <Label
             htmlFor="show-link-previews"
-            className="flex items-center gap-2 text-[#000000A3] dark:text-neutral-strong"
+            className="flex items-center gap-2 text-[#000000A3] "
           >
             <Checkbox
               name="show-link-previews"
@@ -202,7 +203,7 @@ export const LinkPreview = ({
               orientation === 'fixed' ? 'w-max' : 'flex-col w-full'
             )}
           >
-            {!!linkPreviews.length
+            {linkPreviews && linkPreviews?.length > 0
               ? linkPreviews.map((linkPreview, index) => (
                   <LinkPreviewItem
                     key={index}

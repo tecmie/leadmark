@@ -67,7 +67,7 @@ const DialogHeader = ({
   >
     <div>{children}</div>
 
-    <DialogPrimitive.Close className=" rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 outline-none disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground text-black dark:text-[#FFFFFFA3]">
+    <DialogPrimitive.Close className=" rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 outline-none disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground text-black ">
       <X className="w-6 h-6" />
       <span className="sr-only">Close</span>
     </DialogPrimitive.Close>
