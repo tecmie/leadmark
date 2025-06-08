@@ -40,6 +40,7 @@ input {
 /* Apply dark theme globally */
 body {
   @apply bg-background text-foreground;
+  font-family: var(--font-ubuntu);
 }
 
 /* Deep Black and Yellow Theme */
