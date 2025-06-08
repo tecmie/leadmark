@@ -201,7 +201,7 @@ export default function FormViewer({ formId }: FormViewerProps) {
                   checked={fieldValue === option}
                   onChange={(e) => handleFieldChange(field.name, e.target.value)}
                   required={field.required}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                  className="h-4 w-4 text-primary focus:ring-primary border-gray-300"
                 />
                 <Label htmlFor={`${field.name}_${index}`} className="text-sm cursor-pointer">
                   {option}
@@ -270,7 +270,7 @@ export default function FormViewer({ formId }: FormViewerProps) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
           <p className="text-gray-600">Loading form...</p>
         </div>
       </div>

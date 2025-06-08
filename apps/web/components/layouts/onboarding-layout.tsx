@@ -56,24 +56,24 @@ function OnboardingProgress() {
           <div key={step.number} className="flex items-center">
             {/* Step Circle */}
             <div className="flex flex-col items-center">
-              <div
+                <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-semibold transition-all
                   ${
-                    index <= currentStepIndex
-                      ? 'bg-primary-base text-white shadow-[0_4px_16px_rgba(79,63,253,0.24)]'
-                      : 'bg-[#F1F1F6] text-[#7C7C8A]'
+                  index <= currentStepIndex
+                    ? 'bg-primary text-black shadow-[0_4px_16px_rgba(79,63,253,0.24)]'
+                    : 'text-primary'
                   }
                 `}
                 style={{
                   border:
-                    index <= currentStepIndex
-                      ? '2px solid #8EA7E0'
-                      : '2px solid #F1F1F6',
+                  index <= currentStepIndex
+                    ? '2px solid black'
+                    : '2px solid var(--primary)',
                 }}
-              >
+                >
                 {step.number}
-              </div>
-              <span className="text-xs text-[#7C7C8A] mt-2 hidden font-medium tracking-wide">
+                </div>
+              <span className="text-xs text-primary mt-2 hidden font-medium tracking-wide">
                 {step.label}
               </span>
             </div>
@@ -81,7 +81,7 @@ function OnboardingProgress() {
             {index < steps.length - 1 && (
               <div className="relative flex items-center mx-3 w-28 h-2">
                 {/* Background bar */}
-                <div className="absolute w-full h-2 rounded bg-[#F1F1F6]" />
+                <div className="absolute w-full h-2 rounded bg-primary/10" />
                 {/* Filled bar */}
                 <div
                   className={`absolute h-2 rounded transition-all duration-300`}
@@ -92,7 +92,7 @@ function OnboardingProgress() {
                         : index === currentStepIndex
                           ? '50%'
                           : '0%',
-                    background: '#8EA7E0',
+                    background: 'var(--primary)',
                   }}
                 />
               </div>
