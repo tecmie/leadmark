@@ -293,7 +293,7 @@ This project was built for the **Postmark Challenge: Inbox Innovators**.
 **Built with ❤️ for the Postmark community**
 
 ### Team
-- **Lead Developer**: [Tecmie](https://github.com/tecmie)
+- **Lead Developer**: [Tecmie Leadmark Team](https://github.com/tecmie/leadmark)
 - **Challenge**: Postmark Inbox Innovators 2024
 - **Demo**: [Live Demo URL]
 - **Video**: [Demo Video URL]
