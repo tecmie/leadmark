@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { Ubuntu_Sans } from "next/font/google";
+import { SUSE, Sofia_Sans, Livvic } from "next/font/google";
 import "./globals.css";
 import Providers from '@/utils/provider';
 
@@ -12,7 +12,7 @@ const geistMono = localFont({
   src: "/fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
 });
-const ubuntu = Ubuntu_Sans({
+const ubuntu = Sofia_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
   variable: "--font-ubuntu",

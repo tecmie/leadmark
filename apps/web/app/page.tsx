@@ -784,7 +784,7 @@ export async function POST(request: Request) {
               <span>Built for Postmark Challenge: Inbox Innovators</span>
             </div>
             <div>
-              © 2024 Leadmark. Hackathon submission by Tecmie • DEV.to ×
+              © 2024 Leadmark. Hackathon submission by Team Leadmark • DEV.to ×
               Postmark
             </div>
           </div>
