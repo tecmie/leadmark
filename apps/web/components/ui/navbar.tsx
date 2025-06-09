@@ -67,7 +67,7 @@ export const Navbar = ({
             { label: "Inbox", path: routes.INBOX_OVERVIEW },
             { label: "Contacts", path: routes.CONTACTS },
             { label: "Forms", path: routes.FORMS },
-            { label: "Insights", path: routes.FORMS },
+            // { label: "Insights", path: routes.FORMS },
             ].map((item) => {
             const isActive = pathname?.startsWith(item.path);
             return (

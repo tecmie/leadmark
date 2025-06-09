@@ -16,9 +16,9 @@ interface Contact {
 }
 
 export const fetchContacts = async (): Promise<BackendResponse<Contact[]>> => {
-  const supabase = createClient();
-  const { data: user } = await (await supabase).auth.getUser();
-  
+  const supabase = await createClient();
+  const { data: user } = await supabase.auth.getUser();
+
   if (!user?.user?.id) {
     return {
       success: false,
@@ -27,28 +27,48 @@ export const fetchContacts = async (): Promise<BackendResponse<Contact[]>> => {
   }
 
   try {
-    // Fetch contacts with aggregated thread and message data
-    const { data, error } = await (await supabase)
-      .from("contacts")
-      .select(`
-        id,
-        email,
-        first_name,
-        last_name,
-        created_at,
-        threads(
-          id,
-          last_updated,
-          messages!fk_threads_last_message_id(
-            id,
-            content,
-            created_at
-          )
-        )
-      `)
-      .eq("threads.owner_id", user.user.id);
+    // // Fetch contacts with aggregated thread and message data
+    // const { data, error } = await supabase
+    //   .from("contacts")
+    //   .select(`
+    //     id,
+    //     email,
+    //     first_name,
+    //     last_name,
+    //     created_at,
+    //     threads(
+    //       id,
+    //       last_updated,
+    //       messages!fk_threads_last_message_id(
+    //         id,
+    //         content,
+    //         created_at
+    //       )
+    //     )
+    //   `)
+    //   .eq("threads.owner_id", user.user.id);
 
-    if (error) {
+    const { data, error } = await supabase
+      .from("threads")
+      .select(
+        `
+        id,
+        owner_id,
+        last_updated,
+        messages!fk_threads_last_message_id(
+          id,
+          content,
+          created_at
+        ),
+        contact:contacts!inner(id, email, first_name, last_name, created_at)
+      `
+      )
+      .eq("owner_id", user.user.id)
+      .order("last_updated", { ascending: false });
+
+    console.log("Fetched contacts:", data);
+
+    if (error || !data) {
       console.error("Error fetching contacts:", error);
       return {
         success: false,
@@ -57,31 +77,57 @@ export const fetchContacts = async (): Promise<BackendResponse<Contact[]>> => {
     }
 
     // Process the data to calculate statistics
-    const contactsWithStats = data?.map((contact: any) => {
-      const threads = contact.threads || [];
-      const allMessages = threads.flatMap((thread: any) => thread.messages || []);
-      
-      return {
-        id: contact.id,
-        email: contact.email,
-        first_name: contact.first_name,
-        last_name: contact.last_name,
-        created_at: contact.created_at,
-        thread_count: threads.length,
-        message_count: allMessages.length,
-        last_contacted: threads.length > 0 
-          ? threads.reduce((latest: string, thread: any) => 
-              thread.last_updated > latest ? thread.last_updated : latest, 
-              threads[0].last_updated
-            )
-          : undefined,
-        latest_message: allMessages.length > 0
-          ? allMessages
-              .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0]
-              ?.content?.substring(0, 100) + (allMessages[0]?.message_text?.length > 100 ? '...' : '')
-          : undefined,
-      };
-    }) || [];
+    // Group threads by contact and calculate stats
+    const contactsMap = new Map<string, Contact>();
+
+    data?.forEach((thread) => {
+      const contact = thread.contact;
+      const contactId = contact.id.toString();
+
+      if (!contactsMap.has(contactId)) {
+        contactsMap.set(contactId, {
+          id: contactId,
+          email: contact.email!,
+          first_name: contact.first_name,
+          last_name: contact.last_name,
+          created_at: contact.created_at ?? new Date().toISOString(),
+          thread_count: 0,
+          message_count: 0,
+        });
+      }
+
+      const contactData = contactsMap.get(contactId)!;
+      contactData.thread_count += 1;
+
+      // Update last_contacted if this thread is more recent
+      if (
+        !contactData.last_contacted ||
+        (thread.last_updated || new Date().toISOString()) >
+          contactData.last_contacted
+      ) {
+        contactData.last_contacted =
+          thread.last_updated || new Date().toISOString();
+      }
+
+      // Count messages and get latest message
+      if (thread.messages) {
+        contactData.message_count += 1;
+
+        if (
+          thread.messages.content &&
+          (!contactData.latest_message ||
+            new Date(
+              thread.messages.created_at || new Date().toISOString()
+            ).getTime() > new Date(contactData.last_contacted || 0).getTime())
+        ) {
+          contactData.latest_message =
+            thread.messages.content.substring(0, 100) +
+            (thread.messages.content.length > 100 ? "..." : "");
+        }
+      }
+    });
+
+    const contactsWithStats = Array.from(contactsMap.values());
 
     return {
       success: true,

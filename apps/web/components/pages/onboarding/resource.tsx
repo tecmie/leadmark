@@ -180,7 +180,7 @@ export default function ResourcePage() {
             {resources.map((resource) => (
               <div
                 key={resource.id}
-                className="flex items-center justify-between p-4 bg-gray-50 rounded-xl"
+                className="flex items-center justify-between p-4 border rounded-xl"
               >
                 <div className="flex items-center space-x-3">
                   <FileText className="h-5 w-5 text-gray-500" />
