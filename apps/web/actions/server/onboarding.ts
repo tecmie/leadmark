@@ -8,6 +8,7 @@ import OpenAI from "openai";
 import { env } from "@/env.mjs";
 
 import pdfParse from "pdf-parse";
+// import pdfParse from "pdf-parse/lib/pdf-parse.js";
 import mammoth from "mammoth";
 import { updateOnboardingProgress } from "./user-profile";
 
