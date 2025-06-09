@@ -26,6 +26,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface FormField {
   name: string;
@@ -191,9 +192,7 @@ export default function CustomizePage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div className="text-center w-full">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            Customize Your Form
-          </h1>
+          <h1 className="text-2xl font-bold  mb-2">Customize Your Form</h1>
           <p className="text-gray-600">
             Fine-tune your form fields and settings
           </p>
@@ -209,7 +208,7 @@ export default function CustomizePage() {
 
       <div className="grid gap-8">
         {/* Form Editor */}
-        <div className="space-y-6 bg-white/90 border border-gray-200 rounded-xl p-6">
+        <div className="space-y-6 bg-card border-gray-200 rounded-xl p-6">
           <div className="space-y-4">
             <div>
               <Label htmlFor="form-name">Form Name</Label>
@@ -231,27 +230,29 @@ export default function CustomizePage() {
           </div>
 
           <div className="space-y-4">
-            Form Fields
-            <Button size="sm" onClick={addField}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Field
-            </Button>
+            <div className="flex items-center justify-between ">
+              <p className="text-sm font-semibold capitalize">Form Fields</p>
+              <Button size="sm" onClick={addField}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Field
+              </Button>
+            </div>
             <div className="space-y-4">
               {fields.map((field, index) => (
                 <div
                   key={index}
-                  className="border-gray-200 border rounded-xl p-4 space-y-3"
+                  className="border-primary border rounded-xl p-4 space-y-3"
                 >
-                  <div className="flex items-center justify-between">
-                    <Badge variant="outline" className="capitalize text-xs">
+                  <div className="flex items-center justify-between ">
+                    <p className="text-sm font-medium  capitalize underline">
                       {field.type}
-                    </Badge>
+                    </p>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => removeField(index)}
                     >
-                      <X className="h-4 w-4" />
+                      <X className="h-4 w-4 " />
                     </Button>
                   </div>
 
@@ -392,7 +393,7 @@ export default function CustomizePage() {
                               variant="ghost"
                               onClick={() => removeOption(index, optionIndex)}
                             >
-                              <X className="h-3 w-3" />
+                              <X className="h-3 w-3 " />
                             </Button>
                           </div>
                         ))}
@@ -412,7 +413,7 @@ export default function CustomizePage() {
           <SheetHeader>
             <SheetTitle>Form Preview</SheetTitle>
           </SheetHeader>
-          <div className="p-6">
+          <ScrollArea className="p-6">
             <h3 className="text-base font-semibold mb-2">{formName}</h3>
             <p className="text-gray-600 mb-6">{formDescription}</p>
             <div className="space-y-4">
@@ -471,7 +472,7 @@ export default function CustomizePage() {
                 Submit
               </Button>
             </div>
-          </div>
+          </ScrollArea>
         </SheetContent>
       </Sheet>
 

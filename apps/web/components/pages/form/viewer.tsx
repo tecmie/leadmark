@@ -149,7 +149,7 @@ export default function FormViewer({ formId }: FormViewerProps) {
             placeholder={field.placeholder}
             required={field.required}
             rows={4}
-            className="resize-vertical"
+            className="resize-vertical bg-transparent text-black"
           />
         );
       
@@ -160,10 +160,16 @@ export default function FormViewer({ formId }: FormViewerProps) {
             onValueChange={(value) => handleFieldChange(field.name, value)}
             required={field.required}
           >
-            <SelectTrigger {...commonProps}>
+            <SelectTrigger {...commonProps} 
+            className="bg-transparent text-black"
+            
+            >
               <SelectValue placeholder={field.placeholder || 'Select an option'} />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent
+            className="bg-white text-black"
+            
+            >
               {field.options?.map((option, index) => (
                 <SelectItem key={index} value={option}>
                   {option}
@@ -201,7 +207,7 @@ export default function FormViewer({ formId }: FormViewerProps) {
                   checked={fieldValue === option}
                   onChange={(e) => handleFieldChange(field.name, e.target.value)}
                   required={field.required}
-                  className="h-4 w-4 text-primary focus:ring-primary border-gray-300"
+                  className="h-4 w-4 text-primary focus:ring-primary border-gray-300 bg-transparent"
                 />
                 <Label htmlFor={`${field.name}_${index}`} className="text-sm cursor-pointer">
                   {option}
@@ -223,6 +229,8 @@ export default function FormViewer({ formId }: FormViewerProps) {
             min={field.min}
             max={field.max}
             step={field.step}
+            className='bg-transparent text-black'
+
           />
         );
 
@@ -236,6 +244,7 @@ export default function FormViewer({ formId }: FormViewerProps) {
             required={field.required}
             min={field.min}
             max={field.max}
+            className='bg-transparent text-black'
           />
         );
 
@@ -249,6 +258,8 @@ export default function FormViewer({ formId }: FormViewerProps) {
             placeholder={field.placeholder || 'https://example.com'}
             required={field.required}
             pattern="https?://.*"
+            className='bg-transparent text-black'
+
           />
         );
       
@@ -261,6 +272,8 @@ export default function FormViewer({ formId }: FormViewerProps) {
             onChange={(e) => handleFieldChange(field.name, e.target.value)}
             placeholder={field.placeholder}
             required={field.required}
+            className='bg-transparent text-black'
+
           />
         );
     }

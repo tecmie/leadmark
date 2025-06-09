@@ -1,7 +1,8 @@
-import { type NextRequest, NextResponse } from 'next/server';
-import { routes } from '@/utils/routes';
-import { OnboardingStatusEnum, OnboardingStepEnum } from '@repo/types';
-import { createClient } from '@/supabase/server';
+import { type NextRequest, NextResponse } from "next/server";
+import { routes } from "@/utils/routes";
+import { OnboardingStatusEnum, OnboardingStepEnum } from "@repo/types";
+import { createClient } from "@/supabase/server";
+import { updateSession } from "./supabase/middleware";
 
 // List of public routes that don't require authentication
 const publicRoutes = [
@@ -10,7 +11,7 @@ const publicRoutes = [
   routes.FORGOT_PASSWORD,
   routes.RESET_PASSWORD,
   routes.CONFIRM_EMAIL,
-  '/', // home page
+  "/", // home page
 ];
 
 // List of onboarding routes
@@ -31,25 +32,24 @@ export async function middleware(request: NextRequest) {
     const path = request.nextUrl.pathname;
 
     // Check if the path is a public route
-    const isPublicRoute = publicRoutes.includes(path);
+    const isPublicRoute =
+      publicRoutes.includes(path) || path.startsWith(routes.FORMS_ID) || path.startsWith(routes.CALLBACK);
     const isOnboardingRoute = onboardingRoutes.includes(path);
 
     // Get the user session
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    let { response, user } = await updateSession(request);
 
     // If there's no user and trying to access a protected route
     if (!user && !isPublicRoute) {
       const redirectUrl = new URL(routes.SIGN_IN, request.url);
-      redirectUrl.searchParams.set('redirectTo', path);
+      redirectUrl.searchParams.set("redirectTo", path);
       return NextResponse.redirect(redirectUrl);
     }
 
     // If there's a user
     if (user) {
       // If trying to access auth pages while logged in
-      if (isPublicRoute && path !== '/') {
+      if (isPublicRoute && path !== "/") {
         return NextResponse.redirect(
           new URL(routes.INBOX_OVERVIEW, request.url)
         );
@@ -57,9 +57,9 @@ export async function middleware(request: NextRequest) {
 
       // Get user's onboarding status and step
       const { data: profile } = await supabase
-        .from('profiles')
-        .select('onboarding_status, onboarding_step')
-        .eq('id', user.id)
+        .from("profiles")
+        .select("onboarding_status, onboarding_step")
+        .eq("id", user.id)
         .single();
 
       const onboardingStatus =
@@ -115,15 +115,11 @@ export async function middleware(request: NextRequest) {
       }
     }
 
-    return NextResponse.next({
-      request: {
-        headers: request.headers,
-      },
-    });
+    return response;
   } catch (e) {
     // If there's an error, allow the request to continue
     // This prevents the middleware from breaking the application
-    console.error('Middleware error:', e);
+    console.error("Middleware error:", e);
     return NextResponse.next({
       request: {
         headers: request.headers,
@@ -142,6 +138,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public folder
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

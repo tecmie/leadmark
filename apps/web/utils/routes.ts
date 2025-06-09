@@ -1,6 +1,7 @@
 export const routes = {
   // Auth routes
   SIGN_IN: '/auth/signin',
+  CALLBACK: '/auth/callback',
   SIGN_UP: '/auth/signup',
   FORGOT_PASSWORD: '/auth/forgot-password',
   RESET_PASSWORD: '/auth/reset-password',
@@ -36,6 +37,7 @@ export const routes = {
 
   // Forms routes  
   FORMS: '/forms',
+  FORMS_ID: '/form/',
 
   // Contacts routes
   CONTACTS: '/contacts',

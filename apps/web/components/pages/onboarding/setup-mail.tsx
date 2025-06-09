@@ -1,69 +1,69 @@
-'use client';
+"use client";
 
-import type React from 'react';
+import type React from "react";
 
-import { useState, useRef, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { XCircle, Loader2, CheckCircle2 } from 'lucide-react';
+import { useState, useRef, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { XCircle, Loader2, CheckCircle2 } from "lucide-react";
 import {
   checkUsernameAvailability,
   processMailboxObjective,
   createMailboxForUser,
-} from '@/actions/server/onboarding';
-import { routes } from '@/utils/routes';
-import { useRouter } from 'next/navigation';
-import { updateOnboardingProgress } from '@/actions/server/user-profile';
-import { createClient } from '@/supabase/client';
-import { toast } from 'sonner';
+} from "@/actions/server/onboarding";
+import { routes } from "@/utils/routes";
+import { useRouter } from "next/navigation";
+import { updateOnboardingProgress } from "@/actions/server/user-profile";
+import { createClient } from "@/supabase/client";
+import { toast } from "sonner";
 
 export default function SetupMailPage() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState("");
   const [usernameStatus, setUsernameStatus] = useState<
-    'idle' | 'checking' | 'available' | 'taken'
-  >('idle');
+    "idle" | "checking" | "available" | "taken"
+  >("idle");
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
-  const [objective, setObjective] = useState('');
+  const [objective, setObjective] = useState("");
   const [, setUseFile] = useState(false);
 
   const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   const checkUsername = async (value: string) => {
     if (value.length < 3) return;
 
-    setUsernameStatus('checking');
+    setUsernameStatus("checking");
     try {
       const result = await checkUsernameAvailability(value);
       if (result.success && result.data?.available) {
-        setUsernameStatus('available');
+        setUsernameStatus("available");
         setSuggestions([]);
       } else {
-        setUsernameStatus('taken');
+        setUsernameStatus("taken");
         setSuggestions(result.data?.suggestions || []);
       }
     } catch {
-      setUsernameStatus('idle');
+      setUsernameStatus("idle");
     }
   };
 
   // Debounce username check with useEffect
   useEffect(() => {
     if (username.length < 3) {
-      setUsernameStatus('idle');
+      setUsernameStatus("idle");
       setSuggestions([]);
       return;
     }
-    setUsernameStatus('checking');
+    setUsernameStatus("checking");
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
       checkUsername(username);
@@ -76,7 +76,7 @@ export default function SetupMailPage() {
 
   const handleUsernameChange = (value: string) => {
     setUsername(value);
-    setUsernameStatus('idle');
+    setUsernameStatus("idle");
     setSuggestions([]);
   };
 
@@ -97,10 +97,10 @@ export default function SetupMailPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (usernameStatus !== 'available' || !objective.trim()) return;
+    if (usernameStatus !== "available" || !objective.trim()) return;
 
     setIsProcessing(true);
-    setError('');
+    setError("");
 
     try {
       // Process the objective with AI
@@ -117,12 +117,12 @@ export default function SetupMailPage() {
           // return if the update failed
           const updateResult = await updateOnboardingProgress(
             userId,
-            'in_progress',
-            'resource'
+            "in_progress",
+            "resource"
           );
           if (!updateResult.success) {
             toast.error(
-              updateResult.message || 'Failed to update onboarding progress'
+              updateResult.message || "Failed to update onboarding progress"
             );
           }
           // Create mailbox for user
@@ -133,14 +133,14 @@ export default function SetupMailPage() {
             processedObjective: result.data,
           });
           if (!mailboxResult.success) {
-            toast.error(mailboxResult.message || 'Failed to create mailbox');
+            toast.error(mailboxResult.message || "Failed to create mailbox");
             setIsProcessing(false);
             return;
           }
         }
         // Store data in sessionStorage for next step
         sessionStorage.setItem(
-          'onboarding-data',
+          "onboarding-data",
           JSON.stringify({
             username,
             rawObjective: objective,
@@ -150,10 +150,10 @@ export default function SetupMailPage() {
 
         router.push(routes.ONBOARDING_SETUP_RESOURCE);
       } else {
-        toast.error(result.message || 'Failed to process mailbox objective');
+        toast.error(result.message || "Failed to process mailbox objective");
       }
     } catch {
-      setError('An unexpected error occurred');
+      setError("An unexpected error occurred");
     } finally {
       setIsProcessing(false);
     }
@@ -163,20 +163,21 @@ export default function SetupMailPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div className="text-center w-full">
-          <h1 className="text-2xl font-bold mb-2">
-            Setup Your Mail Account
-          </h1>
+          <h1 className="text-2xl font-bold mb-2">Setup Your Mail Account</h1>
           <p className="text-gray-600">
             Choose your username and define your mailbox objective
           </p>
         </div>
       </div>
 
-      <div className="rounded-2xl bg-white/90 border border-gray-200 p-6">
+      <div className="rounded-2xl bg-card border  p-6">
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Username Section */}
           <div className="space-y-2">
-            <Label htmlFor="username" className="font-medium text-xs text-gray-900">
+            <Label
+              htmlFor="username"
+              className="font-medium text-xs "
+            >
               Choose Username
             </Label>
             <div className="relative">
@@ -185,41 +186,40 @@ export default function SetupMailPage() {
                 value={username}
                 onChange={(e) => handleUsernameChange(e.target.value)}
                 placeholder="paul"
-                className="pr-10 focus:ring-2 transition-all bg-white/90 border border-gray-200 p-3 text-black"
+                className="pr-10 focus:ring-2 transition-all p-3 "
                 autoComplete="off"
               />
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                {usernameStatus === 'checking' && (
+                {usernameStatus === "checking" && (
                   <Loader2 className="h-4 w-4 animate-spin " />
                 )}
-                {usernameStatus === 'available' && (
+                {usernameStatus === "available" && (
                   <CheckCircle2 className="h-4 w-4 text-green-500" />
                 )}
-                {usernameStatus === 'taken' && (
+                {usernameStatus === "taken" && (
                   <XCircle className="h-4 w-4 text-red-500" />
                 )}
               </div>
             </div>
-            <p className="text-sm text-gray-600">
-              Your email will be:{' '}
+            <p className="text-sm ">
+              Your email will be:{" "}
               <span className="font-medium">
-                {username || 'username'}@leadmark.email
+                {username || "username"}@leadmark.email
               </span>
             </p>
             {suggestions.length > 0 && (
               <div className="space-y-2">
-                <p className="text-sm text-gray-600">Suggestions:</p>
+                <p className="text-sm ">Suggestions:</p>
                 <div className="flex flex-wrap gap-2">
                   {suggestions.map((suggestion) => (
                     <Button
                       key={suggestion}
                       type="button"
-                      variant="outline"
                       size="sm"
-                      className="hover:bg-yellow-50 border-yellow-200"
+                      className="bg-primary text-black "
                       onClick={() => {
                         setUsername(suggestion);
-                        setUsernameStatus('checking');
+                        setUsernameStatus("checking");
                       }}
                     >
                       {suggestion}
@@ -232,18 +232,20 @@ export default function SetupMailPage() {
 
           {/* Objective Section */}
           <div className="space-y-4">
-            <Label className="font-medium text-xs text-gray-900">Mailbox Objective</Label>
+            <Label className="font-medium text-xs ">
+              Mailbox Objective
+            </Label>
             <Textarea
               value={objective}
               onChange={(e) => setObjective(e.target.value)}
               placeholder="Describe what you want to use this mailbox for, e.g. 'I want to qualify leads for my SaaS product and schedule calls with potential customers.'"
               rows={7}
-              className="resize-none focus:ring-3 focus:ring-accent-foreground transition-all bg-white/90 border-none   p-3 text-black"
+              className="resize-none focus:ring-3 focus:ring-accent-foreground transition-all p-3"
             />
             <div className="flex items-center space-x-4">
               <button
                 type="button"
-                className="text-sm font-medium cursor-pointer text-gray-500 underline"
+                className="text-sm font-medium cursor-pointer  underline"
                 onClick={() => fileInputRef.current?.click()}
               >
                 Upload File
@@ -256,11 +258,11 @@ export default function SetupMailPage() {
                 className="hidden"
               />
             </div>
-            <div className="bg-yellow-50/80 p-5 rounded-xl border border-yellow-100 mt-2">
+            <div className="bg-yellow-50/80 p-5 rounded-xl border border-yellow-00 mt-2">
               <h4 className="font-semibold text-yellow-900 mb-2 flex items-center gap-2">
                 <span role="img" aria-label="lightbulb">
                   💡
-                </span>{' '}
+                </span>{" "}
                 Tips for a great objective:
               </h4>
               <ul className="text-sm text-yellow-800 space-y-1 list-disc pl-5">
@@ -291,7 +293,7 @@ export default function SetupMailPage() {
             type="submit"
             className="w-full py-3 rounded-lg text-sm font-semibold shadow-sm transition-all"
             disabled={
-              usernameStatus !== 'available' ||
+              usernameStatus !== "available" ||
               !objective.trim() ||
               isProcessing
             }
@@ -302,7 +304,7 @@ export default function SetupMailPage() {
                 Processing Objective...
               </>
             ) : (
-              'Continue to Resources'
+              "Continue to Resources"
             )}
           </Button>
         </form>
